@@ -1,7 +1,42 @@
 from flask import Flask,render_template,url_for,redirect,request
+from flask_sqlalchemy import SQLAlchemy
+
 import csv
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
+    username="asemah",
+    password="Newburg822!",
+    hostname="asemah.mysql.pythonanywhere-services.com",
+    databasename="asemah$miscdb",
+)
 app=Flask(__name__)
 print(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
+
+class State(db.Model):
+
+    __tablename__ = "States"
+
+    order_id = db.Column(db.Integer, primary_key=True)
+    state = db.Column(db.String(255))
+    abr = db.Column(db.String(255))
+    year_est = db.Column(db.Integer)
+    size = db.Column(db.Integer)
+    pop = db.Column(db.Integer)
+
+
+@app.route('/states.html')
+def index():
+	#return 'Hello, World'
+	#url=url_for('my_home')
+	#return redirect(url)
+	states=State.query.all()
+	#return "lenght of states is " + str(len(states))
+	return  render_template('states.html',states=states)
+
+
 
 @app.route('/')
 def my_home():
