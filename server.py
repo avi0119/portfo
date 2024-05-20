@@ -207,7 +207,22 @@ def write_to_csv(data):
 		message=data['message']
 		csv_writer=csv.writer(database2,delimiter=',',quotechar='"',quoting=csv.QUOTE_MINIMAL)
 		csv_writer.writerow([email,subject,message])
+@app.route('/submit_login_form', methods=['POST','GET'])
+def submit_login_form():
+	print ('inside submit_login_form')
+	#uname= request.form['uname']
+	#psw=request.form['psw']
 
+	return 'success'
+@app.route('/submit_login_form2', methods=['POST','GET'])
+def submit_login_form2():
+    print ('inside submit_login_form')
+    #uname= request.form['uname']
+    #psw=request.form['psw']
+    content = request.get_json(silent=True)
+    print(content['uname'])
+    return {"content":content['uname']}
+	
 '''
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form(page_name):
