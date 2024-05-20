@@ -171,11 +171,68 @@ span.psw {
           //modal.style.display = "none";
       }
   }
+function closeLoginForm(){
+    document.getElementById('id01').style.display='none';
+  }
+  function setAction(ABUTTON) 
+  {
+    form=document.getElementById('form1')
+    const url = 'login';
+    const andSign = '&';
+    const uname = form.uname.value;      
+    const psw = form.psw.value;
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+      'uname':uname,
+      'psw':psw
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          alert('Unable to login\n'+data['msg'])
+        }
+        else
+        {
+          alert('Successful loging')
+          closeLoginForm()
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
   function SayHi()
   {
     alert('Hi')
   }
-  function setAction(ABUTTON) {
+  function setAction_old(ABUTTON) {
     form=document.getElementById('form1')
     const url = 'submit_login_form2';
     const andSign = '&';

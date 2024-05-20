@@ -288,6 +288,67 @@ def recordNewUserName(uname, first_name, last_name, password, last_updated, crea
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False,{"error": f'{e}'})	
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    print ('inside login')
+    #uname= request.form['uname'] 
+    #psw=request.form['psw']
+    today_date = datetime.now()
+    new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    uname=content['uname']
+    # email=content['email']
+    psw=content['psw']
+    # first_name=content['firstname']
+    # last_name=content['lastname']
+    password=psw
+    last_updated=new_today_date
+    created=last_updated
+    isAuthenticationSuccessful=isUserPasswordCombinationInDB(uname,psw)
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    if isAuthenticationSuccessful==False:
+    	return {'success':False,'msg':'username and/or password are incorrect'}	
+    #res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    
+    return {'success':True,'msg':'successful authentication!'}	#{"content":res}
+
+def isUserPasswordCombinationInDB(uname,psw):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            #sqltext="select * from City where name='"+ city+ "'"
+            #sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"select count(*) as count from users where uname='{uname}' and password='{psw}'"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            main_list = []
+            
+            for row in rows:
+                current_list = []
+                for i in row:
+                    current_list.append(i)
+                main_list.append(current_list)
+            count=main_list[0][0]
+            return count>0# int([data[0]]['count'])
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error": str(e)})
 def returnCountOfRecordsOfGivenUserName(uname):
     try:
         # if not mysql.open:
