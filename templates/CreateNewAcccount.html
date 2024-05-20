@@ -147,6 +147,8 @@ span.psw {
         <label for="lastname"><b>Last Name</b></label>
       <input type="text" placeholder="Enter Last Name" name="lastname" required>
 
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter Email" name="email" required>
 
       <label for="uname"><b>Username</b></label>
       <input type="text" placeholder="Enter Username" name="uname" required>
@@ -182,12 +184,17 @@ span.psw {
   {
     alert('Hi')
   }
-  function setAction(ABUTTON) {
+  function closeLoginForm(){
+    document.getElementById('id01').style.display='none';
+  }
+  function setAction(ABUTTON) 
+  {
     form=document.getElementById('form1')
     const url = 'crate_new_user';
     const andSign = '&';
     const uname = form.uname.value;      
     const psw = form.psw.value;
+    const email = form.email.value;
     const firstname = form.firstname.value;      
     const lastname = form.lastname.value;
     const newUrl = url+uname+andSign+psw;
@@ -195,7 +202,64 @@ span.psw {
       'uname':uname,
       'psw':psw,
       'lastname':lastname,
-      'firstname':firstname
+      'firstname':firstname,
+      'email':email
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          alert('Unable to create new user name\n'+data['msg'])
+        }
+        else
+        {
+          alert('Successful creation of user name!')
+          closeLoginForm()
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+  function setAction_bkup(ABUTTON) {
+    form=document.getElementById('form1')
+    const url = 'crate_new_user';
+    const andSign = '&';
+    const uname = form.uname.value;      
+    const psw = form.psw.value;
+    const email = form.email.value;
+    const firstname = form.firstname.value;      
+    const lastname = form.lastname.value;
+    const newUrl = url+uname+andSign+psw;
+    adata={
+      'uname':uname,
+      'psw':psw,
+      'lastname':lastname,
+      'firstname':firstname,
+      'email':email
 
     }
     payload=JSON.stringify(adata)
@@ -207,7 +271,9 @@ span.psw {
           body: payload
       }
      )
-    .then(data => data)//data.json()
+    .then(data =>{
+      return data;
+    } )//data.json()
     .then((json) => {
       alert(json);
       //document.getElementById("form").reset();     
