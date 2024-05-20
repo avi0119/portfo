@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from flask import Flask,render_template,url_for,redirect,request,send_from_directory
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS #comment this on deployment
@@ -234,6 +234,26 @@ def submit_login_form2():
     
     res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created)
     return {"content":res}
+@app.route('/crate_new_user', methods=['POST','GET'])
+def crate_new_user():
+    print ('inside submit_login_form')
+    #uname= request.form['uname']
+    #psw=request.form['psw']
+    today_date = datetime.now()
+    new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    uname=content['uname']
+    psw=content['psw']
+    first_name=content['firstname']
+    last_name=content['lastname']
+    password=psw
+    last_updated=new_today_date
+    created=last_updated
+    
+    res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created)
+    return {"content":res}
+
 
 def recordNewUserName(uname, first_name, last_name, password, last_updated, created):
     
