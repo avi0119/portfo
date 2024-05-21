@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask,render_template,url_for,redirect,request,send_from_directory
+from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS #comment this on deployment
 from api.HelloApiHandler import HelloApiHandler
@@ -289,31 +289,33 @@ def recordNewUserName(uname, first_name, last_name, password, last_updated, crea
         print(f"An error occurred: {str(e)}")
         return (False,{"error": f'{e}'})	
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    print ('inside login')
-    #uname= request.form['uname'] 
-    #psw=request.form['psw']
+    print('inside login')
+    # uname= request.form['uname'] 
+    # psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
     content = request.get_json(silent=True)
-    #print(content['uname'])
-    uname=content['uname']
+    # print(content['uname'])
+    uname = content['uname']
     # email=content['email']
-    psw=content['psw']
+    psw = content['psw']
     # first_name=content['firstname']
     # last_name=content['lastname']
-    password=psw
-    last_updated=new_today_date
-    created=last_updated
-    isAuthenticationSuccessful=isUserPasswordCombinationInDB(uname,psw)
+    password = psw
+    last_updated = new_today_date
+    created = last_updated
+    isAuthenticationSuccessful = isUserPasswordCombinationInDB(uname, psw)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
-    if isAuthenticationSuccessful==False:
-    	return {'success':False,'msg':'username and/or password are incorrect'}	
-    #res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
-    
-    return {'success':True,'msg':'successful authentication!'}	#{"content":res}
+    if isAuthenticationSuccessful == False:
+        return {'success': False, 'msg': 'username and/or password are incorrect'}
+    # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    out = jsonify(success=True, msg='successful authentication!')
+    out.set_cookie('soapologyInSessionUserName', uname)
+    return out
+    # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
 
 def isUserPasswordCombinationInDB(uname,psw):
     try:
