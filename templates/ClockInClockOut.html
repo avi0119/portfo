@@ -306,6 +306,8 @@ span.psw {
     const workingday = form.workingday.value;      
     const starttime = form.starttime.value;
     const endtime = form.endtime.value;
+    var cookiename="soapologyInSessionUserName";
+    var uname = getCookie(cookiename);
     validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
     if (validationResult['isvalid']==false)
     {
@@ -319,7 +321,8 @@ span.psw {
     adata={
       'workingday':workingday,
       'starttime':starttime,
-      'endtime':endtime
+      'endtime':endtime,
+      'uname':uname
 
     }
     payload=JSON.stringify(adata)
@@ -349,7 +352,7 @@ span.psw {
         }
         else
         {
-          //alert('Successful loging');
+          alert('Successful time logging for username ' + uname + ' for ' + workingday );
           closeLoginForm();
           //UpdateInSessionStateIfApplicable();
         }
