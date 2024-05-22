@@ -362,32 +362,35 @@ def crate_new_user():
     return {'success':success,'msg':res[1]}	#{"content":res}
 
 
-def recordNewUserName(uname, first_name, last_name, password, last_updated, created,email):
+def recordNewUserName(uname, first_name, last_name, password, last_updated, created, email):
+    defaultrole = 1
     
-
-
-    sqltext = f"INSERT INTO users ( email,uname,first_name, last_name, password, active, last_updated, created) VALUES ('{email}','{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
-    #return sqltext
+    
+    sqltext = f"INSERT INTO users ( role,email,uname,first_name, last_name, password, active, last_updated, created) VALUES ({defaultrole},'{email}','{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
+    # return sqltext
     
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
-        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],ssh_password=app.config["MYSQL_PASSWORD"],remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
-            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
-            #sqltext = "select * from States"
+            # sqltext = "select * from States"
             cursor.execute(sqltext)
-            #cursor.execute('''select * from States''')
+            # cursor.execute('''select * from States''')
             connection.commit()
-            #data = cursor.fetchall()
-            return (True,'11')
+            # data = cursor.fetchall()
+            return (True, '11')
     
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False,{"error": f'{e}'})	
+        return (False, {"error": f'{e}'})	
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -486,9 +489,9 @@ def returnCountOfRecordsOfGivenUserName(uname):
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)})
 
-def updateUserName(uname, first_name, last_name, password, last_updated, created):
+def updateUserName(role,uname, first_name, last_name, password, last_updated, created):
     
-    sqltext = f"Update users set ( uname,first_name, last_name, password, active, last_updated, created) VALUES ('{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
+    sqltext = f"Update users set ( role,uname,first_name, last_name, password, active, last_updated, created) VALUES ({role},'{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
     #return sqltext
     
     try:
