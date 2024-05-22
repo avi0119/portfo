@@ -26,6 +26,13 @@ body {
   color: #818181;
   display: block;
 }
+.usernamesection  {
+  //padding: 6px 6px 6px 32px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+
+}
 
 .sidenav a:hover {
   color: #f1f1f1;
@@ -46,13 +53,13 @@ body {
 <div class="sidenav">
   <a href="#"onclick="return Login();">Login</a>
   <a href="#"onclick="return CreateAccount();">Create Account</a>
-  <a href="#">Clients</a>
+  <a href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
   <a href="#">Contact</a>
 </div>
 
 <div class="main">
   <h2>Soapology</h2>
-  <div id="loggedInUserIdParent"  style="color:blue;display:none;">user: <span id="loggedInUserId"   ></span></div>
+  <div class="usernamesection" id="loggedInUserIdParent"  style="color:blue;display:block;"><span id="loggedInUserId"   ></span></div>
 
 <!--   <div id="contentpaneid"><p>This sidenav is always shown.</p></div> -->
 <iframe id="contentpaneid" src="about:blank" width="100%" height="1000" frameborder="1" scrolling="no"></iframe>
@@ -77,13 +84,20 @@ body {
     theelement=document.getElementById('contentpaneid');
     theelement.src = "ModalLogIn.html";//string_of_html;
   }
+  function SingleDayTimeEntry()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "ClockInClockOut.html";//string_of_html;    
+  }
   function CreateAccount()
   {
     //alert('Create New Account')
     let string_of_html = '<div>Cool</div>'
     //theelement=document.body.innerHTML;
     theelement=document.getElementById('contentpaneid');
-    theelement.src = "CreateNewAcccount.html";//string_of_html;
+    theelement.src = "CreateNewAcccount.html";//string_of_html; 
   }
  
 </script>

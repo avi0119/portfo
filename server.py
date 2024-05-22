@@ -235,6 +235,34 @@ def submit_login_form2():
     
     res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     return {"content":res}
+
+@app.route('/recordsingledaytimehours', methods=['POST','GET'])
+def RecodSingleDayTimeHours():
+    print ('inside RecodSingleDayTimeHours')
+    return {'msg':'hello world'}
+    #uname= request.form['uname'] 
+    #psw=request.form['psw']
+    today_date = datetime.now()
+    new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    uname=content['uname']
+    email=content['email']
+    psw=content['psw']
+    first_name=content['firstname']
+    last_name=content['lastname']
+    password=psw
+    last_updated=new_today_date
+    created=last_updated
+    numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenUserName(uname))
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    if numberOfusersOfSameUname>0:
+    	return {'success':False,'msg':'this user name is already taken'}	
+    res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    success=res[0]
+    return {'success':success,'msg':res[1]}	#{"content":res}
+
 @app.route('/crate_new_user', methods=['POST','GET'])
 def crate_new_user():
     print ('inside submit_login_form')

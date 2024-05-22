@@ -32,8 +32,8 @@ button:hover {
 
 /* Extra styles for the cancel button */
 .cancelbtn {
-  width: auto;
-  padding: 10px 18px;
+  //width: auto;
+ // padding: 10px 18px;
   background-color: #f44336;
 }
 
@@ -123,10 +123,18 @@ span.psw {
   .cancelbtn {
      width: 100%;
   }
+
+
+}​
+  .labelclass {
+  display: inline-block;
+  width: 300px;
+  text-align: right;
+  border: 1px solid green;
 }
 </style>
 </head>
-<body id="LogInBodyID">
+<body >
 
 <!-- <h2>Modal Login Form</h2> -->
 
@@ -136,27 +144,41 @@ span.psw {
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
     <div class="imgcontainer">
-      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-      <img src="/static/img_avatar2.png" alt="Avatar" class="avatar">
+      <h2>Single Day Time Entry</h2>
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Single Day Time Entryy">&times;</span>
+    </div>
+    <div class="imgcontainer">
+      <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
+<!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
     </div>
 
-    <div class="container">
-      <label for="uname"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" name="uname" required>
+    <div class="container" style="border: 0px solid red;">
+     
+      <label style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" for="SelectWorkingDay" ><b>Select Working Day</b></label>
+       <input type="date" id="workingday" name="workingday" style="width:100px"><br><br><br>
 
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required>
+      
+
+      <label for="SelectStartTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" ><b>Select Start Time</b></label>
+      <input type="time" id="starttime" name="starttime" style="width:100px"><br><br><br>
+
+      <label for="SelectEndTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Select End Time</b></label>
+      <input type="time" id="endtime" name="endtime" style="width:100px"><br><br><br>
+
+
+
         
-      <button type="button"  onclick="setAction(this)">Login</button>
-      <label>
+      <button type="button" style="width:100px" onclick="setAction(this)" >Submit</button>
+      <button type="button" style="width:100px" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+<!--       <label>
         <input type="checkbox" checked="checked" name="remember"> Remember me
-      </label>
+      </label> -->
     </div>
 
     <div class="container" style="background-color:#f1f1f1">
-      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+      <!-- <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button> -->
 <!--       <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
-      <span class="psw">Forgot <a href="#">password?</a></span>
+<!--       <span class="psw">Forgot <a href="#">password?</a></span> -->
     </div>
   </form>
 </div>
@@ -216,20 +238,88 @@ span.psw {
           
       }
   }
+  function convertTimeToseconds(atime)
+  {
+    var time = atime;
+    var array = time.split(":");
+    var seconds = (parseInt(array[0], 10) * 60 * 60) + (parseInt(array[1], 10) * 60) + 0;
+    return seconds;
+
+  }
+  function isTime1GreaterTahnTime2(time1,time2)
+  {
+      time1inseconds=convertTimeToseconds(time1);
+      time2inseconds=convertTimeToseconds(time2);
+      return time1inseconds>time2inseconds;
+
+  }
+  function validateParamsForTimeEntry(workingday,starttime,endtime)
+  {
+    ret={
+
+    }
+    var isValid=true;
+    var msg;
+      if (workingday=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'working Day'"
+
+      }
+      else if (starttime=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'Start Time'"
+      }
+      else if (endtime=='')
+      {
+         isValid=false;
+        msg="Please make sure to specify 'End Time'"
+      }
+      if (isValid==false)
+      {
+          ret['isvalid']=isValid;
+          ret['msg']=msg;
+          return ret;
+      }
+      else
+      {
+          if (!(isTime1GreaterTahnTime2(endtime,starttime)))
+          {
+            ret['isvalid']=false;
+            ret['msg']="Please make sure that Ending Time is greater the Start Time";
+            
+          }
+          else
+          {
+            ret['isvalid']=true;
+            ret['msg']="Time entry is Valid";
+          }
+          return ret;
+      }
+  }
   function setAction(ABUTTON) 
   {
     form=document.getElementById('form1')
-    const url = 'login';
+    const url = 'recordsingledaytimehours';
     // const andSign = '&';
-    const uname = form.uname.value;      
-    const psw = form.psw.value;
+    const workingday = form.workingday.value;      
+    const starttime = form.starttime.value;
+    const endtime = form.endtime.value;
+    validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    if (validationResult['isvalid']==false)
+    {
+      alert(validationResult['msg']);
+      return;
+    }
     // const email = form.email.value;
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
     adata={
-      'uname':uname,
-      'psw':psw
+      'workingday':workingday,
+      'starttime':starttime,
+      'endtime':endtime
 
     }
     payload=JSON.stringify(adata)
@@ -255,13 +345,13 @@ span.psw {
         console.log(data);
         if (data['success']==false)
         {
-          alert('Unable to login\n'+data['msg'])
+          alert('Unable to submit time\n'+data['msg'])
         }
         else
         {
           //alert('Successful loging');
           closeLoginForm();
-          UpdateInSessionStateIfApplicable();
+          //UpdateInSessionStateIfApplicable();
         }
       }
     )
@@ -275,57 +365,7 @@ span.psw {
   {
     alert('Hi')
   }
-  function setAction_old(ABUTTON) {
-    form=document.getElementById('form1')
-    const url = 'submit_login_form2';
-    const andSign = '&';
-    const uname = form.uname.value;      
-    const psw = form.psw.value;
-    const newUrl = url+uname+andSign+psw;
-    adata={
-      'uname':uname,
-      'psw':psw
-    }
-    payload=JSON.stringify(adata)
-    fetch(
-      url,
-      {            
-          headers: { "Content-Type": "application/json" },            
-          method: "POST",
-          body: payload
-      }
-     )
-    .then(data => data)//data.json()
-    .then((json) => {
-      alert(json);
-      //document.getElementById("form").reset();     
-    });
-    return false;
-  }
-  function setAction2()
-  {
-    fetch('submit_login_form')
-        .then(function(response) {
-            // When the page is loaded convert it to text
-            return response.text()
-        })
-        .then(function(html) {
-            // Initialize the DOM parser
-            var parser = new DOMParser();
-
-            // Parse the text
-            var doc = parser.parseFromString(html, "text/html");
-
-            // You can now even select part of that html as you would in the regular DOM 
-            // Example:
-            // var docArticle = doc.querySelector('article').innerHTML;
-
-            console.log(doc);
-        })
-        .catch(function(err) {  
-            console.log('Failed to fetch page: ', err);  
-        });
-    }
+  
 </script>
 
 </body>
