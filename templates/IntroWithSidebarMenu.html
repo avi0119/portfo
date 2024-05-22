@@ -54,7 +54,8 @@ body {
   <a href="#"onclick="return Login();">Login</a>
   <a href="#"onclick="return CreateAccount();">Create Account</a>
   <a href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
-  <a href="#">Contact</a>
+  <a href="#" onclick="return HistoricalTimeEntry();">Hitorical Time Entry</a>
+
 </div>
 
 <div class="main">
@@ -83,6 +84,13 @@ body {
     //theelement=document.body.innerHTML;
     theelement=document.getElementById('contentpaneid');
     theelement.src = "ModalLogIn.html";//string_of_html;
+  }
+  function HistoricalTimeEntry()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "HistoricalTimeEntry.html";//string_of_html;       
   }
   function SingleDayTimeEntry()
   {

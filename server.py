@@ -488,7 +488,66 @@ def returnCountOfRecordsOfGivenUserName(uname):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)})
+@app.route('/gethistoricaltimeentry', methods=['GET', 'POST'])
+def getHistoricalTimeEntry():
+    print ('inside getHistoricalTimeEntry')
+    #uname= request.form['uname'] 
+    #psw=request.form['psw']
+    # today_date = datetime.now()
+    # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    uname=content['uname']
+    # email=content['email']
+    # psw=content['psw']
+    # first_name=content['firstname']
+    # last_name=content['lastname']
+    # password=psw
+    # last_updated=new_today_date
+    # created=last_updated
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname)
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    # if len(listOfresults)==0:
+    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    # success=res[0]
+    data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
+    return {'success':True,'data':data_as_dict,'msg':'mpthing yet'}	#{"content":res}
 
+def returnAllRecordTimeEntryHistoryForUserName(uname):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            #sqltext="select * from City where name='"+ city+ "'"
+            #sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"select * from timeentry where uname='{uname}' order by start_date"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            main_list = []
+            
+            for row in rows:
+                current_list = []
+                for i in row:
+                    current_list.append(i)
+                main_list.append(current_list)
+            return main_list# int([data[0]]['count'])
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error": str(e)})
 def updateUserName(role,uname, first_name, last_name, password, last_updated, created):
     
     sqltext = f"Update users set ( role,uname,first_name, last_name, password, active, last_updated, created) VALUES ({role},'{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
