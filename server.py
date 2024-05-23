@@ -11,6 +11,7 @@ import sshtunnel
 #from flaskext.mysql import MySQL
 
 import csv
+import sys
 # SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
 #     username="asemah",
 #     password="Newburg822!",
@@ -512,8 +513,15 @@ def getHistoricalTimeEntry():
     # 	return {'success':False,'msg':'this user name is already taken'}	
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     # success=res[0]
-    data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
-    return {'success':True,'data':data_as_dict,'msg':'mpthing yet'}	#{"content":res}
+    # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
+    
+
+    data_as_dict=listOfresults[1]
+    #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
+    if listOfresults[0]==True:
+    	return {'success':listOfresults[0],'data':data_as_dict,'msg':'all is good'}	#{"content":res}
+    else:
+    	return {'success':listOfresults[0],'msg':data_as_dict}	#{"content":res}
 
 def returnAllRecordTimeEntryHistoryForUserName(uname):
     try:
@@ -526,9 +534,9 @@ def returnAllRecordTimeEntryHistoryForUserName(uname):
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
-            cursor = connection.cursor()
-            #sqltext="select * from City where name='"+ city+ "'"
-            #sqltext="select * from users" #where uname='{uname}'""
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext="select * from users" #where uname='{uname}'""
             sqltext = f"select * from timeentry where uname='{uname}' order by start_date"
             cursor.execute(sqltext)
             # cursor.execute('''select * from City''')
@@ -536,18 +544,33 @@ def returnAllRecordTimeEntryHistoryForUserName(uname):
             # data_array=data['content']
             # firstrecord=data_array[0]
             # count=firstrecord[0]
-            main_list = []
-            
-            for row in rows:
-                current_list = []
-                for i in row:
-                    current_list.append(i)
-                main_list.append(current_list)
-            return main_list# int([data[0]]['count'])
-    
+            if True == False:
+                main_list = []
+                
+                for row in rows:
+                    current_list = []
+                    for i in row:
+                        current_list.append(i)
+                    main_list.append(current_list)
+                return main_list  # int([data[0]]['count'])
+            else:
+            	print('hiiiiiiiiiiiiiii',file=sys.stdout)
+            	#ret={'type':str(type(rows))}
+            	print(rows,file=sys.stdout)
+            	return (True,evalluatListOfDictionaries(rows))
+
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return ({"error": str(e)})
+        return (False,({"error": str(e)}))
+def evalluatListOfDictionaries(rows):
+	ret=[]
+	for row in rows:
+		new_dict={}
+		for akey,avalue in row.items():
+			new_dict[akey]=(str(avalue))
+		ret.append(new_dict)
+	return ret
 def updateUserName(role,uname, first_name, last_name, password, last_updated, created):
     
     sqltext = f"Update users set ( role,uname,first_name, last_name, password, active, last_updated, created) VALUES ({role},'{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
