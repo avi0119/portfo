@@ -3,6 +3,27 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  table {
+  border-collapse: collapse;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+table td {
+  padding: 15px;
+}
+table thead td {
+  background-color: #54585d;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 13px;
+  border: 1px solid #54585d;
+}
+table tbody td {
+  color: #636363;
+  border: 1px solid #dddfe1;
+}
+table tbody tr {
+  background-color: #f9fafb;
+}
 body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Full-width input fields */
@@ -129,7 +150,37 @@ span.psw {
 <body id="LogInBodyID">
 
 <!-- <h2>Modal Login Form</h2> -->
-<div id='historicaldataid'>hello world</div>
+<div id='historicaldataid'>
+
+<!-- <table>
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Gender</td>
+      <td>Age</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>David</td>
+      <td>Male</td>
+      <td>23</td>
+    </tr>
+    <tr>
+      <td>Jessica</td>
+      <td>Female</td>
+      <td>47</td>
+    </tr>
+    <tr>
+      <td>Warren</td>
+      <td>Male</td>
+      <td>12</td>
+    </tr>
+  </tbody>
+</table> -->
+
+
+</div>
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
 
 <div id="id01" class="modal">
@@ -236,8 +287,80 @@ span.psw {
       // because unescape has been deprecated, replaced with decodeURI
       //return unescape(dc.substring(begin + prefix.length, end));
       return decodeURI(dc.substring(begin + prefix.length, end));
+  }
+  function removeAllChildElmenst(aNode)
+  {
+    while (aNode.lastElementChild)
+    {
+      aNode.removeChild(aNode.lastElementChild);
+    }
   }   
+ function returnNewTable_old(players)
+ {
+      const newTable = document.createElement("table");
+    newTable.innerHTML = "<thead><th>Date</th><th>Start</th><th>End</th><th>Last Updated</th><th>Created</th></thead>";
+    for(player of players){
+        const newRow = document.createElement("tr");
 
+        const tdDate = document.createElement("td");
+        const tdStart = document.createElement("td");
+        const tdEnd = document.createElement("td");
+        const tdLastUpdated = document.createElement("td");
+        const tdCreated = document.createElement("td");
+      
+        tdDate.textContent = player.start_date;
+        tdStart.textContent = player.start_time;  
+        tdEnd.textContent = player.end_time;
+        tdLastUpdated.textContent = player.last_updated;  
+        tdCreated.textContent = player.created;
+
+        newRow.appendChild(tdDate);
+        newRow.appendChild(tdStart);
+        newRow.appendChild(tdEnd);
+        newRow.appendChild(tdLastUpdated);
+        newRow.appendChild(tdCreated);
+
+
+        newTable.appendChild(newRow);
+    }
+    return newTable;
+    // const target = document.getElementById('target');
+    // target.appendChild(newTable);
+ }
+  function returnNewTable(players)
+ {
+    const newTable = document.createElement("table");
+    newTable.innerHTML = "<thead><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
+    newtBody = document.createElement("tbody");
+    for(player of players){
+        const newRow = document.createElement("tr");
+
+        const tdDate = document.createElement("td");
+        const tdStart = document.createElement("td");
+        const tdEnd = document.createElement("td");
+        const tdLastUpdated = document.createElement("td");
+        const tdCreated = document.createElement("td");
+      
+        tdDate.textContent = player.start_date.substr(0, 10);;
+        tdStart.textContent = player.start_time;  
+        tdEnd.textContent = player.end_time;
+        tdLastUpdated.textContent = player.last_updated;  
+        tdCreated.textContent = player.created;
+
+        newRow.appendChild(tdDate);
+        newRow.appendChild(tdStart);
+        newRow.appendChild(tdEnd);
+        newRow.appendChild(tdLastUpdated);
+        newRow.appendChild(tdCreated);
+
+
+        newtBody.appendChild(newRow);
+    }
+    newTable.appendChild(newtBody);
+    return newTable;
+    // const target = document.getElementById('target');
+    // target.appendChild(newTable);
+ }
   function PopulateHistoricalData() 
   {
     form=document.getElementById('form1')
@@ -282,8 +405,11 @@ span.psw {
         else
         {
           dictionaryToPopulate=data['data'];
+          newTable=returnNewTable(dictionaryToPopulate)
           var hisotoricaldataelement = document.getElementById('historicaldataid');
-          hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
+          removeAllChildElmenst(hisotoricaldataelement);
+          hisotoricaldataelement.appendChild(newTable);
+          // hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
           //alert('Successful loging');
           //closeLoginForm();
 
@@ -327,30 +453,7 @@ span.psw {
     });
     return false;
   }
-  function setAction2()
-  {
-    fetch('submit_login_form')
-        .then(function(response) {
-            // When the page is loaded convert it to text
-            return response.text()
-        })
-        .then(function(html) {
-            // Initialize the DOM parser
-            var parser = new DOMParser();
 
-            // Parse the text
-            var doc = parser.parseFromString(html, "text/html");
-
-            // You can now even select part of that html as you would in the regular DOM 
-            // Example:
-            // var docArticle = doc.querySelector('article').innerHTML;
-
-            console.log(doc);
-        })
-        .catch(function(err) {  
-            console.log('Failed to fetch page: ', err);  
-        });
-    }
 </script>
 
 </body>

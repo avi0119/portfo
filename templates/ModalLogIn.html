@@ -136,7 +136,8 @@ span.psw {
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
     <div class="imgcontainer">
-      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <span class="close" title="Close Modal">&times;</span>
+       <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar">
     </div>
 
@@ -173,7 +174,7 @@ span.psw {
       }
   }
   function closeLoginForm(){
-      document.getElementById('id01').style.display='none';
+      // document.getElementById('id01').style.display='none';
     }
     function getCookie(name) {
       var dc = document.cookie;
@@ -209,9 +210,9 @@ span.psw {
           // do cookie exists stuff
           //alert(cookiename + ' was found');
           var loggedInUserIdElement = window.parent.document.getElementById('loggedInUserId');
-          loggedInUserIdElement.innerHTML=myCookie;
-          var loggedInUserIdElementParent = window.parent.document.getElementById('loggedInUserIdParent');
-          loggedInUserIdElementParent.style.display="block"
+          // loggedInUserIdElement.innerHTML=myCookie;
+          // var loggedInUserIdElementParent = window.parent.document.getElementById('loggedInUserIdParent');
+          // loggedInUserIdElementParent.style.display="block"
 
           
       }
@@ -262,6 +263,10 @@ span.psw {
           //alert('Successful loging');
           closeLoginForm();
           UpdateInSessionStateIfApplicable();
+          // window.location.href = "IntroWithSidebarMenu.html";
+         // window.location.href ='IntroWithSidebarMenu.html';
+          // history.pushState("object or string representing the state of the page", "new title", "IntroWithSidebarMenu.html");
+          window.location.assign("IntroWithSidebarMenu.html");
         }
       }
     )
