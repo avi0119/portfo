@@ -187,7 +187,25 @@ span.psw {
 // Get the modal
   document.getElementById('id01').style.display='block'
   var modal = document.getElementById('id01');
+  function delete_cookie(name) 
+  {
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+    function Logout()
+  {
+      delete_cookie("soapologyInSessionUserName");
 
+      window.parent.location.href = "InitialLoginPageOnly.html"+'?n=' + new Date().getTime();
+      //window.location.assign("InitialLoginPageOnly.html");
+      const myHeaders = new Headers();
+        myRequest = new Request("displayInitialLogin", {
+        method: "GET",
+        headers: myHeaders
+        // ,mode: "cors",
+        // cache: "default",
+      });
+      //makeRequeestToInitilaLogin(myRequest)
+  }
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = function(event) {
       if (event.target == modal) {
@@ -348,7 +366,11 @@ span.psw {
         console.log(data);
         if (data['success']==false)
         {
-          alert('Unable to submit time\n'+data['msg'])
+          alert('Unable to create new user name\n'+data['msg'])
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
         }
         else
         {

@@ -240,8 +240,9 @@ def submit_login_form2():
 @app.route('/recordsingledaytimehours', methods=['POST','GET'])
 def RecodSingleDayTimeHours():
     print ('inside RecodSingleDayTimeHours')
-    
-    #uname= request.form['uname'] 
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}    
+    #uname= request.form['uname']  
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -339,7 +340,9 @@ def recordTimeInAndOut(uname, workingday, starttime, endtime, last_updated, crea
 @app.route('/crate_new_user', methods=['POST','GET'])
 def crate_new_user():
     print ('inside submit_login_form')
-    #uname= request.form['uname'] 
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']  
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
