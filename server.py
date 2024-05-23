@@ -420,7 +420,11 @@ def login():
     out.set_cookie('soapologyInSessionUserName', uname)
     return out
     # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
-
+def IsThereSecurityCookie():
+	ret=False
+	if 'soapologyInSessionUserName' in request.cookies:
+		ret=True
+	return ret
 def isUserPasswordCombinationInDB(uname,psw):
     try:
         # if not mysql.open:
@@ -521,13 +525,19 @@ def getHistoricalTimeEntry():
     if listOfresults[0]==True:
     	return {'success':listOfresults[0],'data':data_as_dict,'msg':'all is good'}	#{"content":res}
     else:
-    	return {'success':listOfresults[0],'msg':data_as_dict}	#{"content":res}
+    	if str(data_as_dict)=="RelogginNeeded":
+    		msg="RelogginNeeded"
+    	else:
+    		msg=data_as_dict
+    	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
 
 def returnAllRecordTimeEntryHistoryForUserName(uname):
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        if IsThereSecurityCookie()==False:
+        	return (False,"RelogginNeeded")
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
