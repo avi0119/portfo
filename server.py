@@ -594,7 +594,21 @@ def updateUserName(role,uname, first_name, last_name, password, last_updated, cr
     
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False,{"error": f'{e}'})	
+        return (False,{"error": f'{e}'})
+
+
+@app.route('/sidebarmenu', methods=['POST','GET'])
+def sidebarmenu():
+	error=None
+	return render_template('IntroWithSidebarMenu.html',error=error)
+@app.route('/displayInitialLogin', methods=['POST','GET'])
+def displayLogin():
+	error=None
+	return render_template('InitialLoginPageOnly.html',error=error)
+
+
+
+
 '''
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form(page_name):

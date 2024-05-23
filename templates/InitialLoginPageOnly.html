@@ -68,7 +68,11 @@ body {
 <script>
 // Get the modal  InitialLoginPageOnly.html
   var modal = document.getElementById('id01');
+    
+
+
   LoginIfUserHasNotLoggedBeforeOtherWiseGoToMenu();
+
   function LoginIfUserHasNotLoggedBeforeOtherWiseGoToMenu()
   {
     isLogged=HasUnserLoggedIn();
@@ -78,10 +82,44 @@ body {
     }
     else
     {
-      window.location.href = "IntroWithSidebarMenu.html";
+      const myHeaders = new Headers();
+     myRequest = new Request("sidebarmenu", 
+     {
+      method: "GET",
+      headers: myHeaders
+      // ,mode: "cors",
+      // cache: "default",
+      });
+      window.location.href = "IntroWithSidebarMenu.html"+'?n=' + new Date().getTime(); ;;
+      //makerequestToDisplayMenu(myRequest);
     }
 
   }
+
+async function makerequestToDisplayMenu(request) {
+  try 
+  {
+    const response = await fetch(request);
+    if (!response.ok) 
+    {
+      throw new Error("Network response was not OK");
+    }
+    const myBlob = await response.text();
+    ReplaceContent(myBlob);
+    // myImage.src = URL.createObjectURL(myBlob);
+  } catch (error) 
+  {
+    console.error("Error:", error);
+  }
+}
+    function ReplaceContent(NC) {
+      document.open();
+      document.write(NC);
+      document.close();
+    }
+
+
+
   function HasUnserLoggedIn() 
   {
       ret=false;

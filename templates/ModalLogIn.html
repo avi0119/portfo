@@ -266,7 +266,16 @@ span.psw {
           // window.location.href = "IntroWithSidebarMenu.html";
          // window.location.href ='IntroWithSidebarMenu.html';
           // history.pushState("object or string representing the state of the page", "new title", "IntroWithSidebarMenu.html");
-          window.location.assign("IntroWithSidebarMenu.html");
+          //window.location.assign("IntroWithSidebarMenu.html");
+      const myHeaders = new Headers();
+     myRequest = new Request("sidebarmenu", 
+     {
+      method: "GET",
+      headers: myHeaders
+      // ,mode: "cors",
+      // cache: "default",
+      });
+          makerequestToDisplayMenu(myRequest);
         }
       }
     )
@@ -276,6 +285,27 @@ span.psw {
     });
     return false;
   }
+  async function makerequestToDisplayMenu(request) {
+  try 
+  {
+    const response = await fetch(request);
+    if (!response.ok) 
+    {
+      throw new Error("Network response was not OK");
+    }
+    const myBlob = await response.text();
+    ReplaceContent(myBlob);
+    // myImage.src = URL.createObjectURL(myBlob);
+  } catch (error) 
+  {
+    console.error("Error:", error);
+  }
+}
+    function ReplaceContent(NC) {
+      document.open();
+      document.write(NC);
+      document.close();
+    }
   function SayHi()
   {
     alert('Hi')

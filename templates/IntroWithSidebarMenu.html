@@ -72,17 +72,75 @@ body {
 // Get the modal
   var modal = document.getElementById('id01');
   UpdateInSessionStateIfApplicable();
+    
+
+
   function Logout()
   {
       delete_cookie("soapologyInSessionUserName");
 
-     // window.location.href = "InitialLoginPageOnly.html";
-      window.location.assign("InitialLoginPageOnly.html");
+      window.location.href = "InitialLoginPageOnly.html"+'?n=' + new Date().getTime();
+      //window.location.assign("InitialLoginPageOnly.html");
+      const myHeaders = new Headers();
+        myRequest = new Request("displayInitialLogin", {
+        method: "GET",
+        headers: myHeaders
+        // ,mode: "cors",
+        // cache: "default",
+      });
+      //makeRequeestToInitilaLogin(myRequest)
   }
 
   function delete_cookie(name) 
   {
     document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+  async function makeRequeestToInitilaLogin(request) {
+  try 
+  {
+    const response = await fetch(request);
+    if (!response.ok) 
+    {
+      throw new Error("Network response was not OK");
+    }
+    const myBlob = await response.text();
+    ReplaceContent(myBlob);
+    // myImage.src = URL.createObjectURL(myBlob);
+  } catch (error) 
+  {
+    console.error("Error:", error);
+  }
+}
+      function ReplaceContent(NC) {
+        document.open();
+        document.write(NC);
+        document.close();
+      }
+
+
+
+  function HasUnserLoggedIn() 
+  {
+      ret=false;
+      var cookiename="soapologyInSessionUserName";
+      var myCookie = getCookie(cookiename);
+
+      if (myCookie == null) 
+      {
+          // do cookie doesn't exist stuff;
+          //alert(cookiename + ' was not found')
+      }
+      else {
+          // do cookie exists stuff
+          //alert(cookiename + ' was found');
+          // var loggedInUserIdElement = window.parent.document.getElementById('loggedInUserId');
+          // loggedInUserIdElement.innerHTML=myCookie;
+          // var loggedInUserIdElementParent = window.parent.document.getElementById('loggedInUserIdParent');
+          // loggedInUserIdElementParent.style.display="block"
+          ret=true;
+          
+      }
+      return ret;
   }
   function UpdateInSessionStateIfApplicable() {
       var cookiename="soapologyInSessionUserName";
@@ -92,9 +150,10 @@ body {
       {
           // do cookie doesn't exist stuff;
           //alert(cookiename + ' was not found')
-          location.replace('InitialLoginPageOnly.html');
+          //location.replace('InitialLoginPageOnly.html');
           // history.pushState("object or string representing the state of the page", "new title", "IntroWithSidebarMenu.html");
-          window.location.assign("InitialLoginPageOnly.html");
+          //window.location.assign("InitialLoginPageOnly.html"); 
+          window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
       }
       else {
           // do cookie exists stuff
