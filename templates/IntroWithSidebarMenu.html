@@ -54,6 +54,7 @@ body {
   <!-- <a href="#"onclick="return Login();">Login</a> -->
   <a href="#"onclick="return Logout();">Logout</a>
   <a href="#"onclick="return CreateAccount();">Create Account</a>
+  <a href="#"onclick="return EditAccount();">Edit Account</a>
   <a href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
   <a href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a>
 
@@ -224,6 +225,14 @@ body {
     //theelement=document.body.innerHTML;
     theelement=document.getElementById('contentpaneid');
     theelement.src = "CreateNewAcccount.html";//string_of_html; 
+  }
+  function EditAccount()
+  {
+    //alert('Create New Account')
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "CreateNewAcccount.html?Edit=True";//string_of_html;    
   }
  
 </script>

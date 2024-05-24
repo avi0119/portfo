@@ -364,8 +364,74 @@ def crate_new_user():
     res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
+@app.route('/updateuser', methods=['POST','GET'])
+def updateUserDeatils():
+    print ('inside updateUserDeatils')
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']  
+    #psw=request.form['psw']
+    today_date = datetime.now()
+    new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    uname=content['uname']
+    email=content['email']
+    psw=content['psw']
+    first_name=content['firstname']
+    last_name=content['lastname']
+    password=psw
+    last_updated=new_today_date
+    # created=last_updated
+    numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenUserName(uname))
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    if numberOfusersOfSameUname==0:
+    	return {'success':False,'msg':'this user does not exist in database'}
+    res=updateUserName(uname,first_name, last_name,   last_updated,email)
+    success=res[0]
+    return {'success':success,'msg':res[1]}	#{"content":res}
+
+def returnAllUserDetailsForUserName(uname):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"select * from users where uname='{uname}'"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            if True == False:
+                main_list = []
+                
+                for row in rows:
+                    current_list = []
+                    for i in row:
+                        current_list.append(i)
+                    main_list.append(current_list)
+                return main_list  # int([data[0]]['count'])
+            else:
+            	print('hiiiiiiiiiiiiiii',file=sys.stdout)
+            	#ret={'type':str(type(rows))}
+            	print(rows,file=sys.stdout)
+            	return (True,evalluatListOfDictionaries(rows))
 
 
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False,({"error": str(e)}))
 def recordNewUserName(uname, first_name, last_name, password, last_updated, created, email):
     defaultrole = 1
     
@@ -395,7 +461,72 @@ def recordNewUserName(uname, first_name, last_name, password, last_updated, crea
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False, {"error": f'{e}'})	
+@app.route('/getuserdetails', methods=['GET', 'POST'])
+def getUserDetails():
+    print ('inside getUserDetails')
+    #uname= request.form['uname'] 
+    #psw=request.form['psw']
+    # today_date = datetime.now()
+    # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    print(content['uname'])
+    uname=content['uname']
+    # email=content['email']
+    # psw=content['psw']
+    # first_name=content['firstname']
+    # last_name=content['lastname']
+    # password=psw
+    # last_updated=new_today_date
+    # created=last_updated
+    listOfresults=returnAllUserDetailsForUserName(uname)
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    # if len(listOfresults)==0:
+    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    # success=res[0]
+    # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
+    
 
+    data_as_dict=listOfresults[1]
+    #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
+    if listOfresults[0]==True:
+    	return {'success':listOfresults[0],'data':data_as_dict,'msg':'all is good'}	#{"content":res}
+    else:
+    	if str(data_as_dict)=="RelogginNeeded":
+    		msg="RelogginNeeded"
+    	else:
+    		msg=data_as_dict
+    	return {'success':listOfresults[0],'msg':msg}
+def updateUserName( uname,first_name, last_name,   last_updated,email):
+    defaultrole = 1
+    defaultactive=1
+    
+    sqltext = f"UPDATE users SET first_name='{first_name}', last_name='{last_name}',active={defaultactive},last_updated='{last_updated}',email='{email}' where uname='{uname}';"
+    # return (False,sqltext)
+    
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext = "select * from States"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from States''')
+            connection.commit()
+            # data = cursor.fetchall()
+            return (True, '11')
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False, {"error": f'{e}'})	
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print('inside login')
@@ -584,30 +715,7 @@ def evalluatListOfDictionaries(rows):
 			new_dict[akey]=(str(avalue))
 		ret.append(new_dict)
 	return ret
-def updateUserName(role,uname, first_name, last_name, password, last_updated, created):
-    
-    sqltext = f"Update users set ( role,uname,first_name, last_name, password, active, last_updated, created) VALUES ({role},'{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
-    #return sqltext
-    
-    try:
-        # if not mysql.open:
-        #     mysql.ping(reconnect=True)
-        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
-        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],ssh_password=app.config["MYSQL_PASSWORD"],remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
-            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
-            cursor = connection.cursor()
-            # sqltext="select * from City where name='"+ city+ "'"
-            #sqltext = "select * from States"
-            cursor.execute(sqltext)
-            #cursor.execute('''select * from States''')
-            connection.commit()
-            #data = cursor.fetchall()
-            return (True,'11')
-    
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return (False,{"error": f'{e}'})
+
 
 
 @app.route('/sidebarmenu', methods=['POST','GET'])
