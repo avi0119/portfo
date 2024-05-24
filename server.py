@@ -741,12 +741,16 @@ def testSendinEmail():
 	first_name=content['firstname']
 	last_name=content['lastname']
 	today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+	url_to_create_account='http://127.0.0.1:5000/CreateNewAcccount.html'
 	email_text = f"""
-	Hi! This is the report from our script -- {today_date}.
+	Dear Person,
+	Welecome aboard.  Please click the link below in order to create new account
 
-	We have added 1 + 2 and gotten the answer {1+2}.
+	{url_to_create_account}
 
-	Bye!
+	Thank you,
+
+	Soapology Management
 	"""
 
 	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
