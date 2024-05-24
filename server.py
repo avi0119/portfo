@@ -1,4 +1,4 @@
-#import pandas
+import pandas as pd
 #import pyjokes
 from datetime import datetime
 from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify
@@ -680,7 +680,7 @@ def downloadtimeentryfile():
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
     content = request.get_json(silent=True)
     #print(content['uname'])
-    uname=content['uname']
+    uname='johndoe'#content['uname']
     # email=content['email']
     # psw=content['psw']
     # first_name=content['firstname']
@@ -689,6 +689,9 @@ def downloadtimeentryfile():
     # last_updated=new_today_date
     # created=last_updated
     listOfresults=returnAllRecordTimeEntryHistoryForUserName(None,True)
+    df = pd.DataFrame(listOfresults[1])
+    print(df)
+    df.to_excel('timeentrydownload.xlsx', index=False)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
