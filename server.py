@@ -12,6 +12,8 @@ import sshtunnel
 
 import csv
 import sys
+import smtplib
+from email.mime.text import MIMEText
 # SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
 #     username="asemah",
 #     password="Newburg822!",
@@ -727,8 +729,44 @@ def displayLogin():
 	error=None
 	return render_template('InitialLoginPageOnly.html',error=error)
 
+@app.route('/sendemployeeinitializationemail', methods=['POST','GET'])
+def testSendinEmail():
+	if IsThereSecurityCookie()==False:
+		return {'success':False,'msg':'RelogginNeeded'}#(False,"RelogginNeeded")
+	content = request.get_json(silent=True)
+	# print(content['uname'])
+	# uname = content['uname']
+	email_recipient=content['email']
+	# psw = content['psw']
+	first_name=content['firstname']
+	last_name=content['lastname']
+	today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+	email_text = f"""
+	Hi! This is the report from our script -- {today_date}.
+
+	We have added 1 + 2 and gotten the answer {1+2}.
+
+	Bye!
+	"""
+
+	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+
+	GMAIL_USERNAME = EMAIL
+	GMAIL_APP_PASSWORD = PASSWORD
+
+	recipients = [email_recipient]#["avisemah@gmail.com"]
+	msg = MIMEText(email_text)
+	msg["Subject"] = "Email report: a simple sum"
+	msg["To"] = ", ".join(recipients)
+	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
 
 
+	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+	smtp_server.login(GMAIL_USERNAME, GMAIL_APP_PASSWORD)
+	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
+	smtp_server.quit()
+	return {'success':True,'msg':'sent email!'}
 
 '''
 @app.route('/submit_form', methods=['POST','GET'])
