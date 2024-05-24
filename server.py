@@ -1,3 +1,5 @@
+#import pandas
+#import pyjokes
 from datetime import datetime
 from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify
 from flask_restful import Api, Resource, reqparse
@@ -649,7 +651,44 @@ def getHistoricalTimeEntry():
     # password=psw
     # last_updated=new_today_date
     # created=last_updated
-    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname)
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname,False)
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    # if len(listOfresults)==0:
+    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    # success=res[0]
+    # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
+    
+
+    data_as_dict=listOfresults[1]
+    #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
+    if listOfresults[0]==True:
+    	return {'success':listOfresults[0],'data':data_as_dict,'msg':'all is good'}	#{"content":res}
+    else:
+    	if str(data_as_dict)=="RelogginNeeded":
+    		msg="RelogginNeeded"
+    	else:
+    		msg=data_as_dict
+    	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
+@app.route('/downloadtimeentryfile', methods=['GET', 'POST'])
+def downloadtimeentryfile():
+    print ('inside getHistoricalTimeEntry')
+    #uname= request.form['uname'] 
+    #psw=request.form['psw']
+    # today_date = datetime.now()
+    # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    uname=content['uname']
+    # email=content['email']
+    # psw=content['psw']
+    # first_name=content['firstname']
+    # last_name=content['lastname']
+    # password=psw
+    # last_updated=new_today_date
+    # created=last_updated
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(None,True)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
@@ -670,11 +709,12 @@ def getHistoricalTimeEntry():
     		msg=data_as_dict
     	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
 
-def returnAllRecordTimeEntryHistoryForUserName(uname):
+def returnAllRecordTimeEntryHistoryForUserName(uname,allrecordflag):
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        
         if IsThereSecurityCookie()==False:
         	return (False,"RelogginNeeded")
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
@@ -686,7 +726,12 @@ def returnAllRecordTimeEntryHistoryForUserName(uname):
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
-            sqltext = f"select * from timeentry where uname='{uname}' order by start_date"
+            #return  (False,"xyzxyz")
+            if allrecordflag==True:
+            	sqltext = f"select * from timeentry"
+            else:
+            	sqltext = f"select * from timeentry where uname='{uname}' order by start_date"
+            # return  (False,sqltext)
             cursor.execute(sqltext)
             # cursor.execute('''select * from City''')
             rows = cursor.fetchall()
