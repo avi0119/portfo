@@ -183,6 +183,7 @@ span.psw {
       if (begin == -1) {
           begin = dc.indexOf(prefix);
           if (begin != 0) return null;
+          end=dc.indexOf(";")
       }
       else
       {
@@ -260,22 +261,27 @@ span.psw {
         }
         else
         {
-          //alert('Successful loging');
-          closeLoginForm();
-          UpdateInSessionStateIfApplicable();
-          // window.location.href = "IntroWithSidebarMenu.html";
-         // window.location.href ='IntroWithSidebarMenu.html';
-          // history.pushState("object or string representing the state of the page", "new title", "IntroWithSidebarMenu.html");
-          //window.location.assign("IntroWithSidebarMenu.html");
-      const myHeaders = new Headers();
-     myRequest = new Request("sidebarmenu", 
-     {
-      method: "GET",
-      headers: myHeaders
-      // ,mode: "cors",
-      // cache: "default",
-      });
-          makerequestToDisplayMenu(myRequest);
+                //alert('Successful loging');
+                closeLoginForm();
+                UpdateInSessionStateIfApplicable();
+                role=1
+                dict=data['user_details'];
+                role=dict['role'];
+                alert('role is ' + role)
+                document.cookie = "usernamerole=" + role;
+                // window.location.href = "IntroWithSidebarMenu.html";
+               window.location.href ='IntroWithSidebarMenu.html'+ '?n=' + new Date().getTime(); ;
+                // history.pushState("object or string representing the state of the page", "new title", "IntroWithSidebarMenu.html");
+                //window.location.assign("IntroWithSidebarMenu.html");
+            const myHeaders = new Headers();
+           myRequest = new Request("sidebarmenu", 
+           {
+            method: "GET",
+            headers: myHeaders
+            // ,mode: "cors",
+            // cache: "default",
+            });
+                //makerequestToDisplayMenu(myRequest);
         }
       }
     )
@@ -310,57 +316,8 @@ span.psw {
   {
     alert('Hi')
   }
-  function setAction_old(ABUTTON) {
-    form=document.getElementById('form1')
-    const url = 'submit_login_form2';
-    const andSign = '&';
-    const uname = form.uname.value;      
-    const psw = form.psw.value;
-    const newUrl = url+uname+andSign+psw;
-    adata={
-      'uname':uname,
-      'psw':psw
-    }
-    payload=JSON.stringify(adata)
-    fetch(
-      url,
-      {            
-          headers: { "Content-Type": "application/json" },            
-          method: "POST",
-          body: payload
-      }
-     )
-    .then(data => data)//data.json()
-    .then((json) => {
-      alert(json);
-      //document.getElementById("form").reset();     
-    });
-    return false;
-  }
-  function setAction2()
-  {
-    fetch('submit_login_form')
-        .then(function(response) {
-            // When the page is loaded convert it to text
-            return response.text()
-        })
-        .then(function(html) {
-            // Initialize the DOM parser
-            var parser = new DOMParser();
 
-            // Parse the text
-            var doc = parser.parseFromString(html, "text/html");
 
-            // You can now even select part of that html as you would in the regular DOM 
-            // Example:
-            // var docArticle = doc.querySelector('article').innerHTML;
-
-            console.log(doc);
-        })
-        .catch(function(err) {  
-            console.log('Failed to fetch page: ', err);  
-        });
-    }
 </script>
 
 </body>

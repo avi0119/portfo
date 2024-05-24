@@ -54,11 +54,11 @@ body {
   <!-- <a href="#"onclick="return Login();">Login</a> -->
  
 
-  <a href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
-  <a href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a>
-  <a href="#"onclick="return CreateAccount();">Create Account</a>
+  <a i href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
+  <a  href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a>
+  <a id="createaccountid" href="#"onclick="return CreateAccount();">Create Account</a>
   <a href="#"onclick="return EditAccount();">Edit Account</a>
-  <a href="#"onclick="return SendSignUpInvitation();">Send Sign up Invitation</a>
+  <a id="sendinvitationid" href="#"onclick="return SendSignUpInvitation();">Send Sign up Invitation</a>
   <a href="#"onclick="return Logout();">Logout</a>
 
 </div>
@@ -169,6 +169,19 @@ body {
           loggedInUserIdElementParent.style.display="block"
           theelement=document.getElementById('contentpaneid');
           theelement.src = "about:blank";//string_of_html;
+          usernamerole=getCookie('usernamerole');
+          if (usernamerole==1)
+          {
+              sendinvitationidelement=document.getElementById('sendinvitationid');
+              sendinvitationidelement.style.display="none";
+              createaccountidelement=document.getElementById('createaccountid');
+              createaccountidelement.style.display="none";
+              
+              
+          } else if (usernamerole=2)
+          {
+
+          }
 
           
       }
@@ -180,6 +193,7 @@ body {
       if (begin == -1) {
           begin = dc.indexOf(prefix);
           if (begin != 0) return null;
+          end=dc.indexOf(";")
       }
       else
       {

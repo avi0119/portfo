@@ -552,7 +552,10 @@ def login():
     if isAuthenticationSuccessful == False:
         return {'success': False, 'msg': 'username and/or password are incorrect'}
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
-    out = jsonify(success=True, msg='successful authentication!')
+    user_details=returnAllUserDetailsForUserName(uname)
+    dict=user_details[1][0]
+    del dict['password']
+    out = jsonify(success=True, msg='successful authentication!',user_details=dict)
     out.set_cookie('soapologyInSessionUserName', uname)
     return out
     # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
