@@ -676,14 +676,19 @@ def getHistoricalTimeEntry():
     	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
 @app.route('/downloadtimeentryfile', methods=['GET', 'POST'])
 def downloadtimeentryfile():
-    print ('inside getHistoricalTimeEntry')
+    print ('inside downloadtimeentryfile')
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}
     #uname= request.form['uname'] 
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
     content = request.get_json(silent=True)
     #print(content['uname'])
-    #uname=content['uname']
+    # uname=content['uname']
+    uname=content.get('uname',None)
+    fromdate=content.get('fromdate',None)
+    todate=content.get('todate',None)
     # email=content['email']
     # psw=content['psw']
     # first_name=content['firstname']
@@ -691,7 +696,9 @@ def downloadtimeentryfile():
     # password=psw
     # last_updated=new_today_date
     # created=last_updated
-    listOfresults=returnAllRecordTimeEntryHistoryForUserName()
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname=uname,fromdate=fromdate,todate=todate)
+    #print(content['uname'])
+
     df = pd.DataFrame(listOfresults[1])
     print(df)
     df.to_excel('timeentrydownload.xlsx', index=False)

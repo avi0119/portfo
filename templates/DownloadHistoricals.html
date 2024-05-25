@@ -136,7 +136,7 @@ span.psw {
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
     <div class="imgcontainer">
-      <h2>Single Day Time Entry</h2>
+      <h2 id="tileid">Single Day Time Entry</h2>
       <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Single Day Time Entryy">&times;</span>
     </div>
     <div class="imgcontainer">
@@ -195,7 +195,11 @@ span.psw {
 
         
       // }
-      document.getElementById('id01').style.display='block'
+      document.getElementById('id01').style.display='block';
+      titleelemnt=document.getElementById('tileid');
+      titleelemnt.innerHTML="Time Entry Query";
+
+      
   }
   function delete_cookie(name) 
   {
@@ -312,6 +316,7 @@ span.psw {
   }
   function convertDateToString(date)
   {
+    return date.toISOString().substring(0,10);
     // Get year, month, and day part from the date
     var year = date.toLocaleString("default", { year: "numeric" });
     var month = date.toLocaleString("default", { month: "2-digit" });
@@ -353,7 +358,7 @@ function dateString2Date(dateString) {
     theelement=window.parent.document.getElementById('contentpaneid');
    // window.location.href ="HistoricalTimeEntry.html?uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&n=" + new Date().getTime();//string_of_html;
    document.getElementById('id01').style.display='none';
-    theelement.src = "HistoricalTimeEntry.html?uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&n=" + new Date().getTime(); 
+    theelement.src = "HistoricalTimeEntry.html?MODE=query&uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&n=" + new Date().getTime(); 
           
   }
  function setAction(ABUTTON) 
