@@ -1,7 +1,7 @@
 import pandas as pd
 #import pyjokes
 from datetime import datetime
-from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify
+from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify, send_file,send_from_directory
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS #comment this on deployment
 from api.HelloApiHandler import HelloApiHandler
@@ -674,6 +674,10 @@ def getHistoricalTimeEntry():
     	else:
     		msg=data_as_dict
     	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
+def returnNoneIfEmpty(arg):
+	if arg!=None and len(arg)==0:
+		return None
+	return arg
 @app.route('/downloadtimeentryfile', methods=['GET', 'POST'])
 def downloadtimeentryfile():
     print ('inside downloadtimeentryfile')
@@ -683,12 +687,20 @@ def downloadtimeentryfile():
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
-    content = request.get_json(silent=True)
-    #print(content['uname'])
-    # uname=content['uname']
-    uname=content.get('uname',None)
-    fromdate=content.get('fromdate',None)
-    todate=content.get('todate',None)
+	# if True==False:
+	# 	content = request.get_json(silent=True)
+	# 	uname=content.get('uname',None)
+	# 	fromdate=content.get('fromdate',None)
+	# 	todate=content.get('todate',None)
+	# else:
+    # uname=None
+    # fromdate=None
+    # todate=None	
+    uname = returnNoneIfEmpty(request.args.get('uname'))
+    fromdate = returnNoneIfEmpty(request.args.get('fromdate'))
+    todate = returnNoneIfEmpty(request.args.get('todate'))
+    # temp=str(uname) + " "+ str(fromdate)+ " "+ str(todate)
+    # return {'final':temp}
     # email=content['email']
     # psw=content['psw']
     # first_name=content['firstname']
@@ -698,10 +710,13 @@ def downloadtimeentryfile():
     # created=last_updated
     listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname=uname,fromdate=fromdate,todate=todate)
     #print(content['uname'])
-
+    filename="timeentrydownload.xlsx"
+    uploads="D:\\PythonWS\\portfo"
     df = pd.DataFrame(listOfresults[1])
     print(df)
     df.to_excel('timeentrydownload.xlsx', index=False)
+    return send_file( filename,as_attachment=True)
+    # return send_from_directory(uploads, filename)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:

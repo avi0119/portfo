@@ -234,9 +234,13 @@ span.psw {
        // var cookiename="soapologyInSessionUserName";
        // var uname = getCookie(cookiename); 
 
-      if (MODE=='query')
+      if (!(MODE=='query'))
       {
-
+          document.getElementById('downloadbuttonid').style.display='none';
+      }
+      else
+      {
+        document.getElementById('downloadbuttonid').style.display='block';
       }
 
        PopulateHistoricalData(uname_,fromdate_,todate_);
@@ -340,7 +344,93 @@ span.psw {
     // const target = document.getElementById('target');
     // target.appendChild(newTable);
  }
-   function downloadFile() 
+    function downloadFile() 
+  {
+
+      const queryString = window.location.search;
+      // alert(queryString);
+      console.log(queryString);
+      const urlParams = new URLSearchParams(queryString);
+      uname=urlParams.get('uname');
+      fromdate=urlParams.get('fromdate');
+      todate=urlParams.get('todate');
+      finalurl="downloadtimeentryfile?"+ "fromdate="+ fromdate+ "&" + "todate="+todate+ "&" + "uname="+uname
+      window.open(finalurl, '_blank');
+      return
+
+    form=document.getElementById('form1')
+    const url = 'downloadtimeentryfile';
+    // const andSign = '&';
+    // var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);  
+
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+
+
+    }
+    if ((uname.length)>0)
+    {
+      adata['uname']=uname;
+    }
+    if ((fromdate.length)>0)
+    {
+      adata['fromdate']=fromdate;
+    }
+    if ((todate.length)>0)
+    {
+      adata['todate']=todate;
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => 
+    {
+        // // Handle the JSON data
+        // console.log(data);
+        // if (data['success']==false)
+        // {
+        //   alert('Unable to login\n'+data['msg']) 
+        //   if (data['msg']=='RelogginNeeded'){
+        //     // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+        //     Logout();
+        //   }
+          
+        // }
+        // else
+        // {
+
+        //     alert('file was downloaded');
+
+        // }
+        alert('file was downloaded');
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+   function downloadFile_bkup() 
   {
 
       const queryString = window.location.search;
