@@ -215,7 +215,21 @@ span.psw {
 <script>
 // Get the modal
   // document.getElementById('id01').style.display='block'
-  PopulateHistoricalData();
+
+  PopulateHistoricalDataWrapper();
+  function  PopulateHistoricalDataWrapper()
+  {
+        const queryString = window.location.search;
+        console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        uname_=urlParams.get('uname');
+        fromdate_=urlParams.get('fromdate');
+        todate_=urlParams.get('todate');
+       // var cookiename="soapologyInSessionUserName";
+       // var uname = getCookie(cookiename); 
+
+       PopulateHistoricalData(uname_,fromdate_,todate_);
+  }
   var modal = document.getElementById('id01');
 
   // When the user clicks anywhere outside of the modal, close it
@@ -277,58 +291,30 @@ span.psw {
       aNode.removeChild(aNode.lastElementChild);
     }
   }   
- function returnNewTable_old(players)
- {
-      const newTable = document.createElement("table");
-    newTable.innerHTML = "<thead><th>Date</th><th>Start</th><th>End</th><th>Last Updated</th><th>Created</th></thead>";
-    for(player of players){
-        const newRow = document.createElement("tr");
 
-        const tdDate = document.createElement("td");
-        const tdStart = document.createElement("td");
-        const tdEnd = document.createElement("td");
-        const tdLastUpdated = document.createElement("td");
-        const tdCreated = document.createElement("td");
-      
-        tdDate.textContent = player.start_date;
-        tdStart.textContent = player.start_time;  
-        tdEnd.textContent = player.end_time;
-        tdLastUpdated.textContent = player.last_updated;  
-        tdCreated.textContent = player.created;
-
-        newRow.appendChild(tdDate);
-        newRow.appendChild(tdStart);
-        newRow.appendChild(tdEnd);
-        newRow.appendChild(tdLastUpdated);
-        newRow.appendChild(tdCreated);
-
-
-        newTable.appendChild(newRow);
-    }
-    return newTable;
-    // const target = document.getElementById('target');
-    // target.appendChild(newTable);
- }
   function returnNewTable(players)
  {
     const newTable = document.createElement("table");
-    newTable.innerHTML = "<thead><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
+    newTable.innerHTML = "<thead><td>Username</td><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
     newtBody = document.createElement("tbody");
     for(player of players){
         const newRow = document.createElement("tr");
 
+        const tdUname = document.createElement("td");
         const tdDate = document.createElement("td");
         const tdStart = document.createElement("td");
         const tdEnd = document.createElement("td");
         const tdLastUpdated = document.createElement("td");
         const tdCreated = document.createElement("td");
       
+        tdUname.textContent = player.uname;
         tdDate.textContent = player.start_date.substr(0, 10);;
         tdStart.textContent = player.start_time;  
         tdEnd.textContent = player.end_time;
         tdLastUpdated.textContent = player.last_updated;  
         tdCreated.textContent = player.created;
 
+        newRow.appendChild(tdUname);
         newRow.appendChild(tdDate);
         newRow.appendChild(tdStart);
         newRow.appendChild(tdEnd);
@@ -343,21 +329,33 @@ span.psw {
     // const target = document.getElementById('target');
     // target.appendChild(newTable);
  }
-  function PopulateHistoricalData() 
+  function PopulateHistoricalData(uname,fromdate,todate) 
   {
     form=document.getElementById('form1')
     const url = 'gethistoricaltimeentry';
     // const andSign = '&';
    var cookiename="soapologyInSessionUserName";
-    var uname = getCookie(cookiename);  
+    // var uname = getCookie(cookiename);  
 
     // const email = form.email.value;
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
     adata={
-      'uname':uname
 
+
+    }
+    if ((uname.length)>0)
+    {
+      adata['uname']=uname;
+    }
+    if ((fromdate.length)>0)
+    {
+      adata['fromdate']=fromdate;
+    }
+    if ((todate.length)>0)
+    {
+      adata['todate']=todate;
     }
     payload=JSON.stringify(adata)
     fetch(

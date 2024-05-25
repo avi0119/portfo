@@ -58,6 +58,7 @@ body {
   <a  href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a>
   <a id="createaccountid" href="#"onclick="return CreateAccount();">Create Account</a>
   <a href="#"onclick="return EditAccount();">Edit Account</a>
+  <a id="downloadhistoricalid" href="#"onclick="return DownloadHistoricalTimeEntry();">Download Historicals</a>
   <a id="sendinvitationid" href="#"onclick="return SendSignUpInvitation();">Send Sign up Invitation</a>
   <a href="#"onclick="return Logout();">Logout</a>
 
@@ -176,6 +177,9 @@ body {
               sendinvitationidelement.style.display="none";
               createaccountidelement=document.getElementById('createaccountid');
               createaccountidelement.style.display="none";
+
+              downloadhistoricalidelement=document.getElementById('downloadhistoricalid');
+              downloadhistoricalidelement.style.display="none";
               
               
           } else if (usernamerole=2)
@@ -223,10 +227,12 @@ body {
   }
   function HistoricalTimeEntry()
   {
+    var cookiename="soapologyInSessionUserName";
+    var uname = getCookie(cookiename); 
     let string_of_html = '<div>Cool</div>'
     //theelement=document.body.innerHTML;
     theelement=document.getElementById('contentpaneid');
-    theelement.src = "HistoricalTimeEntry.html";//string_of_html;       
+    theelement.src = "HistoricalTimeEntry.html?uname="+uname+"&fromdate=&todate=";//string_of_html;       
   }
   function SingleDayTimeEntry()
   {
@@ -251,6 +257,13 @@ body {
     theelement=document.getElementById('contentpaneid');
     theelement.src = "CreateNewAcccount.html?Edit=True";//string_of_html;    
   }
+  function DownloadHistoricalTimeEntry()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "DownloadHistoricals.html";//string_of_html;     
+  }
   function SendSignUpInvitation()
   {
         let string_of_html = '<div>Cool</div>'
@@ -258,69 +271,7 @@ body {
     theelement=document.getElementById('contentpaneid');
     theelement.src = "SignUpInvitation.html";//string_of_html; 
     return
-    //form=document.getElementById('form1')
-      // var cookiename="soapologyInSessionUserName";
-      // var uname = getCookie(cookiename);
-    var url = 'sendemployeeinitializationemail';
 
-    // const andSign = '&';
-    // const uname = form.uname.value;      
-    // const psw = form.psw.value;
-    const email = "avisemah@gmail.com"//form.email.value;
-    // const firstname = form.firstname.value;      
-    // const lastname = form.lastname.value;
-    // const newUrl = url+uname+andSign+psw;
-    adata={
-
-      'email':email
-
-    }
-    payload=JSON.stringify(adata)
-    fetch(
-      url,
-      {            
-        headers: { "Content-Type": "application/json" },            
-        method: "POST",
-        body: payload
-      }
-    )
-    .then(response => {
-      // Check if the request was successful
-      if (!response.ok) 
-      {
-        throw new Error('Network response was not ok');
-      }
-      // Parse the response as JSON
-      return response.json();
-    })
-    .then(data => {
-        // Handle the JSON data
-        console.log(data);
-        if (data['success']==false)
-        {
-          errormsg='Unable to send invitation\n';
-
-          alert(errormsg+data['msg'])
-          if (data['msg']=="RelogginNeeded")
-          {
-            Logout()
-          }
-        }
-        else
-        {
-
-            alert('Invitation sent successfully!');
-          
-
-          // closeLoginForm()
-        }
-      }
-    )
-    .catch(error => {
-      // Handle any errors that occurred during the fetch
-      console.error('Fetch error:', error);
-    });
-    return false;
 
   }
 </script>

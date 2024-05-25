@@ -643,7 +643,10 @@ def getHistoricalTimeEntry():
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
     content = request.get_json(silent=True)
     #print(content['uname'])
-    uname=content['uname']
+    # uname=content['uname']
+    uname=content.get('uname',None)
+    fromdate=content.get('fromdate',None)
+    todate=content.get('todate',None)
     # email=content['email']
     # psw=content['psw']
     # first_name=content['firstname']
@@ -651,7 +654,7 @@ def getHistoricalTimeEntry():
     # password=psw
     # last_updated=new_today_date
     # created=last_updated
-    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname,False)
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname=uname,fromdate=fromdate,todate=todate)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
@@ -680,7 +683,7 @@ def downloadtimeentryfile():
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
     content = request.get_json(silent=True)
     #print(content['uname'])
-    uname='johndoe'#content['uname']
+    #uname=content['uname']
     # email=content['email']
     # psw=content['psw']
     # first_name=content['firstname']
@@ -688,7 +691,7 @@ def downloadtimeentryfile():
     # password=psw
     # last_updated=new_today_date
     # created=last_updated
-    listOfresults=returnAllRecordTimeEntryHistoryForUserName(None,True)
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName()
     df = pd.DataFrame(listOfresults[1])
     print(df)
     df.to_excel('timeentrydownload.xlsx', index=False)
@@ -711,8 +714,7 @@ def downloadtimeentryfile():
     	else:
     		msg=data_as_dict
     	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
-
-def returnAllRecordTimeEntryHistoryForUserName(uname,allrecordflag):
+def returnAllRecordTimeEntryHistoryForUserName(uname=None,fromdate=None,todate=None):
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
@@ -730,10 +732,17 @@ def returnAllRecordTimeEntryHistoryForUserName(uname,allrecordflag):
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
             #return  (False,"xyzxyz")
-            if allrecordflag==True:
-            	sqltext = f"select * from timeentry"
-            else:
-            	sqltext = f"select * from timeentry where uname='{uname}' order by start_date"
+            sqltext = f"select * from timeentry"
+            criteria=''
+            if (uname!=None):
+            	criteria=f" where uname='{uname}'"
+            if fromdate!=None or todate!=None:
+            	criteria=criteria=criteria + (' and ' if len(criteria)>0 else ' where ') +f"(start_date>='{fromdate}' and start_date<='{todate}')"
+            sqltext=sqltext+ criteria+ ' order by start_date'
+            # if allrecordflag==True:
+            # 	sqltext = f"select * from timeentry"
+            # else:
+            # 	sqltext = f"select * from timeentry where uname='{uname}' order by start_date"
             # return  (False,sqltext)
             cursor.execute(sqltext)
             # cursor.execute('''select * from City''')
