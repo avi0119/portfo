@@ -1,3 +1,4 @@
+import uuid
 import pandas as pd
 #import pyjokes
 from datetime import datetime
@@ -853,7 +854,191 @@ def testSendinEmail():
 	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
 	smtp_server.quit()
 	return {'success':True,'msg':'sent email!'}
+@app.route('/resetpassword', methods=['POST','GET'])
+def resetpassword():
+    print ('inside resetpassword')
+    # if IsThereSecurityCookie()==False:
+    # 	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']  
+    #psw=request.form['psw']
+    today_date = datetime.now()
+    new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    token=content['token']
+    listOfresults=retruntokenandunamerecordforgiventoken(token)
+    data_as_dict=listOfresults[1]
+    uname=data_as_dict[0]['uname']
+    ## find uname based on token
+    # uname=content['uname']
+    # email=content['email']
+    psw=content['psw']
+    #return {'success':True,'msg':f'password was reset token={token} and pswe={psw},uname is {uname}'}
+    # first_name=content['firstname']
+    # last_name=content['lastname']
+    password=psw
+    last_updated=new_today_date
+    # created=last_updated
+    numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenUserName(uname))
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    if numberOfusersOfSameUname==0:
+    	return {'success':False,'msg':'this user does not exist in database'}
+    res=updatepasswordonlyforusername(uname,password  ,last_updated)
+    success=res[0]
+    return {'success':success,'msg':res[1]}	#{"content":res}
+def updatepasswordonlyforusername( uname,password  ,last_updated):
+    defaultrole = 1
+    defaultactive=1
+    
+    sqltext = f"UPDATE users SET password='{password}', last_updated='{last_updated}' where uname='{uname}';"
+    # return (False,sqltext)
+    
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext = "select * from States"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from States''')
+            connection.commit()
+            # data = cursor.fetchall()
+            return (True, '11')
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False, {"error": f'{e}'})	
 
+@app.route('/sendemailtoresetpassword', methods=['POST','GET'])
+def sendemailtoresetpassword():
+	# if IsThereSecurityCookie()==False:
+	# 	return {'success':False,'msg':'RelogginNeeded'}#(False,"RelogginNeeded")
+	content = request.get_json(silent=True)
+	# print(content['uname'])
+	# uname = content['uname']  
+	uname=content['uname']    
+    # listOfresults= returnAllUserDetailsForUserName(uname)      
+    # data_as_dict=listOfresults[1]  
+	listOfresults= returnAllUserDetailsForUserName(uname)  
+	data_as_dict=listOfresults[1] 
+	if len(data_as_dict)==0:
+		return {'success':False,'msg':'no reset password was sent:username you provided does not exist'}
+	today_date = datetime.now()
+	created = today_date.strftime("%Y-%m-%d %H:%M:%S")
+	result = uuid.uuid4()
+	token=result.hex
+	res=recordusernameandtoken(uname,token, created)
+	if res[0]==False:
+		return {'msg':res[1]}
+	# first_name=content['firstname']
+	# last_name=content['lastname']
+	## need to produce token for uname and record in db
+	email_recipient=data_as_dict[0]['email']#"avisemah@gmail.com"
+	
+	url_to_create_account=f'http://127.0.0.1:5000/ResetPassword.html?token={token}'
+	email_text = f"""
+	Dear Person,
+	Please click n the link below in order to reset password
+
+	{url_to_create_account}
+
+	Thank you,
+
+	Soapology Management
+	"""
+
+	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+
+	GMAIL_USERNAME = EMAIL
+	GMAIL_APP_PASSWORD = PASSWORD
+
+	recipients = [email_recipient]#["avisemah@gmail.com"]
+	msg = MIMEText(email_text)
+	msg["Subject"] = "Email report: a simple sum"
+	msg["To"] = ", ".join(recipients)
+	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
+
+
+	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+	smtp_server.login(GMAIL_USERNAME, GMAIL_APP_PASSWORD)
+	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
+	smtp_server.quit()
+	return {'success':True,'msg':'sent email!'}
+def recordusernameandtoken(uname,token, created):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        #startdate_converted_to_date = datetime.strptime(workingday, '%Y-%m-%d')
+        #startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
+        sqltext = f"INSERT INTO usernameandtokes ( uname,token, created) VALUES ('{uname}', '{token}','{created}');"
+        # return (False,sqltext)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+            ssh_password=app.config["MYSQL_PASSWORD"],
+            remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext = "select * from States"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from States''')
+            connection.commit()
+            # data = cursor.fetchall()
+            return (True, '11')
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False, {"error": f'error for {sqltext}\n {e}'})
+#SELECT * FROM asemah$miscdb.usernameandtokes where token='980b780309ad44479bd6102d536249dd'
+def retruntokenandunamerecordforgiventoken(token):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"SELECT * FROM usernameandtokes where token='{token}'"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            if True == False:
+                main_list = []
+                
+                for row in rows:
+                    current_list = []
+                    for i in row:
+                        current_list.append(i)
+                    main_list.append(current_list)
+                return main_list  # int([data[0]]['count'])
+            else:
+            	print('hiiiiiiiiiiiiiii',file=sys.stdout)
+            	#ret={'type':str(type(rows))}
+            	print(rows,file=sys.stdout)
+            	return (True,evalluatListOfDictionaries(rows))
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error":"while executing {sqltext}"+ str(e)})
 '''
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form(page_name):
