@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  table {
+  border-collapse: collapse;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+table td {
+  padding: 15px;
+}
+table thead td {
+  background-color: #54585d;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 13px;
+  border: 1px solid #54585d;
+}
+table tbody td {
+  color: #636363;
+  border: 1px solid #dddfe1;
+}
+table tbody tr {
+  background-color: #f9fafb;
+}
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+</style>
+</head>
+<body id="LogInBodyID">
+
+<!-- <h2>Modal Login Form</h2> -->
+<div id="downloadbuttonid">
+  <button type="button"  onclick="downloadFile(this)" style="width:150px">Download Results</button>
+
+</div>
+<div id='historicaldataid'>
+
+<!-- <table>
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Gender</td>
+      <td>Age</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>David</td>
+      <td>Male</td>
+      <td>23</td>
+    </tr>
+    <tr>
+      <td>Jessica</td>
+      <td>Female</td>
+      <td>47</td>
+    </tr>
+    <tr>
+      <td>Warren</td>
+      <td>Male</td>
+      <td>12</td>
+    </tr>
+  </tbody>
+</table> -->
+
+
+</div>
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
+
+<div id="id01" class="modal">
+  
+  <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="/static/img_avatar2.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="uname"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required>
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+        
+      <button type="button"  onclick="setAction(this)">Login</button>
+      <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+<!--       <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
+      <span class="psw">Forgot <a href="#">password?</a></span>
+    </div>
+  </form>
+</div>
+
+<script>
+// Get the modal
+  // document.getElementById('id01').style.display='block'
+
+  PopulateHistoricalDataWrapper();
+  function  PopulateHistoricalDataWrapper()
+  {
+        const queryString = window.location.search;
+        // alert(queryString);
+        console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        uname_=urlParams.get('uname');
+        fromdate_=urlParams.get('fromdate');
+        todate_=urlParams.get('todate');
+        MODE=urlParams.get('MODE');
+       // var cookiename="soapologyInSessionUserName";
+       // var uname = getCookie(cookiename); 
+
+      if (!(MODE=='query'))
+      {
+          document.getElementById('downloadbuttonid').style.display='none';
+      }
+      else
+      {
+        document.getElementById('downloadbuttonid').style.display='block';
+      }
+
+       PopulateHistoricalData(uname_,fromdate_,todate_);
+  }
+  var modal = document.getElementById('id01');
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          //modal.style.display = "none";
+      }
+  }
+  function closeLoginForm(){
+      document.getElementById('id01').style.display='none';
+    }
+    function getCookie(name) {
+      var dc = document.cookie;
+      var prefix = name + "=";
+      var begin = dc.indexOf("; " + prefix);
+      if (begin == -1) {
+          begin = dc.indexOf(prefix);
+          if (begin != 0) return null;
+          end=dc.indexOf(";")
+      }
+      else
+      {
+          begin += 2;
+          var end = document.cookie.indexOf(";", begin);
+          if (end == -1) {
+          end = dc.length;
+          }
+      }
+      // because unescape has been deprecated, replaced with decodeURI
+      //return unescape(dc.substring(begin + prefix.length, end));
+      return decodeURI(dc.substring(begin + prefix.length, end));
+  } 
+
+  function UpdateInSessionStateIfApplicable() {
+      var cookiename="soapologyInSessionUserName";
+      var myCookie = getCookie(cookiename);
+
+      if (myCookie == null) 
+      {
+          // do cookie doesn't exist stuff;
+          //alert(cookiename + ' was not found')
+      }
+      else {
+          // do cookie exists stuff
+          //alert(cookiename + ' was found');
+          var loggedInUserIdElement = window.parent.document.getElementById('loggedInUserId');
+          loggedInUserIdElement.innerHTML=myCookie;
+          var loggedInUserIdElementParent = window.parent.document.getElementById('loggedInUserIdParent');
+          loggedInUserIdElementParent.style.display="block"
+
+          
+      }
+  }
+
+  function removeAllChildElmenst(aNode)
+  {
+    while (aNode.lastElementChild)
+    {
+      aNode.removeChild(aNode.lastElementChild);
+    }
+  }   
+
+  function returnNewTable(players)
+ {
+    const newTable = document.createElement("table");
+    newTable.innerHTML = "<thead><td>Username</td><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
+    newtBody = document.createElement("tbody");
+    for(player of players){
+        const newRow = document.createElement("tr");
+
+        const tdUname = document.createElement("td");
+        const tdDate = document.createElement("td");
+        const tdStart = document.createElement("td");
+        const tdEnd = document.createElement("td");
+        const tdLastUpdated = document.createElement("td");
+        const tdCreated = document.createElement("td");
+      
+        tdUname.textContent = player.uname;
+        tdDate.textContent = player.start_date.substr(0, 10);;
+        tdStart.textContent = player.start_time;  
+        tdEnd.textContent = player.end_time;
+        tdLastUpdated.textContent = player.last_updated;  
+        tdCreated.textContent = player.created;
+
+        newRow.appendChild(tdUname);
+        newRow.appendChild(tdDate);
+        newRow.appendChild(tdStart);
+        newRow.appendChild(tdEnd);
+        newRow.appendChild(tdLastUpdated);
+        newRow.appendChild(tdCreated);
+
+
+        newtBody.appendChild(newRow);
+    }
+    newTable.appendChild(newtBody);
+    return newTable;
+    // const target = document.getElementById('target');
+    // target.appendChild(newTable);
+ }
+    function downloadFile() 
+  {
+
+      const queryString = window.location.search;
+      // alert(queryString);
+      console.log(queryString);
+      const urlParams = new URLSearchParams(queryString);
+      uname=urlParams.get('uname');
+      fromdate=urlParams.get('fromdate');
+      todate=urlParams.get('todate');
+      finalurl="downloadtimeentryfile?"+ "fromdate="+ fromdate+ "&" + "todate="+todate+ "&" + "uname="+uname
+      window.open(finalurl, '_blank');
+      return
+
+    form=document.getElementById('form1')
+    const url = 'downloadtimeentryfile';
+    // const andSign = '&';
+    // var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);  
+
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+
+
+    }
+    if ((uname.length)>0)
+    {
+      adata['uname']=uname;
+    }
+    if ((fromdate.length)>0)
+    {
+      adata['fromdate']=fromdate;
+    }
+    if ((todate.length)>0)
+    {
+      adata['todate']=todate;
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => 
+    {
+        // // Handle the JSON data
+        // console.log(data);
+        // if (data['success']==false)
+        // {
+        //   alert('Unable to login\n'+data['msg']) 
+        //   if (data['msg']=='RelogginNeeded'){
+        //     // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+        //     Logout();
+        //   }
+          
+        // }
+        // else
+        // {
+
+        //     alert('file was downloaded');
+
+        // }
+        alert('file was downloaded');
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+   function downloadFile_bkup() 
+  {
+
+      const queryString = window.location.search;
+      // alert(queryString);
+      console.log(queryString);
+      const urlParams = new URLSearchParams(queryString);
+      uname=urlParams.get('uname');
+      fromdate=urlParams.get('fromdate');
+      todate=urlParams.get('todate');
+
+
+    form=document.getElementById('form1')
+    const url = 'downloadtimeentryfile';
+    // const andSign = '&';
+    // var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);  
+
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+
+
+    }
+    if ((uname.length)>0)
+    {
+      adata['uname']=uname;
+    }
+    if ((fromdate.length)>0)
+    {
+      adata['fromdate']=fromdate;
+    }
+    if ((todate.length)>0)
+    {
+      adata['todate']=todate;
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          alert('Unable to login\n'+data['msg']) 
+          if (data['msg']=='RelogginNeeded'){
+            // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+            Logout();
+          }
+          
+        }
+        else
+        {
+
+            alert('file was downloaded');
+
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+
+  function PopulateHistoricalData(uname,fromdate,todate) 
+  {
+    form=document.getElementById('form1')
+    const url = 'gethistoricaltimeentry';
+    // const andSign = '&';
+   var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);  
+
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+
+
+    }
+    if ((uname.length)>0)
+    {
+      adata['uname']=uname;
+    }
+    if ((fromdate.length)>0)
+    {
+      adata['fromdate']=fromdate;
+    }
+    if ((todate.length)>0)
+    {
+      adata['todate']=todate;
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          alert('Unable to login\n'+data['msg']) 
+          if (data['msg']=='RelogginNeeded'){
+            // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+            Logout();
+          }
+          
+        }
+        else
+        {
+          dictionaryToPopulate=data['data'];
+          newTable=returnNewTable(dictionaryToPopulate)
+          var hisotoricaldataelement = document.getElementById('historicaldataid');
+          removeAllChildElmenst(hisotoricaldataelement);
+          hisotoricaldataelement.appendChild(newTable);
+          // hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
+          //alert('Successful loging');
+          //closeLoginForm();
+
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+    function delete_cookie(name) 
+  {
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+    function Logout()
+  {
+      delete_cookie("soapologyInSessionUserName");
+
+      window.parent.location.href = "InitialLoginPageOnly.html"+'?n=' + new Date().getTime();
+      //window.location.assign("InitialLoginPageOnly.html");
+      const myHeaders = new Headers();
+        myRequest = new Request("displayInitialLogin", {
+        method: "GET",
+        headers: myHeaders
+        // ,mode: "cors",
+        // cache: "default",
+      });
+      //makeRequeestToInitilaLogin(myRequest)
+  }
+  function SayHi()
+  {
+    alert('Hi')
+  }
+  function setAction_old(ABUTTON) {
+    form=document.getElementById('form1')
+    const url = 'submit_login_form2';
+    const andSign = '&';
+    const uname = form.uname.value;      
+    const psw = form.psw.value;
+    const newUrl = url+uname+andSign+psw;
+    adata={
+      'uname':uname,
+      'psw':psw
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+          headers: { "Content-Type": "application/json" },            
+          method: "POST",
+          body: payload
+      }
+     )
+    .then(data => data)//data.json()
+    .then((json) => {
+      alert(json);
+      //document.getElementById("form").reset();     
+    });
+    return false;
+  }
+
+</script>
+
+</body>
+</html>

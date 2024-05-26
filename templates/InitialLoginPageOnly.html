@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 6px 6px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+.usernamesection  {
+  //padding: 6px 6px 6px 32px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.main {
+  margin-left: 300px; /* Same as the width of the sidenav */
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+
+<!-- <div class="sidenav">
+  <a href="#"onclick="return Login();">Login</a>
+
+
+</div> -->
+
+<div class="mainx">
+<!--   <h2>Soapology</h2> -->
+  <div class="usernamesection" id="loggedInUserIdParentx"  style="color:blue;display:block;"><span id="loggedInUserId"   ></span></div>
+
+<!--   <div id="contentpaneid"><p>This sidenav is always shown.</p></div> -->
+<iframe id="contentpaneid" src="about:blank" width="100%" height="1000" frameborder="1" scrolling="no"></iframe>
+</div>
+   
+</body>
+<script>
+// Get the modal  InitialLoginPageOnly.html
+  var modal = document.getElementById('id01');
+    
+
+
+  LoginIfUserHasNotLoggedBeforeOtherWiseGoToMenu();
+
+  function LoginIfUserHasNotLoggedBeforeOtherWiseGoToMenu()
+  {
+    isLogged=HasUnserLoggedIn();
+    if (isLogged==false)
+    {
+        Login();
+    }
+    else
+    {
+      const myHeaders = new Headers();
+     myRequest = new Request("sidebarmenu", 
+     {
+      method: "GET",
+      headers: myHeaders
+      // ,mode: "cors",
+      // cache: "default",
+      });
+      window.location.href = "IntroWithSidebarMenu.html"+'?n=' + new Date().getTime(); ;;
+      //makerequestToDisplayMenu(myRequest);
+    }
+
+  }
+
+async function makerequestToDisplayMenu(request) {
+  try 
+  {
+    const response = await fetch(request);
+    if (!response.ok) 
+    {
+      throw new Error("Network response was not OK");
+    }
+    const myBlob = await response.text();
+    ReplaceContent(myBlob);
+    // myImage.src = URL.createObjectURL(myBlob);
+  } catch (error) 
+  {
+    console.error("Error:", error);
+  }
+}
+    function ReplaceContent(NC) {
+      document.open();
+      document.write(NC);
+      document.close();
+    }
+
+
+
+  function HasUnserLoggedIn() 
+  {
+      ret=false;
+      var cookiename="soapologyInSessionUserName";
+      var myCookie = getCookie(cookiename);
+
+      if (myCookie == null) 
+      {
+          // do cookie doesn't exist stuff;
+          //alert(cookiename + ' was not found')
+      }
+      else {
+          // do cookie exists stuff
+          //alert(cookiename + ' was found');
+          // var loggedInUserIdElement = window.parent.document.getElementById('loggedInUserId');
+          // loggedInUserIdElement.innerHTML=myCookie;
+          // var loggedInUserIdElementParent = window.parent.document.getElementById('loggedInUserIdParent');
+          // loggedInUserIdElementParent.style.display="block"
+          ret=true;
+          
+      }
+      return ret;
+  }
+  function getCookie(name) {
+      var dc = document.cookie;
+      var prefix = name + "=";
+      var begin = dc.indexOf("; " + prefix);
+      if (begin == -1) {
+          begin = dc.indexOf(prefix);
+          if (begin != 0) return null;
+      }
+      else
+      {
+          begin += 2;
+          var end = document.cookie.indexOf(";", begin);
+          if (end == -1) {
+          end = dc.length;
+          }
+      }
+      // because unescape has been deprecated, replaced with decodeURI
+      //return unescape(dc.substring(begin + prefix.length, end));
+      return decodeURI(dc.substring(begin + prefix.length, end));
+  } 
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          //modal.style.display = "none";
+      }
+  }
+  function Login()
+  {
+   
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "ModalLogIn.html";//string_of_html;
+  }
+  function HistoricalTimeEntry()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "HistoricalTimeEntry.html";//string_of_html;       
+  }
+  function SingleDayTimeEntry()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "ClockInClockOut.html";//string_of_html;    
+  }
+  function CreateAccount()
+  {
+    //alert('Create New Account')
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "CreateNewAcccount.html";//string_of_html; 
+  }
+ 
+</script>
+</html> 

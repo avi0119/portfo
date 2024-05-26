@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- <h2>Modal Login Form</h2> -->
+
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
+
+<div id="id01" class="modal">
+  
+  <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+<!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
+    </div>
+
+    <div class="container">
+      <label for="firstname"><b>First Name</b></label>
+      <input id="firstname" type="text" placeholder="Enter First NAme" name="firstname" required>
+
+        <label for="lastname"><b>Last Name</b></label>
+      <input id="lastname" type="text" placeholder="Enter Last Name" name="lastname" required>
+
+      <label for="email"><b>Email</b></label>
+      <input id="email" type="text" placeholder="Enter Email" name="email" required>
+
+      <label for="uname" id="unamelbl"><b>Username</b></label>
+      <input id="uname" type="text" placeholder="Enter Username" name="uname" required>
+
+      <label for="psw" id="pswlbl"><b>Password</b></label>
+      <input id="psw" type="password" placeholder="Enter Password" name="psw" required>
+        
+      <button type="button" onclick="setAction(this)">OK</button>
+<!--       <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label> -->
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+ <!--      <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
+      <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
+    </div>
+  </form>
+</div>
+
+<script>
+  var MODE="NEW";
+  PopulateIfNecessary();
+  function PopulateIfNecessary()
+  {
+      const queryString = window.location.search;
+      console.log(queryString);
+      const urlParams = new URLSearchParams(queryString);
+      editMode=urlParams.get('Edit')
+      if (!(editMode==null))
+      {
+        //alert(urlParams.get('Edit'));
+        MODE="EDIT";
+        HideElemnstForEditMode();
+        PopulateUserDetails();
+
+        
+      }
+      document.getElementById('id01').style.display='block'
+  }
+  function delete_cookie(name) 
+  {
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+    function Logout()
+  {
+      delete_cookie("soapologyInSessionUserName");
+
+      window.parent.location.href = "InitialLoginPageOnly.html"+'?n=' + new Date().getTime();
+      //window.location.assign("InitialLoginPageOnly.html");
+      const myHeaders = new Headers();
+        myRequest = new Request("displayInitialLogin", {
+        method: "GET",
+        headers: myHeaders
+        // ,mode: "cors",
+        // cache: "default",
+      });
+      //makeRequeestToInitilaLogin(myRequest)
+  }
+  function PopulateUserDetails() 
+  {
+    form=document.getElementById('form1')
+    const url = 'getuserdetails';
+    // const andSign = '&';
+   var cookiename="soapologyInSessionUserName";
+    var uname = getCookie(cookiename);  
+
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+      'uname':uname
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          alert('Unable to login\n'+data['msg']) 
+          if (data['msg']=='RelogginNeeded'){
+            // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+            Logout();
+          }
+          
+        }
+        else
+        {
+          dictionaryToPopulate=data['data'];
+          populateUserDictionary(dictionaryToPopulate)
+          // var hisotoricaldataelement = document.getElementById('historicaldataid');
+          // removeAllChildElmenst(hisotoricaldataelement);
+          // hisotoricaldataelement.appendChild(newTable);
+          // hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
+          //alert('Successful loging');
+          //closeLoginForm();
+
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+ function populateUserDictionary(userDictionartList)
+ {
+   adict=userDictionartList[0];
+  active=adict['active'];
+  created=adict['created'];
+  email=adict['email'];
+  first_name=adict['first_name'];
+  idusers=adict['idusers'];
+  last_name=adict['last_name'];
+  last_updated=adict['last_updated'];
+  password=adict['password'];
+  role=adict['role'];
+  uname=adict['uname'];
+  
+
+  usernameelement=document.getElementById('uname');
+  first_nameelement=document.getElementById('firstname');
+  last_nameelement=document.getElementById('lastname');
+  emailelement=document.getElementById('email');
+
+ 
+ usernameelement.value=uname;
+ first_nameelement.value=first_name;
+ last_nameelement.value=last_name;
+ emailelement.value=email;
+
+
+ }
+ function HideElemnstForEditMode()
+ {
+  pswelement=document.getElementById('psw');
+  pswelement.style.display='none';
+
+  pswelementlbl=document.getElementById('pswlbl');
+  pswelementlbl.style.display='none';
+  
+    unameelement=document.getElementById('uname');
+  unameelement.style.display='none';
+
+    unamelblelement=document.getElementById('unamelbl');
+  unamelblelement.style.display='none';  
+ }
+// Get the modal
+ 
+  var modal = document.getElementById('id01');
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          //modal.style.display = "none";
+      }
+  }
+  function SayHi()
+  {
+    alert('Hi')
+  }
+  function closeLoginForm(){
+    document.getElementById('id01').style.display='none';
+  }
+  function setAction(ABUTTON) 
+  {
+    form=document.getElementById('form1')
+    var url = 'crate_new_user';
+    if (MODE=='EDIT')
+    {
+      url="updateuser"
+    }
+    const andSign = '&';
+    const uname = form.uname.value;      
+    const psw = form.psw.value;
+    const email = form.email.value;
+    const firstname = form.firstname.value;      
+    const lastname = form.lastname.value;
+    const newUrl = url+uname+andSign+psw;
+    adata={
+      'uname':uname,
+      'psw':psw,
+      'lastname':lastname,
+      'firstname':firstname,
+      'email':email
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          errormsg='Unable to create new user name\n';
+          if (MODE=='EDIT')
+          {
+              errormsg='Unable to Edit new user name\n';
+          }
+          alert(errormsg+data['msg'])
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          if (MODE=='EDIT'){
+
+            alert('Successful edit!');
+          }
+          else
+          {
+            alert('Successful creation of user name!');
+          }
+
+          closeLoginForm()
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+  function setAction_bkup(ABUTTON) {
+    form=document.getElementById('form1')
+    const url = 'crate_new_user';
+    const andSign = '&';
+    const uname = form.uname.value;      
+    const psw = form.psw.value;
+    const email = form.email.value;
+    const firstname = form.firstname.value;      
+    const lastname = form.lastname.value;
+    const newUrl = url+uname+andSign+psw;
+    adata={
+      'uname':uname,
+      'psw':psw,
+      'lastname':lastname,
+      'firstname':firstname,
+      'email':email
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+          headers: { "Content-Type": "application/json" },            
+          method: "POST",
+          body: payload
+      }
+     )
+    .then(data =>{
+      return data;
+    } )//data.json()
+    .then((json) => {
+      alert(json);
+      //document.getElementById("form").reset();     
+    });
+    return false;
+  }
+       function getCookie(name) {
+      var dc = document.cookie;
+      var prefix = name + "=";
+      var begin = dc.indexOf("; " + prefix);
+      if (begin == -1) {
+          begin = dc.indexOf(prefix);
+          if (begin != 0) return null;
+          end=dc.indexOf(";")
+      }
+      else
+      {
+          begin += 2;
+          var end = document.cookie.indexOf(";", begin);
+          if (end == -1) {
+          end = dc.length;
+          }
+      }
+      // because unescape has been deprecated, replaced with decodeURI
+      //return unescape(dc.substring(begin + prefix.length, end));
+      return decodeURI(dc.substring(begin + prefix.length, end));
+  } 
+</script>
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  //width: auto;
+ // padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+
+
+}​
+  .labelclass {
+  display: inline-block;
+  width: 300px;
+  text-align: right;
+  border: 1px solid green;
+}
+</style>
+</head>
+<body >
+
+<!-- <h2>Modal Login Form</h2> -->
+
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
+
+<div id="id01" class="modal">
+  
+  <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
+    <div class="imgcontainer">
+      <h2>Single Day Time Entry</h2>
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Single Day Time Entryy">&times;</span>
+    </div>
+    <div class="imgcontainer">
+      <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
+<!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
+    </div>
+
+    <div class="container" style="border: 0px solid red;">
+     
+      <label style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" for="SelectWorkingDay" ><b>Select Working Day</b></label>
+       <input type="date" id="workingday" name="workingday" style="width:100px"><br><br><br>
+
+      
+
+      <label for="SelectStartTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" ><b>Select Start Time</b></label>
+      <input type="time" id="starttime" name="starttime" style="width:100px"><br><br><br>
+
+      <label for="SelectEndTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Select End Time</b></label>
+      <input type="time" id="endtime" name="endtime" style="width:100px"><br><br><br>
+
+
+
+        
+      <button type="button" style="width:100px" onclick="setAction(this)" >Submit</button>
+      <button type="button" style="width:100px" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+<!--       <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label> -->
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <!-- <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button> -->
+<!--       <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
+<!--       <span class="psw">Forgot <a href="#">password?</a></span> -->
+    </div>
+  </form>
+</div>
+
+<script>
+// Get the modal
+  document.getElementById('id01').style.display='block'
+  var modal = document.getElementById('id01');
+  function delete_cookie(name) 
+  {
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+    function Logout()
+  {
+      delete_cookie("soapologyInSessionUserName");
+
+      window.parent.location.href = "InitialLoginPageOnly.html"+'?n=' + new Date().getTime();
+      //window.location.assign("InitialLoginPageOnly.html");
+      const myHeaders = new Headers();
+        myRequest = new Request("displayInitialLogin", {
+        method: "GET",
+        headers: myHeaders
+        // ,mode: "cors",
+        // cache: "default",
+      });
+      //makeRequeestToInitilaLogin(myRequest)
+  }
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          //modal.style.display = "none";
+      }
+  }
+  function closeLoginForm(){
+      document.getElementById('id01').style.display='none';
+    }
+    function getCookie(name) {
+      var dc = document.cookie;
+      var prefix = name + "=";
+      var begin = dc.indexOf("; " + prefix);
+      if (begin == -1) {
+          begin = dc.indexOf(prefix);
+          if (begin != 0) return null;
+          end=dc.indexOf(";")
+      }
+      else
+      {
+          begin += 2;
+          var end = document.cookie.indexOf(";", begin);
+          if (end == -1) {
+          end = dc.length;
+          }
+      }
+      // because unescape has been deprecated, replaced with decodeURI
+      //return unescape(dc.substring(begin + prefix.length, end));
+      return decodeURI(dc.substring(begin + prefix.length, end));
+  } 
+
+  function UpdateInSessionStateIfApplicable() {
+      var cookiename="soapologyInSessionUserName";
+      var myCookie = getCookie(cookiename);
+
+      if (myCookie == null) 
+      {
+          // do cookie doesn't exist stuff;
+          //alert(cookiename + ' was not found')
+      }
+      else {
+          // do cookie exists stuff
+          //alert(cookiename + ' was found');
+          var loggedInUserIdElement = window.parent.document.getElementById('loggedInUserId');
+          loggedInUserIdElement.innerHTML=myCookie;
+          var loggedInUserIdElementParent = window.parent.document.getElementById('loggedInUserIdParent');
+          loggedInUserIdElementParent.style.display="block"
+
+          
+      }
+  }
+  function convertTimeToseconds(atime)
+  {
+    var time = atime;
+    var array = time.split(":");
+    var seconds = (parseInt(array[0], 10) * 60 * 60) + (parseInt(array[1], 10) * 60) + 0;
+    return seconds;
+
+  }
+  function isTime1GreaterTahnTime2(time1,time2)
+  {
+      time1inseconds=convertTimeToseconds(time1);
+      time2inseconds=convertTimeToseconds(time2);
+      return time1inseconds>time2inseconds;
+
+  }
+  function validateParamsForTimeEntry(workingday,starttime,endtime)
+  {
+    ret={
+
+    }
+    var isValid=true;
+    var msg;
+      if (workingday=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'working Day'"
+
+      }
+      else if (starttime=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'Start Time'"
+      }
+      else if (endtime=='')
+      {
+         isValid=false;
+        msg="Please make sure to specify 'End Time'"
+      }
+      if (isValid==false)
+      {
+          ret['isvalid']=isValid;
+          ret['msg']=msg;
+          return ret;
+      }
+      else
+      {
+          if (!(isTime1GreaterTahnTime2(endtime,starttime)))
+          {
+            ret['isvalid']=false;
+            ret['msg']="Please make sure that Ending Time is greater the Start Time";
+            
+          }
+          else
+          {
+            ret['isvalid']=true;
+            ret['msg']="Time entry is Valid";
+          }
+          return ret;
+      }
+  }
+  function setAction(ABUTTON) 
+  {
+    form=document.getElementById('form1')
+    const url = 'recordsingledaytimehours';
+    // const andSign = '&';
+    const workingday = form.workingday.value;      
+    const starttime = form.starttime.value;
+    const endtime = form.endtime.value;
+    var cookiename="soapologyInSessionUserName";
+    var uname = getCookie(cookiename);
+    validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    if (validationResult['isvalid']==false)
+    {
+      alert(validationResult['msg']);
+      return;
+    }
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+      'workingday':workingday,
+      'starttime':starttime,
+      'endtime':endtime,
+      'uname':uname
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          alert('Unable to create new user name\n'+data['msg'])
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          alert('Successful time logging for username ' + uname + ' for ' + workingday );
+          closeLoginForm();
+          //UpdateInSessionStateIfApplicable();
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
+    });
+    return false;
+  }
+  function SayHi()
+  {
+    alert('Hi')
+  }
+  
+</script>
+
+</body>
+</html>
