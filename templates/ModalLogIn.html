@@ -56,8 +56,13 @@ img.avatar {
 span.psw {
   float: right;
   padding-top: 16px;
+  width: 150px;
 }
+span.psw2 {
+  float: right;
+  padding-top: 16px;
 
+}
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
@@ -149,15 +154,16 @@ span.psw {
       <input type="password" placeholder="Enter Password" name="psw" required>
         
       <button type="button"  onclick="setAction(this)">Login</button>
-      <label>
+<!--       <label>
         <input type="checkbox" checked="checked" name="remember"> Remember me
-      </label>
+      </label> -->
     </div>
 
     <div class="container" style="background-color:#f1f1f1">
       <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
 <!--       <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
-      <span class="psw">Forgot <a href="#" onclick="return ForgotPassword();">password?</a></span>
+      <span class="psw2" >Forgot <a href="#" onclick="return ForgtoUsername();">username?</a></span>
+      <span class="psw">Forgot <a href="#" onclick="return ForgotPassword();">password?</a> </span>
     </div>
   </form>
 </div>
@@ -170,7 +176,11 @@ span.psw {
   {
     alert('launch forgot password from');
     // closeLoginForm();
-    window.location.href ='ForgotPassword.html'+ '?n=' + new Date().getTime(); ;
+    window.location.href ='ForgotPassword.html'+ '?MODE=password&n=' + new Date().getTime(); ;
+  }
+  function ForgtoUsername()
+  {
+    window.location.href ='ForgotPassword.html'+ '?MODE=username&n=' + new Date().getTime(); ;
   }
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = function(event) {

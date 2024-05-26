@@ -396,6 +396,46 @@ def updateUserDeatils():
     res=updateUserName(uname,first_name, last_name,   last_updated,email)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
+def returnAllUserDetailsEmail(email):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"select * from users where email='{email}'"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            if True == False:
+                main_list = []
+                
+                for row in rows:
+                    current_list = []
+                    for i in row:
+                        current_list.append(i)
+                    main_list.append(current_list)
+                return main_list  # int([data[0]]['count'])
+            else:
+            	print('hiiiiiiiiiiiiiii',file=sys.stdout)
+            	#ret={'type':str(type(rows))}
+            	print(rows,file=sys.stdout)
+            	return (True,evalluatListOfDictionaries(rows))
+
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False,({"error": str(e)}))
 
 def returnAllUserDetailsForUserName(uname):
     try:
@@ -973,6 +1013,56 @@ def sendemailtoresetpassword():
 	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
 	smtp_server.quit()
 	return {'success':True,'msg':'sent email!'}
+@app.route('/sendemailtogetusername', methods=['POST','GET'])
+def sendemailtogetusername():
+	# if IsThereSecurityCookie()==False:
+	# 	return {'success':False,'msg':'RelogginNeeded'}#(False,"RelogginNeeded")
+	content = request.get_json(silent=True)
+	# print(content['uname'])
+	email = content['email']  
+	#uname=content['uname']    
+    # listOfresults= returnAllUserDetailsForUserName(uname)      
+    # data_as_dict=listOfresults[1]  
+	listOfresults= returnAllUserDetailsEmail(email)  
+	data_as_dict=listOfresults[1] 
+	if len(data_as_dict)==0:
+		return {'success':False,'msg':'no reset password was sent:email you provided does not exist'}
+	uname=data_as_dict[0]['uname']
+	# last_name=content['lastname']
+	## need to produce token for uname and record in dbs
+	email_recipient=email#data_as_dict[0]['email']#"avisemah@gmail.com"
+	
+
+	email_text = f"""
+	Dear Person,
+	Your username is 
+
+	{uname}
+
+	Thank you,
+
+	Soapology Management
+	"""
+
+	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+
+	GMAIL_USERNAME = EMAIL
+	GMAIL_APP_PASSWORD = PASSWORD
+
+	recipients = [email_recipient]#["avisemah@gmail.com"]
+	msg = MIMEText(email_text)
+	msg["Subject"] = "Email report: a simple sum"
+	msg["To"] = ", ".join(recipients)
+	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
+
+
+	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+	smtp_server.login(GMAIL_USERNAME, GMAIL_APP_PASSWORD)
+	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
+	smtp_server.quit()
+	return {'success':True,'msg':'sent email!'}
+
 def recordusernameandtoken(uname,token, created):
     try:
         # if not mysql.open:
