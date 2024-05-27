@@ -17,6 +17,10 @@ import csv
 import sys
 import smtplib
 from email.mime.text import MIMEText
+from urllib.parse import urlparse
+
+HOST12701='127.0.0.1'
+DOMAIN_HTTP_ADDRESS='http://127.0.0.1:5000'
 # SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
 #     username="asemah",
 #     password="Newburg822!",
@@ -93,7 +97,7 @@ def index():
 #     database=app.config["MYSQL_DB"]
 # )
 with sshtunnel.SSHTunnelForwarder( ('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"], ssh_password=app.config["MYSQL_PASSWORD"], remote_bind_address=(app.config["MYSQL_HOST"], 3306) ) as tunnel:
-	 connection = pymysql.connect( user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"], host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+	 connection = pymysql.connect( user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"], host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
 
 #mysql = MySQL(app)
 # print(f'my sql is: {mysql}')
@@ -121,7 +125,7 @@ def returnDBStaff(city):
     #     mysql.ping(reconnect=True)
     #cursor = mysql.cursor(pymysql.cursors.DictCursor)
         with sshtunnel.SSHTunnelForwarder( ('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"], ssh_password=app.config["MYSQL_PASSWORD"], remote_bind_address=(app.config["MYSQL_HOST"], 3306) ) as tunnel:
-            connection = pymysql.connect( user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"], host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            connection = pymysql.connect( user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"], host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
@@ -179,6 +183,16 @@ def serve(path):
     return send_from_directory(app.static_folder,'index.html')
 '''
 api.add_resource(HelloApiHandler, '/flask/hello')
+
+@app.route('/getdomain')
+def getdomain():
+	#return 'Hello, World'
+	o = urlparse(request.base_url)
+	return o.hostname
+def obtaindomain():
+	#return 'Hello, World'
+	o = urlparse(request.base_url)
+	return DOMAIN_HTTP_ADDRESS#"http://"+  o.hostname
 
 @app.route('/')
 def my_home():
@@ -287,7 +301,7 @@ def returnCountOfRecordsOfGivenUserNameAndTimeEntryDate(uname,workingday):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
@@ -328,7 +342,7 @@ def recordTimeInAndOut(uname, workingday, starttime, endtime, last_updated, crea
             ssh_password=app.config["MYSQL_PASSWORD"],
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
@@ -405,7 +419,7 @@ def returnAllUserDetailsEmail(email):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
@@ -446,7 +460,7 @@ def returnAllUserDetailsForUserName(uname):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
@@ -492,7 +506,7 @@ def recordNewUserName(uname, first_name, last_name, password, last_updated, crea
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
@@ -558,7 +572,7 @@ def updateUserName( uname,first_name, last_name,   last_updated,email):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
@@ -616,7 +630,7 @@ def isUserPasswordCombinationInDB(uname,psw):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
@@ -650,7 +664,7 @@ def returnCountOfRecordsOfGivenUserName(uname):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
@@ -851,7 +865,7 @@ def sidebarmenu():
 def displayLogin():
 	error=None
 	return render_template('InitialLoginPageOnly.html',error=error)
-
+#sendemployeeidsetupinvitation
 @app.route('/sendemployeeinitializationemail', methods=['POST','GET'])
 def testSendinEmail():
 	if IsThereSecurityCookie()==False:
@@ -864,7 +878,7 @@ def testSendinEmail():
 	first_name=content['firstname']
 	last_name=content['lastname']
 	today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-	url_to_create_account='http://127.0.0.1:5000/CreateNewAcccount.html'
+	url_to_create_account=f'{obtaindomain()}/CreateNewAcccount.html'
 	email_text = f"""
 	Dear Person,
 	Welecome aboard.  Please click the link below in order to create new account
@@ -908,7 +922,11 @@ def resetpassword():
     token=content['token']
     listOfresults=retruntokenandunamerecordforgiventoken(token)
     data_as_dict=listOfresults[1]
+    wasused=data_as_dict[0]['wasused']
     uname=data_as_dict[0]['uname']
+    if int(wasused)==1:
+    	return {'success':False,'msg':f'password reset token has been already used.  Please issue a new one wasused={wasused} uname={uname}'}
+    
     ## find uname based on token
     # uname=content['uname']
     # email=content['email']
@@ -924,14 +942,15 @@ def resetpassword():
     # return {'ret':typeogf}
     if numberOfusersOfSameUname==0:
     	return {'success':False,'msg':'this user does not exist in database'}
-    res=updatepasswordonlyforusername(uname,password  ,last_updated)
+    res=updatepasswordonlyforusername(uname,password  ,last_updated,token)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
-def updatepasswordonlyforusername( uname,password  ,last_updated):
+def updatepasswordonlyforusername( uname,password  ,last_updated,token):
     defaultrole = 1
     defaultactive=1
     
     sqltext = f"UPDATE users SET password='{password}', last_updated='{last_updated}' where uname='{uname}';"
+    sqltext_updatetokenstatus = f"UPDATE usernameandtokes SET wasused=1, last_updated='{last_updated}' where token='{token}';"
     # return (False,sqltext)
     
     try:
@@ -942,12 +961,13 @@ def updatepasswordonlyforusername( uname,password  ,last_updated):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
             cursor.execute(sqltext)
+            cursor.execute(sqltext_updatetokenstatus)
             # cursor.execute('''select * from States''')
             connection.commit()
             # data = cursor.fetchall()
@@ -983,7 +1003,7 @@ def sendemailtoresetpassword():
 	## need to produce token for uname and record in db
 	email_recipient=data_as_dict[0]['email']#"avisemah@gmail.com"
 	
-	url_to_create_account=f'http://127.0.0.1:5000/ResetPassword.html?token={token}'
+	url_to_create_account=f'{obtaindomain()}/ResetPassword.html?token={token}'
 	email_text = f"""
 	Dear Person,
 	Please click n the link below in order to reset password
@@ -1030,7 +1050,7 @@ def sendemailtogetusername():
 	uname=data_as_dict[0]['uname']
 	# last_name=content['lastname']
 	## need to produce token for uname and record in dbs
-	email_recipient=email#data_as_dict[0]['email']#"avisemah@gmail.com"
+	email_recipient=email#data_asfdomain_dict[0]['email']#"avisemah@gmail.com"
 	
 
 	email_text = f"""
@@ -1070,13 +1090,13 @@ def recordusernameandtoken(uname,token, created):
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
         #startdate_converted_to_date = datetime.strptime(workingday, '%Y-%m-%d')
         #startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
-        sqltext = f"INSERT INTO usernameandtokes ( uname,token, created) VALUES ('{uname}', '{token}','{created}');"
+        sqltext = f"INSERT INTO usernameandtokes ( uname,token, created,wasused) VALUES ('{uname}', '{token}','{created}',0);"
         # return (False,sqltext)
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
             ssh_password=app.config["MYSQL_PASSWORD"],
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
@@ -1100,7 +1120,7 @@ def retruntokenandunamerecordforgiventoken(token):
         ssh_password=app.config["MYSQL_PASSWORD"],
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
-            host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
             
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
@@ -1129,6 +1149,243 @@ def retruntokenandunamerecordforgiventoken(token):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error":"while executing {sqltext}"+ str(e)})
+
+@app.route('/sendemployeeidsetupinvitation', methods=['POST','GET'])
+def sendemployeeidsetupinvitation():
+	if IsThereSecurityCookie()==False:
+		return {'success':False,'msg':'RelogginNeeded'}#(False,"RelogginNeeded")
+	content = request.get_json(silent=True)
+	# print(content['uname'])
+	# uname = content['uname']
+	email_recipient=content['email']
+	email=email_recipient
+	rightnow = datetime.now()
+    # created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
+	created = rightnow.strftime("%Y-%m-%d %H:%M:%S")  
+	first_name=content['firstname']
+	last_name=content['lastname']
+	today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+	result = uuid.uuid4()
+	token=result.hex
+	res=recordnewemployeetoken(email,token, created)
+	url_to_create_account=f'{obtaindomain()}/SetupNewemployeeID.html?token={token}'
+	email_text = f"""
+	Dear Person,
+	Welecome aboard.  Please click the link below in order to create new employee account
+
+	{url_to_create_account}
+
+	Thank you,
+
+	Soapology Management
+	"""
+
+	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+
+	GMAIL_USERNAME = EMAIL
+	GMAIL_APP_PASSWORD = PASSWORD
+
+	recipients = [email_recipient]#["avisemah@gmail.com"]
+	msg = MIMEText(email_text)
+	msg["Subject"] = "Email report: a simple sum"
+	msg["To"] = ", ".join(recipients)
+	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
+	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+	smtp_server.login(GMAIL_USERNAME, GMAIL_APP_PASSWORD)
+	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
+	smtp_server.quit()
+	return {'success':True,'msg':'sent email!'}
+def recordnewemployeetoken(email, token, created):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        # startdate_converted_to_date = datetime.strptime(workingday, '%Y-%m-%d')
+        # startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
+        sqltext = f"INSERT INTO employeesetuptokens ( email,token, created,wasused) VALUES ('{email}', '{token}','{created}',0);"
+        # return (False,sqltext)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+                  ssh_password=app.config["MYSQL_PASSWORD"],
+                  remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+                     host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext = "select * from States"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from States''')
+            connection.commit()
+            # data = cursor.fetchall()
+            return (True, '11')
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False, {"error": f'error for {sqltext}\n {e}'})
+
+
+def sendemployeenewemployeeidbyemail(email,newemployeeid):
+	content = request.get_json(silent=True)
+	# print(content['uname'])
+	# uname = content['uname']
+	email_recipient=email
+
+	# rightnow = datetime.now()
+ #    # created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
+	# created = rightnow.strftime("%Y-%m-%d %H:%M:%S")  
+	# first_name=content['firstname']
+	# last_name=content['lastname']
+	# today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+	# result = uuid.uuid4()
+	# token=result.hex
+	# res=recordnewemployeetoken(email,token, created)
+	# url_to_create_account=f'{obtaindomain()}/SetupNewemployeeID.html?token={token}'
+	email_text = f"""
+	Dear Person,
+	Welecome aboard.  Your new employee id is: {newemployeeid}
+
+	Please make sure to retain this number wheenver clocking in or clocking out
+
+	Thank you,
+
+	Soapology Management
+	"""
+
+	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+
+	GMAIL_USERNAME = EMAIL
+	GMAIL_APP_PASSWORD = PASSWORD
+
+	recipients = [email_recipient]#["avisemah@gmail.com"]
+	msg = MIMEText(email_text)
+	msg["Subject"] = "Email report: a simple sum"
+	msg["To"] = ", ".join(recipients)
+	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
+	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+	smtp_server.login(GMAIL_USERNAME, GMAIL_APP_PASSWORD)
+	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
+	smtp_server.quit()
+	return {'success':True,'msg':'sent email!'}
+@app.route('/createnewemployee', methods=['POST','GET'])
+def createNewEmployee():
+    print ('inside submit_login_form')
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']  
+    #psw=request.form['psw']
+    today_date = datetime.now()
+    new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    #uname=content['uname']
+    email=content['email']
+    dob=content['dob']
+    token=content['token']
+    first_name=content['firstname']
+    last_name=content['lastname']
+    # password=psw
+    last_updated=new_today_date
+    created=last_updated
+
+    listOfresults=retruntokenandemailofnewemployeesetup(token)
+    data_as_dict=listOfresults[1]
+    wasused=data_as_dict[0]['wasused']
+    #return {'success':False,'wasused':wasused,'type':str(type(wasused))}
+    #uname=data_as_dict[0]['uname']
+    if str(wasused)=='None':
+    	# do nothing
+    	a=1
+    else:
+	    if int(wasused)==1:
+	    	return {'success':False,'msg':f'expired token! please make a request to admin to issue new employee setup'}
+    #numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenUserName(uname))
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    # if numberOfusersOfSameUname>0:
+    # 	return {'success':False,'msg':'this user name is already taken'}	
+    res=recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,token)
+    success=res[0]
+    new_employee_id=''
+    if success:
+    	new_employee_id=res[2]
+    	sendemployeenewemployeeidbyemail(email,new_employee_id)
+    return {'success':success,'msg':res[1],'employeeid':new_employee_id}	#{"content":res}
+def retruntokenandemailofnewemployeesetup(token):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"SELECT * FROM employeesetuptokens where token='{token}'"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            if True == False:
+                main_list = []
+                
+                for row in rows:
+                    current_list = []
+                    for i in row:
+                        current_list.append(i)
+                    main_list.append(current_list)
+                return main_list  # int([data[0]]['count'])
+            else:
+            	print('hiiiiiiiiiiiiiii',file=sys.stdout)
+            	#ret={'type':str(type(rows))}
+            	print(rows,file=sys.stdout)
+            	return (True,evalluatListOfDictionaries(rows))
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error":"while executing {sqltext}"+ str(e)})
+
+def recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,token):
+    defaultrole = 1
+    
+    
+    sqltext = f"INSERT INTO employees (dob, email,first_name, last_name,  active, last_updated, created) VALUES ('{dob}','{email}', '{first_name}', '{last_name}',  1, '{last_updated}','{created}');"
+    sqltext_updatetokenstatus = f"UPDATE employeesetuptokens SET wasused=1, last_updated='{last_updated}' where token='{token}';"
+    
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext = "select * from States"
+            cursor.execute(sqltext_updatetokenstatus)
+            cursor.execute(sqltext)
+            cursor.execute('SELECT LAST_INSERT_ID()')
+            cursor.lastrowid = cursor.fetchone()[0]  
+            last_id=cursor.lastrowid
+            # cursor.execute('''select * from States''')
+            connection.commit()
+            # data = cursor.fetchall()
+            return (True, '11',last_id)
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False, {"error": f'{e}\nsql: {sqltext}'})	
+
+
 '''
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form(page_name):
