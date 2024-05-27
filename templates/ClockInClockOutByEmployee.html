@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+  width: 150px;
+}
+span.psw2 {
+  float: right;
+  padding-top: 16px;
+
+}
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+.center {
+  margin: auto;
+  width: 25%;
+  border: 3px solid #73AD21;
+  padding: 10px;
+}
+</style>
+</head>
+<body id="LogInBodyID" onload="startTime()">
+
+<!-- <h2 id="txt" style="'color':'blue';"></h2> -->
+
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
+
+<div id="id01" class="modal">
+  
+  <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
+    <div class="imgcontainer">
+      <span class="close" title="Close Modal">&times;</span>
+       <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
+<!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
+<h1 id="txt" style="color:blue;"></h1>
+    </div>
+
+    <div class="container">
+      <label for="employeeid"><b>Employee ID</b></label>
+      <input type="text" placeholder="Enter Employee ID" name="employeeid" required>
+
+<!--       <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required> -->
+        
+      <button type="button"  onclick="setAction(this)">Clock in/out</button>
+<!--       <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label> -->
+    </div>
+    <div class="center"> 
+      <label class="radio-inline">
+          <input type="radio" name="optradio" id="inid" value="in">Clock-in
+      </label>
+      <label class="radio-inline">
+          <input type="radio" name="optradio" id="outid" value="out" >Clock-out
+      </label>
+
+    </div>
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+<!--       <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
+<!--       <span class="psw2" >Forgot <a href="#" onclick="return ForgtoUsername();">username?</a></span>
+      <span class="psw">Forgot <a href="#" onclick="return ForgotPassword();">password?</a> </span> -->
+    </div>
+  </form>
+</div>
+
+<script>
+// Get the modal
+
+  document.getElementById('id01').style.display='block'
+  var modal = document.getElementById('id01');
+var CURRENT_TIME;
+function returnAction(){
+     
+     var radio_ele = document.querySelector('input[name="optradio"]:checked');
+     if (radio_ele==null)
+     {
+        return '';
+     }
+     else
+     {
+       console.log(radio_ele.value);
+       return radio_ele.value;
+     }
+
+}
+function startTime() {
+  const today = new Date();
+  CURRENT_TIME=today;
+  let h = today.getHours();
+  let m = today.getMinutes();
+  let s = today.getSeconds();
+  m = checkTime(m);
+  s = checkTime(s);
+  h=checkTime(h);
+  document.getElementById('txt').innerHTML =  h + ":" + m + ":" + s;
+  setTimeout(startTime, 1000);
+}
+
+function checkTime(i) {
+  if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+  return i;
+}
+  function ForgotPassword()
+  {
+    alert('launch forgot password from');
+    // closeLoginForm();
+    window.location.href ='ForgotPassword.html'+ '?MODE=password&n=' + new Date().getTime(); ;
+  }
+  function ForgtoUsername()
+  {
+    window.location.href ='ForgotPassword.html'+ '?MODE=username&n=' + new Date().getTime(); ;
+  }
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          //modal.style.display = "none";
+      }
+  }
+  function closeLoginForm(){
+      document.getElementById('id01').style.display='none';
+    }
+    function getCookie(name) {
+      var dc = document.cookie;
+      var prefix = name + "=";
+      var begin = dc.indexOf("; " + prefix);
+      if (begin == -1) {
+          begin = dc.indexOf(prefix);
+          if (begin != 0) return null;
+          end=dc.indexOf(";")
+      }
+      else
+      {
+          begin += 2;
+          var end = document.cookie.indexOf(";", begin);
+          if (end == -1) {
+          end = dc.length;
+          }
+      }
+      // because unescape has been deprecated, replaced with decodeURI
+      //return unescape(dc.substring(begin + prefix.length, end));
+      return decodeURI(dc.substring(begin + prefix.length, end));
+  } 
+
+  function UpdateInSessionStateIfApplicable() {
+      var cookiename="soapologyInSessionUserName";
+      var myCookie = getCookie(cookiename);
+
+      if (myCookie == null) 
+      {
+          // do cookie doesn't exist stuff;
+          //alert(cookiename + ' was not found')
+      }
+      else {
+          // do cookie exists stuff
+          //alert(cookiename + ' was found');
+          var loggedInUserIdElement = window.parent.document.getElementById('loggedInUserId');
+          // loggedInUserIdElement.innerHTML=myCookie;
+          // var loggedInUserIdElementParent = window.parent.document.getElementById('loggedInUserIdParent');
+          // loggedInUserIdElementParent.style.display="block"
+
+          
+      }
+  }
+  function generateDatabaseDateTime(date) {
+  return date.toISOString().replace("T"," ").substring(0, 19);
+}
+  function setAction(ABUTTON) 
+  {
+    form=document.getElementById('form1')
+    const url = 'clockinorout';
+    // const andSign = '&';
+    // const uname = form.uname.value;      
+    const current_time = generateDatabaseDateTime(CURRENT_TIME);
+    const employeeid = form.employeeid.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    action=returnAction();
+    if ((employeeid.length)==0)
+    {
+      alert('please make sure to specify employee id');
+        return;
+    }
+    if ((action.length)==0 )
+    {
+      alert('please make sure to specify clock in or out');
+      return;
+    }
+    adata={
+      'employeeid':employeeid,
+      'currenttime':current_time,
+      'action':action
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+          alert('Unable to record time\n'+data['msg']);
+        }
+        else
+        {
+                //alert('Successful loging');
+                closeLoginForm();
+
+ 
+                //makerequestToDisplayMenu(myRequest);
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
+      function Logout()
+  {
+      delete_cookie("soapologyInSessionUserName");
+
+      window.parent.location.href = "InitialLoginPageOnly.html"+'?n=' + new Date().getTime();
+      //window.location.assign("InitialLoginPageOnly.html");
+      const myHeaders = new Headers();
+        myRequest = new Request("displayInitialLogin", {
+        method: "GET",
+        headers: myHeaders
+        // ,mode: "cors",
+        // cache: "default",
+      });
+      //makeRequeestToInitilaLogin(myRequest)
+  }
+  async function makerequestToDisplayMenu(request) {
+  try 
+  {
+    const response = await fetch(request);
+    if (!response.ok) 
+    {
+      throw new Error("Network response was not OK");
+    }
+    const myBlob = await response.text();
+    ReplaceContent(myBlob);
+    // myImage.src = URL.createObjectURL(myBlob);
+  } catch (error) 
+  {
+    console.error("Error:", error);
+  }
+}
+    function ReplaceContent(NC) {
+      document.open();
+      document.write(NC);
+      document.close();
+    }
+  function SayHi()
+  {
+    alert('Hi')
+  }
+
+
+</script>
+
+</body>
+</html>

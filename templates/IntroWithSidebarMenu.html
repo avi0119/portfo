@@ -53,7 +53,7 @@ body {
 <div class="sidenav">
   <!-- <a href="#"onclick="return Login();">Login</a> -->
  
-
+  <a i href="#" onclick="return ClockInOutByEmployee();">Clock In/Out</a>
   <a i href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
   <a  href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a>
   <a id="createaccountid" href="#"onclick="return CreateAccount();">Create Account</a>
@@ -239,6 +239,13 @@ body {
     //theelement=document.body.innerHTML;
     theelement=document.getElementById('contentpaneid');
     theelement.src = "HistoricalTimeEntry.html?MODE=timeentry&uname="+uname+"&fromdate=&todate=";//string_of_html;       
+  }
+  function ClockInOutByEmployee()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "ClockInClockOutByEmployee.html";//string_of_html;    
   }
   function SingleDayTimeEntry()
   {

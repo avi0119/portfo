@@ -96,9 +96,7 @@ def index():
 #     host=app.config["MYSQL_HOST"],
 #     database=app.config["MYSQL_DB"]
 # )
-with sshtunnel.SSHTunnelForwarder( ('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"], ssh_password=app.config["MYSQL_PASSWORD"], remote_bind_address=(app.config["MYSQL_HOST"], 3306) ) as tunnel:
-	 connection = pymysql.connect( user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"], host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-
+# s
 #mysql = MySQL(app)
 # print(f'my sql is: {mysql}')
 # print(f'my sql is conenction: {mysql.connection}')
@@ -1385,6 +1383,197 @@ def recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,
         print(f"An error occurred: {str(e)}")
         return (False, {"error": f'{e}\nsql: {sqltext}'})	
 
+@app.route('/clockinorout', methods=['POST','GET'])
+def ClockInOrOut():
+    print ('inside ClockInOrOut')
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}   
+    content = request.get_json(silent=True)
+
+    currenttime= content['currenttime']  
+    currenttime_as_date=datetime.strptime(currenttime, '%Y-%m-%d %H:%M:%S')
+
+
+    time=currenttime_as_date.strftime( '%H:%M:%S')
+
+    workingday=currenttime_as_date.strftime( '%Y-%m-%d')
+    employeeid=content['employeeid']
+    action=content['action']
+    # return { 'success':False,
+    # 	'employeeid':employeeid,
+    # 	'action':action
+
+    # } 
+    today_date = datetime.now()
+    new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    
+    #print(content['uname'])
+    # uname=content['uname']
+    # starttime=content['starttime']
+    # endtime=content['endtime']
+    # workingday=content['workingday']
+    # return {
+    # 	'starttime':starttime,
+    # 	'endtime':endtime,
+    # 	'workingday':workingday,
+    # 	'uname':uname
+    # } 
+    
+    
+
+    last_updated=new_today_date
+    created=last_updated
+    numberofemployeesofsameemployeeid=int(returnCountOfRecordsOfGivenEmployeeID(employeeid))
+    #return {'success':False,'numberofemployeesofsameemployeeid':str(type(numberofemployeesofsameemployeeid))}
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    if int(numberofemployeesofsameemployeeid)==0:
+    	return {'success':False,'msg':f'employee id {employeeid} does not exist'}
+    tempres=returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday)
+    # return tempres
+    numberOfusersOfSameUname=int(tempres)
+    #return {'success':False,'numberOfusersOfSameUname':numberOfusersOfSameUname}
+    recordExists=False
+    if int(numberOfusersOfSameUname)==1:
+    	recordExists=True
+    if action=='out' and recordExists==False:
+    	return {'success':False,'msg':f'unable to clock out for {workingday} while no records of prior clocking for that day were found'}
+    	# return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}		
+    if action=='in':
+    	res=recordClockIn(employeeid,workingday,time,last_updated, created)
+    else:
+    	res=recordClockOut(employeeid,workingday,time,last_updated, created)
+
+    success=res[0]
+    return {'success':success,'msg':res[1]}	#{"content":res}
+def recordClockOut(employeeid,workingday,time,last_updated, created):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        # startdate_converted_to_date = datetime.strptime(workingday, '%Y-%m-%d')
+        # startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
+        # sqltext_deleteexisitngrecord = f"delete from  timeentry where employeeid={employeeid} and workingday='{workingday}';"
+        # sqltext = f"INSERT INTO timeentry ( employeeid,start_date,end_time,last_updated, created) VALUES ({employeeid}, '{workingday}', '{time}',  '{last_updated}','{created}');"
+        sqltext = f"update timeentry set end_time='{time}',last_updated='{last_updated}' where employeeid={employeeid} and start_date='{workingday}';"
+        # return (False,sqltext)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+            ssh_password=app.config["MYSQL_PASSWORD"],
+            remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext = "select * from States"
+            # cursor.execute(sqltext_deleteexisitngrecord)
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from States''')
+            connection.commit()
+            # data = cursor.fetchall()
+            return (True, '11')
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+def recordClockIn(employeeid,workingday,time,last_updated, created):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        # startdate_converted_to_date = datetime.strptime(workingday, '%Y-%m-%d')
+        # startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
+        sqltext_deleteexisitngrecord = f"delete from  timeentry where employeeid={employeeid} and start_date='{workingday}';"
+        sqltext = f"INSERT INTO timeentry ( employeeid,start_date,start_time,last_updated, created) VALUES ({employeeid}, '{workingday}', '{time}',  '{last_updated}','{created}');"
+        # return (False,sqltext)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+            ssh_password=app.config["MYSQL_PASSWORD"],
+            remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext = "select * from States"
+            cursor.execute(sqltext_deleteexisitngrecord)
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from States''')
+            connection.commit()
+            # data = cursor.fetchall()
+            return (True, '11')
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+
+def returnCountOfRecordsOfGivenEmployeeID(employeeid):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            #sqltext="select * from City where name='"+ city+ "'"
+            #sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"select count(*) as count from employees where employeeid={employeeid}"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            main_list = []
+            
+            for row in rows:
+                current_list = []
+                for i in row:
+                    current_list.append(i)
+                main_list.append(current_list)
+            count=main_list[0][0]
+            return count# int([data[0]]['count'])
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error": str(e)})
+def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            #sqltext="select * from City where name='"+ city+ "'"
+            #sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"SELECT count(*) as count FROM  timeentry where  start_date  ='{workingday}' and employeeid={employeeid}"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            main_list = []
+            
+            for row in rows:
+                current_list = []
+                for i in row:
+                    current_list.append(i)
+                main_list.append(current_list)
+            count=main_list[0][0]
+            return count# int([data[0]]['count'])
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error": str(e)+ '\n'+ f'sql: {sqltext}'})
 
 '''
 @app.route('/submit_form', methods=['POST','GET'])
