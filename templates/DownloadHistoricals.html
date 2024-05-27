@@ -146,11 +146,15 @@ span.psw {
 
     <div class="container" style="border: 0px solid red;">
      
-      <label style="border: 0px solid red;display: inline-block;width: 50px;text-align: right;" for="fromdate" ><b>From:</b></label>
-       <input type="date" id="fromdate" name="fromdate" style="width:100px"><br><br><br>
+      <label style="border: 0px solid red;display: inline-block;width: 120px;text-align: right;" for="fromdate" ><b>From:</b></label>
+       <input type="date" id="fromdate" name="fromdate" style="width:100px"><br><br>
 
-      <label style="border: 0px solid red;display: inline-block;width: 50px;text-align: right;" for="todate" ><b>To:</b></label>
-       <input type="date" id="todate" name="todate" style="width:100px"><br><br><br>
+      <label style="border: 0px solid red;display: inline-block;width: 120px;text-align: right;" for="todate" ><b>To:</b></label>
+       <input type="date" id="todate" name="todate" style="width:100px"><br><br>
+
+      <label style="border: 0px solid red;display: inline-block;width: 120px;height:15px;text-align: right;" for="employeeid" ><b>Employee ID:</b></label>
+       <input type="text" id="employeeid" name="employeeid" style="width:100px;height:15px;" placeholder="emp id"><br><br>
+
       
 
 <!--       <label for="SelectStartTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" ><b>Select Start Time</b></label>
@@ -335,6 +339,7 @@ function dateString2Date(dateString) {
 
     form=document.getElementById('form1')
     // const andSign = '&';
+    var employeeid=form.employeeid.value; 
     var fromdate = form.fromdate.value;      
     var todate = form.todate.value;
     if (fromdate=='')
@@ -358,7 +363,7 @@ function dateString2Date(dateString) {
     theelement=window.parent.document.getElementById('contentpaneid');
    // window.location.href ="HistoricalTimeEntry.html?uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&n=" + new Date().getTime();//string_of_html;
    document.getElementById('id01').style.display='none';
-    theelement.src = "HistoricalTimeEntry.html?MODE=query&uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&n=" + new Date().getTime(); 
+    theelement.src = "HistoricalTimeEntry.html?MODE=query&uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&employeeid="+employeeid+ "&n=" + new Date().getTime(); 
           
   }
  function setAction(ABUTTON) 

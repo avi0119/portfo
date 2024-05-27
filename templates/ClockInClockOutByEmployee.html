@@ -284,13 +284,28 @@ function checkTime(i) {
   function generateDatabaseDateTime(date) {
   return date.toISOString().replace("T"," ").substring(0, 19);
 }
+  function adjustDateForTimeZoneDiffs(d) {
+    // d = new Date();
+
+    //Deal with dates in milliseconds for most accuracy
+    utc = d.getTime() - (d.getTimezoneOffset() * 60000);
+    newDateWithOffset = new Date(utc );
+
+    //This will return the date with the locale format (string), or just return newDateWithOffset
+    //and go from there.
+    return newDateWithOffset;
+   //return newDateWithOffset.toLocaleString();
+
+}
   function setAction(ABUTTON) 
   {
     form=document.getElementById('form1')
     const url = 'clockinorout';
     // const andSign = '&';
-    // const uname = form.uname.value;      
-    const current_time = generateDatabaseDateTime(CURRENT_TIME);
+    // const uname = form.uname.value;
+    original_date=      adjustDateForTimeZoneDiffs(new Date());//new Date(CURRENT_TIME);
+    // const current_time_ =adjustDateForTimeZoneDiffs(original_date);
+    current_time=generateDatabaseDateTime(original_date);//original_date.toLocaleString();//generateDatabaseDateTime(current_time_);
     const employeeid = form.employeeid.value;
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;

@@ -697,7 +697,7 @@ def getHistoricalTimeEntry():
     content = request.get_json(silent=True)
     #print(content['uname'])
     # uname=content['uname']
-    uname=content.get('uname',None)
+    employeeid=content.get('employeeid',None)
     fromdate=content.get('fromdate',None)
     todate=content.get('todate',None)
     # email=content['email']
@@ -707,7 +707,7 @@ def getHistoricalTimeEntry():
     # password=psw
     # last_updated=new_today_date
     # created=last_updated
-    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname=uname,fromdate=fromdate,todate=todate)
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(employeeid=employeeid,fromdate=fromdate,todate=todate)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
@@ -749,7 +749,7 @@ def downloadtimeentryfile():
     # uname=None
     # fromdate=None
     # todate=None	
-    uname = returnNoneIfEmpty(request.args.get('uname'))
+    employeeid = returnNoneIfEmpty(request.args.get('employeeid'))
     fromdate = returnNoneIfEmpty(request.args.get('fromdate'))
     todate = returnNoneIfEmpty(request.args.get('todate'))
     # temp=str(uname) + " "+ str(fromdate)+ " "+ str(todate)
@@ -761,7 +761,7 @@ def downloadtimeentryfile():
     # password=psw
     # last_updated=new_today_date
     # created=last_updated
-    listOfresults=returnAllRecordTimeEntryHistoryForUserName(uname=uname,fromdate=fromdate,todate=todate)
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(employeeid=employeeid,fromdate=fromdate,todate=todate)
     #print(content['uname'])
     filename="timeentrydownload.xlsx"
     uploads="D:\\PythonWS\\portfo"
@@ -789,7 +789,7 @@ def downloadtimeentryfile():
     	else:
     		msg=data_as_dict
     	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
-def returnAllRecordTimeEntryHistoryForUserName(uname=None,fromdate=None,todate=None):
+def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,todate=None):
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
@@ -807,13 +807,13 @@ def returnAllRecordTimeEntryHistoryForUserName(uname=None,fromdate=None,todate=N
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
             #return  (False,"xyzxyz")
-            sqltext = f"select * from timeentry"
+            sqltext = f"SELECT t.* ,CONCAT(e.first_name,' ', e.last_name) as name  FROM timeentry t inner join employees e on e.employeeid=t.employeeid"
             criteria=''
-            if (uname!=None):
-            	criteria=f" where uname='{uname}'"
+            if (employeeid!=None):
+            	criteria=f" where t.employeeid='{employeeid}'"
             if fromdate!=None or todate!=None:
-            	criteria=criteria=criteria + (' and ' if len(criteria)>0 else ' where ') +f"(start_date>='{fromdate}' and start_date<='{todate}')"
-            sqltext=sqltext+ criteria+ ' order by start_date'
+            	criteria=criteria=criteria + (' and ' if len(criteria)>0 else ' where ') +f"(t.start_date>='{fromdate}' and t.start_date<='{todate}')"
+            sqltext=sqltext+ criteria+ ' order by t.start_date'
             # if allrecordflag==True:
             # 	sqltext = f"select * from timeentry"
             # else:
