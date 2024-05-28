@@ -857,7 +857,11 @@ def resetpassword():
     token=content['token']
     listOfresults=retruntokenandunamerecordforgiventoken(token)
     data_as_dict=listOfresults[1]
+    wasused=data_as_dict[0]['wasused']
     uname=data_as_dict[0]['uname']
+    if int(wasused)==1:
+    	return {'success':False,'msg':f'password reset token has been already used.  Please issue a new one wasused={wasused} uname={uname}'}
+
     ## find uname based on token
     # uname=content['uname']
     # email=content['email']
@@ -873,14 +877,15 @@ def resetpassword():
     # return {'ret':typeogf}
     if numberOfusersOfSameUname==0:
     	return {'success':False,'msg':'this user does not exist in database'}
-    res=updatepasswordonlyforusername(uname,password  ,last_updated)
+    res=updatepasswordonlyforusername(uname,password  ,last_updated,token)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
-def updatepasswordonlyforusername( uname,password  ,last_updated):
+def updatepasswordonlyforusername( uname,password  ,last_updated,token):
     defaultrole = 1
     defaultactive=1
 
     sqltext = f"UPDATE users SET password='{password}', last_updated='{last_updated}' where uname='{uname}';"
+    sqltext_updatetokenstatus = f"UPDATE usernameandtokes SET wasused=1, last_updated='{last_updated}' where token='{token}';"
     # return (False,sqltext)
 
     try:
@@ -897,6 +902,7 @@ def updatepasswordonlyforusername( uname,password  ,last_updated):
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
             cursor.execute(sqltext)
+            cursor.execute(sqltext_updatetokenstatus)
             # cursor.execute('''select * from States''')
             connection.commit()
             # data = cursor.fetchall()
@@ -905,6 +911,7 @@ def updatepasswordonlyforusername( uname,password  ,last_updated):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False, {"error": f'{e}'})
+
 
 @app.route('/sendemailtoresetpassword', methods=['POST','GET'])
 def sendemailtoresetpassword():
@@ -1019,7 +1026,7 @@ def recordusernameandtoken(uname,token, created):
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
         #startdate_converted_to_date = datetime.strptime(workingday, '%Y-%m-%d')
         #startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
-        sqltext = f"INSERT INTO usernameandtokes ( uname,token, created) VALUES ('{uname}', '{token}','{created}');"
+        sqltext = f"INSERT INTO usernameandtokes ( uname,token, created,wasused) VALUES ('{uname}', '{token}','{created}',0);"
         # return (False,sqltext)
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
             ssh_password=app.config["MYSQL_PASSWORD"],
