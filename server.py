@@ -195,8 +195,8 @@ def submit_login_form2():
 def RecodSingleDayTimeHours():
     print ('inside RecodSingleDayTimeHours')
     if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}    
-    #uname= request.form['uname']  
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -212,8 +212,8 @@ def RecodSingleDayTimeHours():
     # 	'endtime':endtime,
     # 	'workingday':workingday,
     # 	'uname':uname
-    # } 
-    
+    # }
+
     last_updated=new_today_date
     created=last_updated
     numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenEmployeeID(employeeid))
@@ -223,7 +223,7 @@ def RecodSingleDayTimeHours():
     	return {'success':False,'msg':f'employee id {employeeid} does not exist'}
     # numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday))
     # if numberOfusersOfSameUname==1:
-    # 	return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}		
+    # 	return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}
     # res=recordTimeInAndOut(uname      ,workingday,starttime,endtime,last_updated, created)
     res=recordClockInAndOut(employeeid,workingday,starttime,endtime,last_updated, created)
     success=res[0]
@@ -239,7 +239,7 @@ def returnCountOfRecordsOfGivenUserNameAndTimeEntryDate(uname,workingday):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
             #sqltext="select * from users" #where uname='{uname}'""
@@ -251,7 +251,7 @@ def returnCountOfRecordsOfGivenUserNameAndTimeEntryDate(uname,workingday):
             # firstrecord=data_array[0]
             # count=firstrecord[0]
             main_list = []
-            
+
             for row in rows:
                 current_list = []
                 for i in row:
@@ -259,7 +259,7 @@ def returnCountOfRecordsOfGivenUserNameAndTimeEntryDate(uname,workingday):
                 main_list.append(current_list)
             count=main_list[0][0]
             return count# int([data[0]]['count'])
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)})
@@ -280,7 +280,7 @@ def recordTimeInAndOut(uname, workingday, starttime, endtime, last_updated, crea
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -289,16 +289,16 @@ def recordTimeInAndOut(uname, workingday, starttime, endtime, last_updated, crea
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'{e}'})	
+        return (False, {"error": f'{e}'})
 @app.route('/crate_new_user', methods=['POST','GET'])
 def crate_new_user():
     print ('inside submit_login_form')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -316,7 +316,7 @@ def crate_new_user():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     if numberOfusersOfSameUname>0:
-    	return {'success':False,'msg':'this user name is already taken'}	
+    	return {'success':False,'msg':'this user name is already taken'}
     res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
@@ -325,7 +325,7 @@ def updateUserDeatils():
     print ('inside updateUserDeatils')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -357,7 +357,7 @@ def returnAllUserDetailsEmail(email):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -370,7 +370,7 @@ def returnAllUserDetailsEmail(email):
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -398,7 +398,7 @@ def returnAllUserDetailsForUserName(uname):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -411,7 +411,7 @@ def returnAllUserDetailsForUserName(uname):
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -430,11 +430,11 @@ def returnAllUserDetailsForUserName(uname):
         return (False,({"error": str(e)}))
 def recordNewUserName(uname, first_name, last_name, password, last_updated, created, email):
     defaultrole = 1
-    
-    
+
+
     sqltext = f"INSERT INTO users ( role,email,uname,first_name, last_name, password, active, last_updated, created) VALUES ({defaultrole},'{email}','{uname}', '{first_name}', '{last_name}', '{password}', 1, '{last_updated}','{created}');"
     # return sqltext
-    
+
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
@@ -444,7 +444,7 @@ def recordNewUserName(uname, first_name, last_name, password, last_updated, crea
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -453,14 +453,14 @@ def recordNewUserName(uname, first_name, last_name, password, last_updated, crea
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'{e}'})	
+        return (False, {"error": f'{e}'})
 @app.route('/getuserdetails', methods=['GET', 'POST'])
 def getUserDetails():
     print ('inside getUserDetails')
-    #uname= request.form['uname'] 
+    #uname= request.form['uname']
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -478,11 +478,11 @@ def getUserDetails():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
-    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # 	return {'success':False,'msg':'this user name is already taken'}
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     # success=res[0]
     # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
-    
+
 
     data_as_dict=listOfresults[1]
     #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
@@ -497,10 +497,10 @@ def getUserDetails():
 def updateUserName( uname,first_name, last_name,   last_updated,email):
     defaultrole = 1
     defaultactive=1
-    
+
     sqltext = f"UPDATE users SET first_name='{first_name}', last_name='{last_name}',active={defaultactive},last_updated='{last_updated}',email='{email}' where uname='{uname}';"
     # return (False,sqltext)
-    
+
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
@@ -510,7 +510,7 @@ def updateUserName( uname,first_name, last_name,   last_updated,email):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -519,14 +519,14 @@ def updateUserName( uname,first_name, last_name,   last_updated,email):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'{e}'})	
+        return (False, {"error": f'{e}'})
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print('inside login')
-    # uname= request.form['uname'] 
+    # uname= request.form['uname']
     # psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -568,7 +568,7 @@ def isUserPasswordCombinationInDB(uname,psw):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
             #sqltext="select * from users" #where uname='{uname}'""
@@ -580,7 +580,7 @@ def isUserPasswordCombinationInDB(uname,psw):
             # firstrecord=data_array[0]
             # count=firstrecord[0]
             main_list = []
-            
+
             for row in rows:
                 current_list = []
                 for i in row:
@@ -588,7 +588,7 @@ def isUserPasswordCombinationInDB(uname,psw):
                 main_list.append(current_list)
             count=main_list[0][0]
             return count>0# int([data[0]]['count'])
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)})
@@ -602,7 +602,7 @@ def returnCountOfRecordsOfGivenUserName(uname):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
             #sqltext="select * from users" #where uname='{uname}'""
@@ -614,7 +614,7 @@ def returnCountOfRecordsOfGivenUserName(uname):
             # firstrecord=data_array[0]
             # count=firstrecord[0]
             main_list = []
-            
+
             for row in rows:
                 current_list = []
                 for i in row:
@@ -622,14 +622,14 @@ def returnCountOfRecordsOfGivenUserName(uname):
                 main_list.append(current_list)
             count=main_list[0][0]
             return count# int([data[0]]['count'])
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)})
 @app.route('/gethistoricaltimeentry', methods=['GET', 'POST'])
 def getHistoricalTimeEntry():
     print ('inside getHistoricalTimeEntry')
-    #uname= request.form['uname'] 
+    #uname= request.form['uname']
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -650,11 +650,11 @@ def getHistoricalTimeEntry():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
-    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # 	return {'success':False,'msg':'this user name is already taken'}
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     # success=res[0]
     # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
-    
+
 
     data_as_dict=listOfresults[1]
     #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
@@ -675,7 +675,7 @@ def downloadtimeentryfile():
     print ('inside downloadtimeentryfile')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname'] 
+    #uname= request.form['uname']
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -687,7 +687,7 @@ def downloadtimeentryfile():
 	# else:
     # uname=None
     # fromdate=None
-    # todate=None	
+    # todate=None
     employeeid = returnNoneIfEmpty(request.args.get('employeeid'))
     fromdate = returnNoneIfEmpty(request.args.get('fromdate'))
     todate = returnNoneIfEmpty(request.args.get('todate'))
@@ -707,16 +707,16 @@ def downloadtimeentryfile():
     df = pd.DataFrame(listOfresults[1])
     print(df)
     df.to_excel('timeentrydownload.xlsx', index=False)
-    return send_file( filename,as_attachment=True)
+    return send_file( '/home/asemah/'+filename,as_attachment=True)
     # return send_from_directory(uploads, filename)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
-    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # 	return {'success':False,'msg':'this user name is already taken'}
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     # success=res[0]
     # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
-    
+
 
     data_as_dict=listOfresults[1]
     #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
@@ -733,7 +733,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
-        
+
         if IsThereSecurityCookie()==False:
         	return (False,"RelogginNeeded")
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
@@ -741,7 +741,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -766,7 +766,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -850,7 +850,7 @@ def resetpassword():
     print ('inside resetpassword')
     # if IsThereSecurityCookie()==False:
     # 	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -863,7 +863,7 @@ def resetpassword():
     uname=data_as_dict[0]['uname']
     if int(wasused)==1:
     	return {'success':False,'msg':f'password reset token has been already used.  Please issue a new one wasused={wasused} uname={uname}'}
-    
+
     ## find uname based on token
     # uname=content['uname']
     # email=content['email']
@@ -885,11 +885,11 @@ def resetpassword():
 def updatepasswordonlyforusername( uname,password  ,last_updated,token):
     defaultrole = 1
     defaultactive=1
-    
+
     sqltext = f"UPDATE users SET password='{password}', last_updated='{last_updated}' where uname='{uname}';"
     sqltext_updatetokenstatus = f"UPDATE usernameandtokes SET wasused=1, last_updated='{last_updated}' where token='{token}';"
     # return (False,sqltext)
-    
+
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
@@ -899,7 +899,7 @@ def updatepasswordonlyforusername( uname,password  ,last_updated,token):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -909,10 +909,10 @@ def updatepasswordonlyforusername( uname,password  ,last_updated,token):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'{e}'})	
+        return (False, {"error": f'{e}'})
 
 @app.route('/sendemailtoresetpassword', methods=['POST','GET'])
 def sendemailtoresetpassword():
@@ -920,12 +920,12 @@ def sendemailtoresetpassword():
 	# 	return {'success':False,'msg':'RelogginNeeded'}#(False,"RelogginNeeded")
 	content = request.get_json(silent=True)
 	# print(content['uname'])
-	# uname = content['uname']  
-	uname=content['uname']    
-    # listOfresults= returnAllUserDetailsForUserName(uname)      
-    # data_as_dict=listOfresults[1]  
-	listOfresults= returnAllUserDetailsForUserName(uname)  
-	data_as_dict=listOfresults[1] 
+	# uname = content['uname']
+	uname=content['uname']
+    # listOfresults= returnAllUserDetailsForUserName(uname)
+    # data_as_dict=listOfresults[1]
+	listOfresults= returnAllUserDetailsForUserName(uname)
+	data_as_dict=listOfresults[1]
 	if len(data_as_dict)==0:
 		return {'success':False,'msg':'no reset password was sent:username you provided does not exist'}
 	today_date = datetime.now()
@@ -939,7 +939,7 @@ def sendemailtoresetpassword():
 	# last_name=content['lastname']
 	## need to produce token for uname and record in db
 	email_recipient=data_as_dict[0]['email']#"avisemah@gmail.com"
-	
+
 	url_to_create_account=f'{obtaindomain()}/ResetPassword.html?token={token}'
 	email_text = f"""
 	Dear Person,
@@ -976,23 +976,23 @@ def sendemailtogetusername():
 	# 	return {'success':False,'msg':'RelogginNeeded'}#(False,"RelogginNeeded")
 	content = request.get_json(silent=True)
 	# print(content['uname'])
-	email = content['email']  
-	#uname=content['uname']    
-    # listOfresults= returnAllUserDetailsForUserName(uname)      
-    # data_as_dict=listOfresults[1]  
-	listOfresults= returnAllUserDetailsEmail(email)  
-	data_as_dict=listOfresults[1] 
+	email = content['email']
+	#uname=content['uname']
+    # listOfresults= returnAllUserDetailsForUserName(uname)
+    # data_as_dict=listOfresults[1]
+	listOfresults= returnAllUserDetailsEmail(email)
+	data_as_dict=listOfresults[1]
 	if len(data_as_dict)==0:
 		return {'success':False,'msg':'no reset password was sent:email you provided does not exist'}
 	uname=data_as_dict[0]['uname']
 	# last_name=content['lastname']
 	## need to produce token for uname and record in dbs
 	email_recipient=email#data_asfdomain_dict[0]['email']#"avisemah@gmail.com"
-	
+
 
 	email_text = f"""
 	Dear Person,
-	Your username is 
+	Your username is
 
 	{uname}
 
@@ -1034,7 +1034,7 @@ def recordusernameandtoken(uname,token, created):
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1043,7 +1043,7 @@ def recordusernameandtoken(uname,token, created):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False, {"error": f'error for {sqltext}\n {e}'})
@@ -1058,7 +1058,7 @@ def retruntokenandunamerecordforgiventoken(token):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -1071,7 +1071,7 @@ def retruntokenandunamerecordforgiventoken(token):
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -1098,7 +1098,7 @@ def sendemployeeidsetupinvitation():
 	email=email_recipient
 	rightnow = datetime.now()
     # created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
-	created = rightnow.strftime("%Y-%m-%d %H:%M:%S")  
+	created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
 	first_name=content['firstname']
 	last_name=content['lastname']
 	today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -1147,7 +1147,7 @@ def recordnewemployeetoken(email, token, created):
                   remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
                      host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1156,7 +1156,7 @@ def recordnewemployeetoken(email, token, created):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False, {"error": f'error for {sqltext}\n {e}'})
@@ -1170,7 +1170,7 @@ def sendemployeenewemployeeidbyemail(email,newemployeeid):
 
 	# rightnow = datetime.now()
  #    # created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
-	# created = rightnow.strftime("%Y-%m-%d %H:%M:%S")  
+	# created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
 	# first_name=content['firstname']
 	# last_name=content['lastname']
 	# today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -1210,7 +1210,7 @@ def createNewEmployee():
     print ('inside submit_login_form')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -1241,7 +1241,7 @@ def createNewEmployee():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if numberOfusersOfSameUname>0:
-    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # 	return {'success':False,'msg':'this user name is already taken'}
     res=recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,token)
     success=res[0]
     new_employee_id=''
@@ -1259,7 +1259,7 @@ def retruntokenandemailofnewemployeesetup(token):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -1272,7 +1272,7 @@ def retruntokenandemailofnewemployeesetup(token):
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -1290,11 +1290,11 @@ def retruntokenandemailofnewemployeesetup(token):
 
 def recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,token):
     defaultrole = 1
-    
-    
+
+
     sqltext = f"INSERT INTO employees (dob, email,first_name, last_name,  active, last_updated, created) VALUES ('{dob}','{email}', '{first_name}', '{last_name}',  1, '{last_updated}','{created}');"
     sqltext_updatetokenstatus = f"UPDATE employeesetuptokens SET wasused=1, last_updated='{last_updated}' where token='{token}';"
-    
+
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
@@ -1304,32 +1304,32 @@ def recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
             cursor.execute(sqltext_updatetokenstatus)
             cursor.execute(sqltext)
             cursor.execute('SELECT LAST_INSERT_ID()')
-            cursor.lastrowid = cursor.fetchone()[0]  
+            cursor.lastrowid = cursor.fetchone()[0]
             last_id=cursor.lastrowid
             # cursor.execute('''select * from States''')
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11',last_id)
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'{e}\nsql: {sqltext}'})	
+        return (False, {"error": f'{e}\nsql: {sqltext}'})
 
 @app.route('/clockinorout', methods=['POST','GET'])
 def ClockInOrOut():
     print ('inside ClockInOrOut')
     if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}   
+    	return {'success':False,'msg':'RelogginNeeded'}
     content = request.get_json(silent=True)
 
-    currenttime= content['currenttime']  
+    currenttime= content['currenttime']
     currenttime_as_date=datetime.strptime(currenttime, '%Y-%m-%d %H:%M:%S')
 
 
@@ -1342,10 +1342,10 @@ def ClockInOrOut():
     # 	'employeeid':employeeid,
     # 	'action':action
 
-    # } 
+    # }
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
-    
+
     #print(content['uname'])
     # uname=content['uname']
     # starttime=content['starttime']
@@ -1356,9 +1356,9 @@ def ClockInOrOut():
     # 	'endtime':endtime,
     # 	'workingday':workingday,
     # 	'uname':uname
-    # } 
-    
-    
+    # }
+
+
 
     last_updated=new_today_date
     created=last_updated
@@ -1377,7 +1377,7 @@ def ClockInOrOut():
     	recordExists=True
     if action=='out' and recordExists==False:
     	return {'success':False,'msg':f'unable to clock out for {workingday} while no records of prior clocking for that day were found'}
-    	# return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}		
+    	# return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}
     if action=='in':
     	res=recordClockIn(employeeid,workingday,time,last_updated, created)
     else:
@@ -1401,7 +1401,7 @@ def recordClockOut(employeeid,workingday,time,last_updated, created):
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1411,10 +1411,10 @@ def recordClockOut(employeeid,workingday,time,last_updated, created):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
 def recordClockIn(employeeid,workingday,time,last_updated, created):
     try:
         # if not mysql.open:
@@ -1430,7 +1430,7 @@ def recordClockIn(employeeid,workingday,time,last_updated, created):
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1440,10 +1440,10 @@ def recordClockIn(employeeid,workingday,time,last_updated, created):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
 def recordClockInAndOut(employeeid,workingday,start_time,end_time,last_updated, created):
     try:
         # if not mysql.open:
@@ -1459,7 +1459,7 @@ def recordClockInAndOut(employeeid,workingday,start_time,end_time,last_updated, 
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1469,10 +1469,10 @@ def recordClockInAndOut(employeeid,workingday,start_time,end_time,last_updated, 
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
 
 def returnCountOfRecordsOfGivenEmployeeID(employeeid):
     try:
@@ -1484,7 +1484,7 @@ def returnCountOfRecordsOfGivenEmployeeID(employeeid):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
             #sqltext="select * from users" #where uname='{uname}'""
@@ -1496,7 +1496,7 @@ def returnCountOfRecordsOfGivenEmployeeID(employeeid):
             # firstrecord=data_array[0]
             # count=firstrecord[0]
             main_list = []
-            
+
             for row in rows:
                 current_list = []
                 for i in row:
@@ -1504,7 +1504,7 @@ def returnCountOfRecordsOfGivenEmployeeID(employeeid):
                 main_list.append(current_list)
             count=main_list[0][0]
             return count# int([data[0]]['count'])
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)})
@@ -1518,7 +1518,7 @@ def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
             #sqltext="select * from users" #where uname='{uname}'""
@@ -1530,7 +1530,7 @@ def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday):
             # firstrecord=data_array[0]
             # count=firstrecord[0]
             main_list = []
-            
+
             for row in rows:
                 current_list = []
                 for i in row:
@@ -1538,7 +1538,7 @@ def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday):
                 main_list.append(current_list)
             count=main_list[0][0]
             return count# int([data[0]]['count'])
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)+ '\n'+ f'sql: {sqltext}'})
@@ -1546,8 +1546,8 @@ def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday):
 def returnlistOfAllEmployees():
     print ('inside returnlistOfAllEmployees')
     if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}    
-    #uname= request.form['uname'] 
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -1565,11 +1565,11 @@ def returnlistOfAllEmployees():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
-    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # 	return {'success':False,'msg':'this user name is already taken'}
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     # success=res[0]
     # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
-    
+
 
     data_as_dict=listOfresults[1]
     #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
@@ -1592,7 +1592,7 @@ def returnlistOfAllEmployeesfromDb():
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -1605,7 +1605,7 @@ def returnlistOfAllEmployeesfromDb():
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -1626,8 +1626,8 @@ def returnlistOfAllEmployeesfromDb():
 def returndetailsofexiitngtimeentryifapplicable():
     print ('inside returndetailsofexiitngtimeentryifapplicable')
     if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}    
-    #uname= request.form['uname'] 
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -1645,11 +1645,11 @@ def returndetailsofexiitngtimeentryifapplicable():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
-    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # 	return {'success':False,'msg':'this user name is already taken'}
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     # success=res[0]
     # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
-    
+
 
     data_as_dict=listOfresults[1]
     #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
@@ -1672,7 +1672,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -1685,7 +1685,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
