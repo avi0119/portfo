@@ -1685,6 +1685,46 @@ def returnlistOfAllEmployeesfromDb():
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False,({"error": str(e)}))
+@app.route('/detailsofexiitngtimeentryifapplicable', methods=['POST','GET'])
+def returndetailsofexiitngtimeentryifapplicable():
+    print ('inside returndetailsofexiitngtimeentryifapplicable')
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}    
+    #uname= request.form['uname'] 
+    #psw=request.form['psw']
+    # today_date = datetime.now()
+    # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+    content = request.get_json(silent=True)
+    print(content['employeeid'])
+    employeeid=content['employeeid']
+    workingday=content['workingday']
+    # psw=content['psw']
+    # first_name=content['firstname']
+    # last_name=content['lastname']
+    # password=psw
+    # last_updated=new_today_date
+    # created=last_updated
+    listOfresults=returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday)
+    # typeogf=str(type(numberOfusersOfSameUname))
+    # return {'ret':typeogf}
+    # if len(listOfresults)==0:
+    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    # success=res[0]
+    # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
+    
+
+    data_as_dict=listOfresults[1]
+    #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
+    if listOfresults[0]==True:
+    	return {'success':listOfresults[0],'data':data_as_dict,'msg':'all is good'}	#{"content":res}
+    else:
+    	if str(data_as_dict)=="RelogginNeeded":
+    		msg="RelogginNeeded"
+    	else:
+    		msg=data_as_dict
+    	return {'success':listOfresults[0],'msg':msg}
+
 def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
     try:
         # if not mysql.open:
