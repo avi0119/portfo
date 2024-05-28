@@ -153,14 +153,23 @@ span.psw {
     </div>
 
     <div class="container" style="border: 0px solid red;">
+      <label for="cars" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Employee Name</b></label>
+      <select name="employees" id="employees" onchange="employeeChange(this.value);">
+<!--         <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="opel">Opel</option>
+        <option value="audi">Audi</option> -->
+      </select>
+      <label for="employeeid" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Employee ID</b></label>
+      <input type="text" id="employeedidinput" placeholder="Enter Employee ID" name="employeeid" required style="width:100px;height:15px;" readonly><br><br>
      
       <label style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" for="SelectWorkingDay" ><b>Select Working Day</b></label>
-       <input type="date" id="workingday" name="workingday" style="width:100px"><br><br><br>
+       <input type="date" id="workingday" name="workingday" style="width:100px" onchange="workingdaychange(this.value);"><br><br><br>
 
       
 
       <label for="SelectStartTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" ><b>Select Start Time</b></label>
-      <input type="time" id="starttime" name="starttime" style="width:100px"><br><br><br>
+      <input type="time" id="starttime" name="starttime" style="width:100px" ><br><br><br>
 
       <label for="SelectEndTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Select End Time</b></label>
       <input type="time" id="endtime" name="endtime" style="width:100px"><br><br><br>
@@ -187,6 +196,241 @@ span.psw {
 // Get the modal
   document.getElementById('id01').style.display='block'
   var modal = document.getElementById('id01');
+  function employeeChange(avalue)
+  {
+    employeedidinput=document.getElementById('employeedidinput');
+    employeedidinput.value=avalue;
+    AttemptPopulatingStartAndEndTime();
+    // alert(avalue);
+  }
+  function FormatTimeToorPM(atime)
+  {
+      return atime;
+      var AMPM="AM";
+      arr=atime.split(":")
+      if (arr[0]>=12)
+      {
+          AMPM="PM";
+          arr[0]=arr[0]-12;
+          str1=''+ arr[0];
+          if (str1.length==1)
+          {
+              arr[0]='0' + arr[0];
+          }
+      }
+      ret=arr.join(":");
+      ret=ret +' '+ AMPM;
+      return ret;
+  }
+  function populateStartAndEndTime(StartAndEndTimeArray)
+  {
+      //alert('populating');
+      if (StartAndEndTimeArray.length>0)
+      {
+        text=PopulateTimeQuestion();
+         response=text=="OK";
+         if (response)
+         {
+          var obj=StartAndEndTimeArray[0];
+          endtime=obj['end_time']
+          starttime=obj['start_time'];
+           form.starttime.value=FormatTimeToorPM(starttime);
+           if (endtime!="0:00:00")
+           {
+              form.endtime.value=FormatTimeToorPM(endtime);     
+           }
+         }
+              
+      }
+
+  }
+  function PopulateTimeQuestion() {
+  let text = "Start and/or end time records found fro current working day adn employee id.\nWould you like to prepopulate?";
+  if (confirm(text) == true) {
+    text = "OK";
+  } else {
+    text = "Cancel";
+  }
+  return text;
+}
+  function AttemptPopulatingStartAndEndTime()
+  {
+    form=document.getElementById('form1')
+    const employeeid=form.employeeid.value;   
+    const workingday = form.workingday.value;
+    if (employeeid.length==0 || workingday.length==0)
+    {
+      return;
+    }
+
+   form=document.getElementById('form1')
+    const url = 'detailsofexiitngtimeentryifapplicable';
+    // const andSign = '&';
+    
+    // const starttime = form.starttime.value;
+    // const endtime = form.endtime.value;
+    // var cookiename="soapologyInSessionUserName";
+    // // var uname = getCookie(cookiename);
+    // validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    // if (validationResult['isvalid']==false)
+    // {
+    //   alert(validationResult['msg']);
+    //   return;
+    // }
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+      'employeeid':employeeid,
+      'workingday':workingday
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          //alert('Unable to fetch all employees\n'+data['msg'])
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          a=1;
+          // alert('Successful time logging for username ' + uname + ' for ' + workingday );
+          // closeLoginForm();
+          //UpdateInSessionStateIfApplicable();
+          populateStartAndEndTime(data['data']);
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.log('Fetch error:', error);
+    });
+    return false;
+
+  }
+  function workingdaychange(avalue)
+  {
+    if (!(avalue==null))
+    {
+      //alert('changed!');
+      AttemptPopulatingStartAndEndTime();
+    }
+  }
+  populateAllEmployyes();
+  function populateAllEmployyes()
+  {
+
+    form=document.getElementById('form1')
+    const url = 'returnlistofallemployees';
+    // const andSign = '&';
+    // const employeeid=form.employeeid.value;   
+    // const workingday = form.workingday.value;      
+    // const starttime = form.starttime.value;
+    // const endtime = form.endtime.value;
+    // var cookiename="soapologyInSessionUserName";
+    // // var uname = getCookie(cookiename);
+    // validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    // if (validationResult['isvalid']==false)
+    // {
+    //   alert(validationResult['msg']);
+    //   return;
+    // }
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+      // 'employeeid':employeeid,
+      // 'workingday':workingday,
+      // 'starttime':starttime,
+      // 'endtime':endtime
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          alert('Unable to fetch all employees\n'+data['msg'])
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          a=1;
+          // alert('Successful time logging for username ' + uname + ' for ' + workingday );
+          // closeLoginForm();
+          //UpdateInSessionStateIfApplicable();
+          populateDropDownListOfEmployyes(data['data']);
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
+  function populateDropDownListOfEmployyes(arrayOfObjects)
+  {
+    var select = document.getElementById("employees");
+    var options=arrayOfObjects;
+    options.unshift({'name':'select employee','employeeid':''});
+    // var options = ["1", "2", "3", "4", "5"];
+    options
+    for(var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        var el = document.createElement("option");
+        el.textContent = opt['name'];
+        el.value =  opt['employeeid'];
+        el.setAttribute('employeeid', opt['employeeid']);
+        select.appendChild(el);
+    }
+  }
   function delete_cookie(name) 
   {
     document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -322,11 +566,12 @@ span.psw {
     form=document.getElementById('form1')
     const url = 'recordsingledaytimehours';
     // const andSign = '&';
+    const employeeid=form.employeeid.value;   
     const workingday = form.workingday.value;      
     const starttime = form.starttime.value;
     const endtime = form.endtime.value;
     var cookiename="soapologyInSessionUserName";
-    var uname = getCookie(cookiename);
+    // var uname = getCookie(cookiename);
     validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
     if (validationResult['isvalid']==false)
     {
@@ -338,10 +583,10 @@ span.psw {
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
     adata={
+      'employeeid':employeeid,
       'workingday':workingday,
       'starttime':starttime,
-      'endtime':endtime,
-      'uname':uname
+      'endtime':endtime
 
     }
     payload=JSON.stringify(adata)
@@ -375,7 +620,7 @@ span.psw {
         }
         else
         {
-          alert('Successful time logging for username ' + uname + ' for ' + workingday );
+          alert('Successful time logging for username ' + employeeid + ' for ' + workingday );
           closeLoginForm();
           //UpdateInSessionStateIfApplicable();
         }
@@ -383,7 +628,7 @@ span.psw {
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
-      console.error('Fetch error:', error);
+      console.log('Fetch error:', error);
     });
     return false;
   }

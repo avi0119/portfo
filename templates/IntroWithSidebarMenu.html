@@ -53,13 +53,14 @@ body {
 <div class="sidenav">
   <!-- <a href="#"onclick="return Login();">Login</a> -->
  
-
+  <a i href="#" onclick="return ClockInOutByEmployee();">Clock In/Out</a>
   <a i href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
   <a  href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a>
   <a id="createaccountid" href="#"onclick="return CreateAccount();">Create Account</a>
   <a href="#"onclick="return EditAccount();">Edit Account</a>
   <a id="downloadhistoricalid" href="#"onclick="return DownloadHistoricalTimeEntry();">Download Historicals</a>
   <a id="sendinvitationid" href="#"onclick="return SendSignUpInvitation();">Send Sign up Invitation</a>
+  <a id="sendemployeesetupinvitation" href="#"onclick="return SendEmployeeCreationInvitation();">Employee Setup Invite</a>
   <a href="#"onclick="return Logout();">Logout</a>
 
 </div>
@@ -175,6 +176,11 @@ body {
           {
               sendinvitationidelement=document.getElementById('sendinvitationid');
               sendinvitationidelement.style.display="none";
+
+              employeesetupelement=document.getElementById('sendemployeesetupinvitation');
+              employeesetupelement.style.display="none";
+
+              
               createaccountidelement=document.getElementById('createaccountid');
               createaccountidelement.style.display="none";
 
@@ -234,6 +240,13 @@ body {
     theelement=document.getElementById('contentpaneid');
     theelement.src = "HistoricalTimeEntry.html?MODE=timeentry&uname="+uname+"&fromdate=&todate=";//string_of_html;       
   }
+  function ClockInOutByEmployee()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "ClockInClockOutByEmployee.html";//string_of_html;    
+  }
   function SingleDayTimeEntry()
   {
     let string_of_html = '<div>Cool</div>'
@@ -273,6 +286,14 @@ body {
     return
 
 
+  }
+  function SendEmployeeCreationInvitation()
+  {
+        let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "EmployeeSetupInvitation.html";//string_of_html; 
+    return    
   }
 </script>
 </html> 

@@ -31,7 +31,7 @@ button:hover {
 }
 
 /* Extra styles for the cancel button */
-.cancelbtnx {
+.cancelbtn {
   width: auto;
   padding: 10px 18px;
   background-color: #f44336;
@@ -128,7 +128,7 @@ span.psw {
 </head>
 <body>
 
-<!-- <h2>Modal Login Form</h2> -->
+<h2>Employee Setup Invitation</h2>
 
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
 
@@ -136,47 +136,31 @@ span.psw {
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
     <div class="imgcontainer">
-      <h2 id="tileid">Single Day Time Entry</h2>
-      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Single Day Time Entryy">&times;</span>
-    </div>
-    <div class="imgcontainer">
-      <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
 <!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
     </div>
 
-    <div class="container" style="border: 0px solid red;">
-     
-      <label style="border: 0px solid red;display: inline-block;width: 120px;text-align: right;" for="fromdate" ><b>From:</b></label>
-       <input type="date" id="fromdate" name="fromdate" style="width:100px"><br><br>
+    <div class="container">
+      <label for="firstname"><b>First Name</b></label>
+      <input id="firstname" type="text" placeholder="Enter First NAme" name="firstname" required>
 
-      <label style="border: 0px solid red;display: inline-block;width: 120px;text-align: right;" for="todate" ><b>To:</b></label>
-       <input type="date" id="todate" name="todate" style="width:100px"><br><br>
+        <label for="lastname"><b>Last Name</b></label>
+      <input id="lastname" type="text" placeholder="Enter Last Name" name="lastname" required>
 
-      <label style="border: 0px solid red;display: inline-block;width: 120px;height:15px;text-align: right;" for="employeeid" ><b>Employee ID:</b></label>
-       <input type="text" id="employeeid" name="employeeid" style="width:100px;height:15px;" placeholder="emp id"><br><br>
-
-      
-
-<!--       <label for="SelectStartTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" ><b>Select Start Time</b></label>
-      <input type="time" id="starttime" name="starttime" style="width:100px"><br><br><br>
-
-      <label for="SelectEndTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Select End Time</b></label>
-      <input type="time" id="endtime" name="endtime" style="width:100px"><br><br><br> -->
-
-
+      <label for="email"><b>Email</b></label>
+      <input id="email" type="text" placeholder="Enter Email" name="email" required>
 
         
-      <button type="button" style="width:100px" onclick="HistoricalTimeEntry(this)" >View</button>
-      <button type="button" style="width:100px" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+      <button type="button" onclick="setAction(this)">Send Email Invitation </button>
 <!--       <label>
         <input type="checkbox" checked="checked" name="remember"> Remember me
       </label> -->
     </div>
 
     <div class="container" style="background-color:#f1f1f1">
-      <!-- <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button> -->
-<!--       <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
-<!--       <span class="psw">Forgot <a href="#">password?</a></span> -->
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+ <!--      <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
+      <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
     </div>
   </form>
 </div>
@@ -199,11 +183,7 @@ span.psw {
 
         
       // }
-      document.getElementById('id01').style.display='block';
-      titleelemnt=document.getElementById('tileid');
-      titleelemnt.innerHTML="Time Entry Query";
-
-      
+      document.getElementById('id01').style.display='block'
   }
   function delete_cookie(name) 
   {
@@ -224,7 +204,72 @@ span.psw {
       });
       //makeRequeestToInitilaLogin(myRequest)
   }
+  // function PopulateUserDetails() 
+  // {
+  //   form=document.getElementById('form1')
+  //   const url = 'getuserdetails';
+  //   // const andSign = '&';
+  //  var cookiename="soapologyInSessionUserName";
+  //   var uname = getCookie(cookiename);  
 
+  //   // const email = form.email.value;
+  //   // const firstname = form.firstname.value;      
+  //   // const lastname = form.lastname.value;
+  //   // const newUrl = url+uname+andSign+psw;
+  //   adata={
+  //     'uname':uname
+
+  //   }
+  //   payload=JSON.stringify(adata)
+  //   fetch(
+  //     url,
+  //     {            
+  //       headers: { "Content-Type": "application/json" },            
+  //       method: "POST",
+  //       body: payload
+  //     }
+  //   )
+  //   .then(response => {
+  //     // Check if the request was successful
+  //     if (!response.ok) 
+  //     {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     // Parse the response as JSON
+  //     return response.json();
+  //   })
+  //   .then(data => {
+  //       // Handle the JSON data
+  //       console.log(data);
+  //       if (data['success']==false)
+  //       {
+  //         alert('Unable to login\n'+data['msg']) 
+  //         if (data['msg']=='RelogginNeeded'){
+  //           // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+  //           Logout();
+  //         }
+          
+  //       }
+  //       else
+  //       {
+  //         dictionaryToPopulate=data['data'];
+  //         populateUserDictionary(dictionaryToPopulate)
+  //         // var hisotoricaldataelement = document.getElementById('historicaldataid');
+  //         // removeAllChildElmenst(hisotoricaldataelement);
+  //         // hisotoricaldataelement.appendChild(newTable);
+  //         // hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
+  //         //alert('Successful loging');
+  //         //closeLoginForm();
+
+  //       }
+  //     }
+  //   )
+  //   .catch(error => {
+  //     // Handle any errors that occurred during the fetch
+  //     console.error('Fetch error:', error);
+  //   });
+  //   return false;
+  // }
  function populateUserDictionary(userDictionartList)
  {
    adict=userDictionartList[0];
@@ -284,124 +329,22 @@ span.psw {
   function closeLoginForm(){
     document.getElementById('id01').style.display='none';
   }
-  function validateForFetchingHistoricals(fromdate,todate)
+  function setAction(ABUTTON) 
   {
-    ret={
+    form=document.getElementById('form1');
+    var url = 'sendemployeeidsetupinvitation';
 
-    }
-    var isValid=true;
-    var msg;
-      if (fromdate=='')
-      {
-        isValid=false;
-        msg="Please make sure to specify 'From date'"
-
-      }
-      else if (todate=='')
-      {
-        isValid=false;
-        msg="Please make sure to specify 'To Date'"
-      }
-      else
-      {
-          if (!(isTime1GreaterTahnTime2(endtime,starttime)))
-          {
-            ret['isvalid']=false;
-            ret['msg']="Please make sure that Ending Time is greater the Start Time";
-            
-          }
-          else
-          {
-            ret['isvalid']=true;
-            ret['msg']="Time entry is Valid";
-          }
-          return ret;
-      }
-  }
-  function convertDateToString(date)
-  {
-    return date.toISOString().substring(0,10);
-    // Get year, month, and day part from the date
-    var year = date.toLocaleString("default", { year: "numeric" });
-    var month = date.toLocaleString("default", { month: "2-digit" });
-    var day = date.toLocaleString("default", { day: "2-digit" });
-
-    // Generate yyyy-mm-dd date string
-    var formattedDate = year + "-" + month + "-" + day;
-    return formattedDate;
-  }
-function dateString2Date(dateString) {
-  const dt = dateString.split(/\-|\s/);
-  return new Date(dt.slice(0, 3).reverse().join('-') + ' ' + dt[3]);
-}
-  function HistoricalTimeEntry()
-  {
-
-    form=document.getElementById('form1')
     // const andSign = '&';
-    var employeeid=form.employeeid.value; 
-    var fromdate = form.fromdate.value;      
-    var todate = form.todate.value;
-    if (fromdate=='')
-    {
-      fromdate='1970-01-01'
-    }
-    if (todate=='')
-    {
-      todate='9999-12-31'
-    }
-    fromdate_date=new Date(fromdate);
-    todate_date=new Date(todate);
-    if (todate_date.getTime()<fromdate_date.getTime())
-    {
-      alert("Please make sure from date is not greater than To date");
-      return;
-    }
-    fromdate_=convertDateToString(fromdate_date);
-    todate_=convertDateToString(todate_date);
-    //theelement=document.body.innerHTML;
-    theelement=window.parent.document.getElementById('contentpaneid');
-   // window.location.href ="HistoricalTimeEntry.html?uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&n=" + new Date().getTime();//string_of_html;
-   document.getElementById('id01').style.display='none';
-    theelement.src = "HistoricalTimeEntry.html?MODE=query&uname=&fromdate=" + fromdate_+ "&todate="+todate_+ "&employeeid="+employeeid+ "&n=" + new Date().getTime(); 
-          
-  }
- function setAction(ABUTTON) 
-  {
-    form=document.getElementById('form1')
-    const url = 'gethistoricaltimeentry';
-    // const andSign = '&';
-    const fromdate = form.fromdate.value;      
-    const todate = form.todate.value;
-    if (fromdate=='')
-    {
-      fromdate='1970-01-01'
-    }
-    if (todate=='')
-    {
-      todate='2150-12-31'
-    }
-    fromdate_date=dateString2Date(fromdate);
-    todate_date=dateString2Date(todate);
-    if (todate_date.getTime()<fromdate_date.getTime())
-    {
-      alert("Please make sure from date is not greater than To date");
-      return;
-    }
-
-
-    var cookiename="soapologyInSessionUserName";
-    var uname = getCookie(cookiename);
-    // const email = form.email.value;
-    // const firstname = form.firstname.value;      
-    // const lastname = form.lastname.value;
+    // const uname = form.uname.value;      
+    // const psw = form.psw.value;
+    const email = form.email.value;
+    const firstname = form.firstname.value;      
+    const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
     adata={
-      'fromdate_date':fromdate_date,
-      'todate_date':todate_date
-      // ,'endtime':endtime,
-      // 'uname':uname
-
+      'email':email,
+      'firstname':firstname,
+      'lastname':lastname
     }
     payload=JSON.stringify(adata)
     fetch(
@@ -426,7 +369,9 @@ function dateString2Date(dateString) {
         console.log(data);
         if (data['success']==false)
         {
-          alert('Unable to create new user name\n'+data['msg'])
+          errormsg='Unable to send invitation\n';
+
+          alert(errormsg+data['msg'])
           if (data['msg']=="RelogginNeeded")
           {
             Logout()
@@ -434,9 +379,11 @@ function dateString2Date(dateString) {
         }
         else
         {
-          alert('Successful time logging for username ' + uname + ' for ' + workingday );
-          closeLoginForm();
-          //UpdateInSessionStateIfApplicable();
+
+            alert('Invitation sent successfully!');
+          
+
+          closeLoginForm()
         }
       }
     )

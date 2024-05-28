@@ -230,6 +230,7 @@ span.psw {
         uname_=urlParams.get('uname');
         fromdate_=urlParams.get('fromdate');
         todate_=urlParams.get('todate');
+        employeeid=urlParams.get('employeeid');
         MODE=urlParams.get('MODE');
        // var cookiename="soapologyInSessionUserName";
        // var uname = getCookie(cookiename); 
@@ -243,7 +244,7 @@ span.psw {
         document.getElementById('downloadbuttonid').style.display='block';
       }
 
-       PopulateHistoricalData(uname_,fromdate_,todate_);
+       PopulateHistoricalData(fromdate_,todate_,employeeid);
   }
   var modal = document.getElementById('id01');
 
@@ -310,11 +311,12 @@ span.psw {
   function returnNewTable(players)
  {
     const newTable = document.createElement("table");
-    newTable.innerHTML = "<thead><td>Username</td><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
+    newTable.innerHTML = "<thead><td>Employee ID</td><td>Name</td><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
     newtBody = document.createElement("tbody");
     for(player of players){
         const newRow = document.createElement("tr");
 
+         const tdemployeeID = document.createElement("td");
         const tdUname = document.createElement("td");
         const tdDate = document.createElement("td");
         const tdStart = document.createElement("td");
@@ -322,19 +324,22 @@ span.psw {
         const tdLastUpdated = document.createElement("td");
         const tdCreated = document.createElement("td");
       
-        tdUname.textContent = player.uname;
+        tdemployeeID.textContent = player.employeeid;
+        tdUname.textContent = player.name;
         tdDate.textContent = player.start_date.substr(0, 10);;
         tdStart.textContent = player.start_time;  
         tdEnd.textContent = player.end_time;
         tdLastUpdated.textContent = player.last_updated;  
         tdCreated.textContent = player.created;
 
+        newRow.appendChild(tdemployeeID);
         newRow.appendChild(tdUname);
         newRow.appendChild(tdDate);
         newRow.appendChild(tdStart);
         newRow.appendChild(tdEnd);
         newRow.appendChild(tdLastUpdated);
         newRow.appendChild(tdCreated);
+        
 
 
         newtBody.appendChild(newRow);
@@ -513,7 +518,7 @@ span.psw {
     return false;
   }
 
-  function PopulateHistoricalData(uname,fromdate,todate) 
+  function PopulateHistoricalData(fromdate,todate,employeeid) 
   {
     form=document.getElementById('form1')
     const url = 'gethistoricaltimeentry';
@@ -529,9 +534,9 @@ span.psw {
 
 
     }
-    if ((uname.length)>0)
+    if ((employeeid.length)>0)
     {
-      adata['uname']=uname;
+      adata['employeeid']=employeeid;
     }
     if ((fromdate.length)>0)
     {
