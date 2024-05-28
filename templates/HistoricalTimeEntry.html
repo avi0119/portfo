@@ -311,11 +311,12 @@ span.psw {
   function returnNewTable(players)
  {
     const newTable = document.createElement("table");
-    newTable.innerHTML = "<thead><td>Name</td><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
+    newTable.innerHTML = "<thead><td>Employee ID</td><td>Name</td><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
     newtBody = document.createElement("tbody");
     for(player of players){
         const newRow = document.createElement("tr");
 
+         const tdemployeeID = document.createElement("td");
         const tdUname = document.createElement("td");
         const tdDate = document.createElement("td");
         const tdStart = document.createElement("td");
@@ -323,6 +324,7 @@ span.psw {
         const tdLastUpdated = document.createElement("td");
         const tdCreated = document.createElement("td");
       
+        tdemployeeID.textContent = player.employeeid;
         tdUname.textContent = player.name;
         tdDate.textContent = player.start_date.substr(0, 10);;
         tdStart.textContent = player.start_time;  
@@ -330,12 +332,14 @@ span.psw {
         tdLastUpdated.textContent = player.last_updated;  
         tdCreated.textContent = player.created;
 
+        newRow.appendChild(tdemployeeID);
         newRow.appendChild(tdUname);
         newRow.appendChild(tdDate);
         newRow.appendChild(tdStart);
         newRow.appendChild(tdEnd);
         newRow.appendChild(tdLastUpdated);
         newRow.appendChild(tdCreated);
+        
 
 
         newtBody.appendChild(newRow);
