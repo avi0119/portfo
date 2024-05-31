@@ -5,6 +5,90 @@
 <style>
 body {font-family: Arial, Helvetica, sans-serif;}
 
+
+.loaderclass {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+div.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+div.disabled *:focus 
+{
+ outline: 0; 
+}
+.loading-state {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loading {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 10px solid #ddd;
+  border-top-color: orange;
+  /*animation: loading 1s linear infinite;*/
+  animation: rotation 1200ms infinite linear; 
+}
+.brnx-loading-scaleout  {
+  transform: scale(0);
+  animation: scaleout 1000ms ease-in;  
+}
+@keyframes scaleout {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+@keyframes loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Full-width input fields */
 input[type=text], input[type=password] {
   width: 100%;
@@ -139,9 +223,11 @@ span.psw {
 <!-- <h2>Modal Login Form</h2> -->
 
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
-
-<div id="id01" class="modal">
-  
+<div id="loader" class="loaderclass"></div>
+<div id="id01" class="modal disabledxyz">
+<!-- <div class="loading-state">
+  <div id="rotatingdivid" class="loading"></div>
+</div> -->
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
     <div class="imgcontainer">
       <h2>Single Day Time Entry</h2>
@@ -196,6 +282,31 @@ span.psw {
 // Get the modal
   document.getElementById('id01').style.display='block'
   var modal = document.getElementById('id01');
+
+   function disablenteraction() 
+  {
+    var element = document.getElementById("id01");
+    element.classList.add("disabled");
+    var element = document.getElementById("loader");
+    element.classList.add("loaderclass");
+    return;
+    element = document.getElementById("rotatingdivid");
+    element.classList.remove("loading");
+    element.classList.add('brnx-loading-scaleout');
+
+   } 
+  function enableInteraction() 
+  {
+    var element = document.getElementById("id01");
+    element.classList.remove("disabled");
+    var element = document.getElementById("loader");
+    element.classList.remove("loaderclass");
+    return;
+    element = document.getElementById("rotatingdivid");
+    element.classList.remove("loading");
+    element.classList.add('brnx-loading-scaleout');
+
+   }
   function employeeChange(avalue)
   {
     employeedidinput=document.getElementById('employeedidinput');
@@ -227,25 +338,31 @@ span.psw {
       //alert('populating');
       if (StartAndEndTimeArray.length>0)
       {
-        text=PopulateTimeQuestion();
+        text="OK";//PopulateTimeQuestion();
          response=text=="OK";
          if (response)
          {
-          var obj=StartAndEndTimeArray[0];
-          endtime=obj['end_time']
-          starttime=obj['start_time'];
-           form.starttime.value=FormatTimeToorPM(starttime);
-           if (endtime!="0:00:00")
-           {
-              form.endtime.value=FormatTimeToorPM(endtime);     
-           }
+            var obj=StartAndEndTimeArray[0];
+            endtime=obj['end_time']
+            starttime=obj['start_time'];
+             form.starttime.value=FormatTimeToorPM(starttime);
+             if (endtime!="0:00:00")
+             {
+                form.endtime.value=FormatTimeToorPM(endtime);     
+             }
          }
               
+      }
+      else
+      {
+            form=document.getElementById('form1')
+             form.starttime.value=null;
+             form.endtime.value=null;      
       }
 
   }
   function PopulateTimeQuestion() {
-  let text = "Start and/or end time records found fro current working day adn employee id.\nWould you like to prepopulate?";
+  let text = "Start and/or end time records found for current working day and employee id.\nWould you like to prepopulate?";
   if (confirm(text) == true) {
     text = "OK";
   } else {
@@ -262,7 +379,7 @@ span.psw {
     {
       return;
     }
-
+    disablenteraction();
    form=document.getElementById('form1')
     const url = 'detailsofexiitngtimeentryifapplicable';
     // const andSign = '&';
@@ -299,6 +416,7 @@ span.psw {
       // Check if the request was successful
       if (!response.ok) 
       {
+        enableInteraction();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -314,6 +432,10 @@ span.psw {
           {
             Logout()
           }
+            form=document.getElementById('form1')
+             form.starttime.value=null;
+             form.endtime.value=null;     
+
         }
         else
         {
@@ -323,11 +445,13 @@ span.psw {
           //UpdateInSessionStateIfApplicable();
           populateStartAndEndTime(data['data']);
         }
+        enableInteraction();
       }
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
       console.log('Fetch error:', error);
+      enableInteraction();
     });
     return false;
 
@@ -343,7 +467,7 @@ span.psw {
   populateAllEmployyes();
   function populateAllEmployyes()
   {
-
+    disablenteraction();
     form=document.getElementById('form1')
     const url = 'returnlistofallemployees';
     // const andSign = '&';
@@ -383,16 +507,20 @@ span.psw {
       // Check if the request was successful
       if (!response.ok) 
       {
+        enableInteraction();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
       return response.json();
     })
-    .then(data => {
+    .then(data => 
+    {
         // Handle the JSON data
+        
         console.log(data);
         if (data['success']==false)
         {
+          enableInteraction();
           alert('Unable to fetch all employees\n'+data['msg'])
           if (data['msg']=="RelogginNeeded")
           {
@@ -405,12 +533,14 @@ span.psw {
           // alert('Successful time logging for username ' + uname + ' for ' + workingday );
           // closeLoginForm();
           //UpdateInSessionStateIfApplicable();
+          enableInteraction();
           populateDropDownListOfEmployyes(data['data']);
         }
       }
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
+      enableInteraction();
       console.log('Fetch error:', error);
     });
     return false;
