@@ -3,6 +3,56 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+
+.loaderclass {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+div.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+div.disabled *:focus 
+{
+ outline: 0; 
+}
+body.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+body.disabled *:focus 
+{
+ outline: 0; 
+}
+
   table {
   border-collapse: collapse;
     font-family: Tahoma, Geneva, sans-serif;
@@ -148,9 +198,9 @@ span.psw {
 </style>
 </head>
 <body id="LogInBodyID">
-
+<div id="loader" class="loaderclass"></div>
 <!-- <h2>Modal Login Form</h2> -->
-<div id="downloadbuttonid">
+<div id="downloadbuttonid" class="disabled">
   <button type="button"  onclick="downloadFile(this)" style="width:150px">Download Results</button>
 
 </div>
@@ -219,7 +269,30 @@ span.psw {
 <script>
 // Get the modal
   // document.getElementById('id01').style.display='block'
+   function disablenteraction() 
+  {
+    var element = document.getElementById("downloadbuttonid");
+    element.classList.add("disabled");
+    var element = document.getElementById("loader");
+    element.classList.add("loaderclass");
+    return;
+    element = document.getElementById("rotatingdivid");
+    element.classList.remove("loading");
+    element.classList.add('brnx-loading-scaleout');
 
+   } 
+     function enableInteraction() 
+  {
+    var element = document.getElementById("downloadbuttonid");
+    element.classList.remove("disabled");
+    var element = document.getElementById("loader");
+    element.classList.remove("loaderclass");
+    return;
+    element = document.getElementById("rotatingdivid");
+    element.classList.remove("loading");
+    element.classList.add('brnx-loading-scaleout');
+
+   }
   PopulateHistoricalDataWrapper();
   function  PopulateHistoricalDataWrapper()
   {
@@ -520,6 +593,7 @@ span.psw {
 
   function PopulateHistoricalData(fromdate,todate,employeeid) 
   {
+
     form=document.getElementById('form1')
     const url = 'gethistoricaltimeentry';
     // const andSign = '&';
@@ -559,6 +633,7 @@ span.psw {
       // Check if the request was successful
       if (!response.ok) 
       {
+        enableInteraction();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -569,6 +644,7 @@ span.psw {
         console.log(data);
         if (data['success']==false)
         {
+          enableInteraction();
           alert('Unable to login\n'+data['msg']) 
           if (data['msg']=='RelogginNeeded'){
             // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
@@ -583,6 +659,7 @@ span.psw {
           var hisotoricaldataelement = document.getElementById('historicaldataid');
           removeAllChildElmenst(hisotoricaldataelement);
           hisotoricaldataelement.appendChild(newTable);
+          enableInteraction();
           // hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
           //alert('Successful loging');
           //closeLoginForm();
@@ -592,7 +669,8 @@ span.psw {
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
-      console.error('Fetch error:', error);
+      console.log('Fetch error:', error);
+      enableInteraction();
     });
     return false;
   }
