@@ -3,6 +3,56 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+
+  .loaderclass {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+div.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+div.disabled *:focus 
+{
+ outline: 0; 
+}
+form.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+form.disabled *:focus 
+{
+ outline: 0; 
+}
+
 body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Full-width input fields */
@@ -142,10 +192,10 @@ span.psw2 {
 <!-- <h2 id="txt" style="'color':'blue';"></h2> -->
 
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
-
+<div id="loader" class="loaderclassxx"></div>
 <div id="id01" class="modal">
   
-  <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
+  <form class="modal-content animate" action="submit_login_form" method="post" id="form1" >
     <div class="imgcontainer">
       <span class="close" title="Close Modal">&times;</span>
        <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
@@ -189,6 +239,30 @@ span.psw2 {
   document.getElementById('id01').style.display='block'
   var modal = document.getElementById('id01');
 var CURRENT_TIME;
+   function disablenteraction() 
+  {
+    var element = document.getElementById("form1");
+    element.classList.add("disabled");
+    var element = document.getElementById("loader");
+    element.classList.add("loaderclass");
+    return;
+    element = document.getElementById("rotatingdivid");
+    element.classList.remove("loading");
+    element.classList.add('brnx-loading-scaleout');
+
+   } 
+     function enableInteraction() 
+  {
+    var element = document.getElementById("form1");
+    element.classList.remove("disabled");
+    var element = document.getElementById("loader");
+    element.classList.remove("loaderclass");
+    return;
+    element = document.getElementById("rotatingdivid");
+    element.classList.remove("loading");
+    element.classList.add('brnx-loading-scaleout');
+
+   }
 function returnAction(){
      
      var radio_ele = document.querySelector('input[name="optradio"]:checked');
@@ -321,6 +395,7 @@ function checkTime(i) {
       alert('please make sure to specify clock in or out');
       return;
     }
+    disablenteraction();
     adata={
       'employeeid':employeeid,
       'currenttime':current_time,
@@ -340,6 +415,7 @@ function checkTime(i) {
       // Check if the request was successful
       if (!response.ok) 
       {
+        enableInteraction();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -358,8 +434,15 @@ function checkTime(i) {
         }
         else
         {
-                //alert('Successful loging');
-                closeLoginForm();
+                alert('You have successfuly entered your time');
+                enableInteraction();
+
+
+                setTimeout(() => {
+                  console.log("Delayed for 1 second.");
+                  closeLoginForm();
+                }, "1000");
+                
 
  
                 //makerequestToDisplayMenu(myRequest);
@@ -369,6 +452,7 @@ function checkTime(i) {
     .catch(error => {
       // Handle any errors that occurred during the fetch
       console.log('Fetch error:', error);
+      enableInteraction();
     });
     return false;
   }
