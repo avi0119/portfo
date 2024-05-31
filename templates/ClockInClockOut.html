@@ -712,6 +712,7 @@ span.psw {
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
+    disablenteraction();
     adata={
       'employeeid':employeeid,
       'workingday':workingday,
@@ -732,6 +733,7 @@ span.psw {
       // Check if the request was successful
       if (!response.ok) 
       {
+        enableInteraction();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -739,10 +741,12 @@ span.psw {
     })
     .then(data => {
         // Handle the JSON data
+        
         console.log(data);
         if (data['success']==false)
         {
-          alert('Unable to create new user name\n'+data['msg'])
+          enableInteraction();
+          alert('Unable to update time for employee\n'+data['msg']);
           if (data['msg']=="RelogginNeeded")
           {
             Logout()
@@ -750,14 +754,20 @@ span.psw {
         }
         else
         {
-          alert('Successful time logging for username ' + employeeid + ' for ' + workingday );
-          closeLoginForm();
+          enableInteraction();
+          setTimeout(() => {
+              console.log("Delayed for 1 second.");
+              alert('Successful time logging for username ' + employeeid + ' for ' + workingday );
+              closeLoginForm();
+          }, "1000");
+
           //UpdateInSessionStateIfApplicable();
         }
       }
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
+      enableInteraction();
       console.log('Fetch error:', error);
     });
     return false;
