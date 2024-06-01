@@ -1,3 +1,4 @@
+import passwordhashing
 from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify, send_file,send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
@@ -298,7 +299,7 @@ def crate_new_user():
     print ('inside submit_login_form')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']
+    #uname= request.form['uname']  
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -316,10 +317,16 @@ def crate_new_user():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     if numberOfusersOfSameUname>0:
-    	return {'success':False,'msg':'this user name is already taken'}
-    res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    	return {'success':False,'msg':'this user name is already taken'}	
+    hashedpasword=passwordhashing.hash_password(password,SALT) 
+    res=recordNewUserName(uname,first_name, last_name, hashedpasword,  last_updated, created,email)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
+def isPasswordCorerctForUserName(uname,password):
+    dbpasswoord=ReturnProvidedPasswordForUSerName(uname)
+    password_matched = passwordhashing.verify_password(dbpasswoord, password, SALT)
+
+    return password_matched
 @app.route('/updateuser', methods=['POST','GET'])
 def updateUserDeatils():
     print ('inside updateUserDeatils')
@@ -526,7 +533,7 @@ def updateUserName( uname,first_name, last_name,   last_updated,email):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print('inside login')
-    # uname= request.form['uname']
+    # uname= request.form['uname'] 
     # psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -540,7 +547,9 @@ def login():
     password = psw
     last_updated = new_today_date
     created = last_updated
-    isAuthenticationSuccessful = isUserPasswordCombinationInDB(uname, psw)
+    print('about to authenticate')
+    isAuthenticationSuccessful = isPasswordCorerctForUserName(uname, psw)#isUserPasswordCombinationInDB(uname, psw)
+    print('done authenticating')
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     if isAuthenticationSuccessful == False:
