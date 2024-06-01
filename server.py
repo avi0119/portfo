@@ -1,3 +1,4 @@
+import passwordhashing
 import uuid
 import pandas as pd
 #import pyjokes
@@ -18,7 +19,7 @@ import sys
 import smtplib
 from email.mime.text import MIMEText
 from urllib.parse import urlparse
-
+SALT="SALTANDPEPPER"
 HOST12701='127.0.0.1'
 DOMAIN_HTTP_ADDRESS='http://127.0.0.1:5000'
 # SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
@@ -206,11 +207,14 @@ def submit_form():
 		return 'something went wrong.  Try again!'
 
 
-
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(app.root_path,'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    # return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico', mimetype='image/vnd.microsoft.icon')
 @app.route('/<string:page_name>')
 def dynamicurl(page_name):
 	#return 'Hello, World'
-	print("page_name:" + page_name)
+	print("page_name is:" + page_name)
 	return render_template(page_name)
 
 def write_to_file(data):
@@ -380,9 +384,15 @@ def crate_new_user():
     # return {'ret':typeogf}
     if numberOfusersOfSameUname>0:
     	return {'success':False,'msg':'this user name is already taken'}	
-    res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
+    hashedpasword=passwordhashing.hash_password(password,SALT) 
+    res=recordNewUserName(uname,first_name, last_name, hashedpasword,  last_updated, created,email)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
+def ReturnProvidedPasswordForUSerName(uname):
+	user_details= returnAllUserDetailsForUserName(uname)  
+	adict=user_details[1][0]
+	hashedpassword=adict['password']
+	return hashedpassword
 @app.route('/updateuser', methods=['POST','GET'])
 def updateUserDeatils():
     print ('inside updateUserDeatils')
@@ -603,7 +613,9 @@ def login():
     password = psw
     last_updated = new_today_date
     created = last_updated
-    isAuthenticationSuccessful = isUserPasswordCombinationInDB(uname, psw)
+    print('about to authenticate')
+    isAuthenticationSuccessful = isPasswordCorerctForUserName(uname, psw)#isUserPasswordCombinationInDB(uname, psw)
+    print('done authenticating')
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     if isAuthenticationSuccessful == False:
@@ -621,6 +633,11 @@ def IsThereSecurityCookie():
 	if 'soapologyInSessionUserName' in request.cookies:
 		ret=True
 	return ret
+def isPasswordCorerctForUserName(uname,password):
+    dbpasswoord=ReturnProvidedPasswordForUSerName(uname)
+    password_matched = passwordhashing.verify_password(dbpasswoord, password, SALT)
+
+    return password_matched
 def isUserPasswordCombinationInDB(uname,psw):
     try:
         # if not mysql.open:
@@ -809,7 +826,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
             #return  (False,"xyzxyz")
-            sqltext = f"SELECT t.* ,CONCAT(e.first_name,' ', e.last_name) as name  FROM timeentry t inner join employees e on e.employeeid=t.employeeid"
+            sqltext = f"SELECT t.* ,CONCAT(e.first_name,' ', e.last_name) as name,TIMEDIFF(end_time, start_time) as hours_worked  FROM timeentry t inner join employees e on e.employeeid=t.employeeid"
             criteria=''
             if (employeeid!=None):
             	criteria=f" where t.employeeid='{employeeid}'"
@@ -1823,6 +1840,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
             # sqltext="select * from users" #where uname='{uname}'""
             #sqltext = f"SELECT * FROM timeentry where employeeid={employeeid} and start_date='{workingday}'"
             sqltext=f"select * from timeentry where start_time= (SELECT max(start_time) as maxStart FROM  timeentry where  start_date  ='{workingday}' and employeeid={employeeid} and end_time is null) and start_date  ='{workingday}' and employeeid={employeeid}"
+            print(f'sql to find id::{sqltext}')
             cursor.execute(sqltext)
             # cursor.execute('''select * from City''')
             rows = cursor.fetchall()
@@ -1874,7 +1892,7 @@ def my_about():
 	print('goinf to about html')
 	return render_template('about.html')
 
-@app.route('/works.html')
+@app.route('/works.html') 
 def my_works():
 	#return 'Hello, World'
 	return render_template('works.html')

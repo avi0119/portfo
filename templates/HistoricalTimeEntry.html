@@ -380,11 +380,29 @@ span.psw {
       aNode.removeChild(aNode.lastElementChild);
     }
   }   
+  function roundNum(number){
+   return +(Math.round(number + "e+2") + "e-2");
+}
+  function ReturnNumberOfHoursWith2DecimalsPoiint(hours_worked)
+  {
+    ret=hours_worked.toString();
 
+    try
+    {
+      var arr=ret.split(':');
+      temp=(arr[0])*1+(arr[1])/60+(arr[2])/3600;
+      ret=roundNum(temp);
+    }
+    catch(err) 
+    {
+      
+    }
+    return ret;
+  }
   function returnNewTable(players)
  {
     const newTable = document.createElement("table");
-    newTable.innerHTML = "<thead><td>Employee ID</td><td>Name</td><td>Date</td><td>Start</td><td>End</td><td>Last Updated</td><td>Created</td></thead>";
+    newTable.innerHTML = "<thead><td>Employee ID</td><td>Name</td><td>Date</td><td>Start</td><td>End</td><td>Hrs Worked</td></thead>";
     newtBody = document.createElement("tbody");
     for(player of players){
         const newRow = document.createElement("tr");
@@ -394,24 +412,24 @@ span.psw {
         const tdDate = document.createElement("td");
         const tdStart = document.createElement("td");
         const tdEnd = document.createElement("td");
-        const tdLastUpdated = document.createElement("td");
-        const tdCreated = document.createElement("td");
+        const tdHoursWorked = document.createElement("td");
+        //const tdCreated = document.createElement("td");
       
         tdemployeeID.textContent = player.employeeid;
         tdUname.textContent = player.name;
         tdDate.textContent = player.start_date.substr(0, 10);;
         tdStart.textContent = player.start_time;  
         tdEnd.textContent = player.end_time;
-        tdLastUpdated.textContent = player.last_updated;  
-        tdCreated.textContent = player.created;
+        tdHoursWorked.textContent = ReturnNumberOfHoursWith2DecimalsPoiint(player.hours_worked);  
+        //tdCreated.textContent = player.created;
 
         newRow.appendChild(tdemployeeID);
         newRow.appendChild(tdUname);
         newRow.appendChild(tdDate);
         newRow.appendChild(tdStart);
         newRow.appendChild(tdEnd);
-        newRow.appendChild(tdLastUpdated);
-        newRow.appendChild(tdCreated);
+        newRow.appendChild(tdHoursWorked);
+        //newRow.appendChild(tdCreated);
         
 
 
