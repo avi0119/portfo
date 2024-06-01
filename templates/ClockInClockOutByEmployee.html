@@ -424,6 +424,7 @@ function checkTime(i) {
     .then(data => {
         // Handle the JSON data
         console.log(data);
+        enableInteraction();
         if (data['success']==false)
         {
           if (data['msg']=="RelogginNeeded")
