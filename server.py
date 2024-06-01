@@ -530,6 +530,11 @@ def updateUserName( uname,first_name, last_name,   last_updated,email):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False, {"error": f'{e}'})
+def ReturnProvidedPasswordForUSerName(uname):
+	user_details= returnAllUserDetailsForUserName(uname)  
+	adict=user_details[1][0]
+	hashedpassword=adict['password']
+	return hashedpassword
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print('inside login')
