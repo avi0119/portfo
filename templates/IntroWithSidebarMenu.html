@@ -149,7 +149,7 @@ body {
       return ret;
   }
   function UpdateInSessionStateIfApplicable() {
-      var cookiename="soapologyInSessionUserName";
+      var cookiename="soapologyInSessionUserName";//this will need to be a different cookie that store ths user name
       var myCookie = getCookie(cookiename);
 
       if (myCookie == null) 
@@ -233,7 +233,7 @@ body {
   }
   function HistoricalTimeEntry()
   {
-    var cookiename="soapologyInSessionUserName";
+    var cookiename="soapologyInSessionUserName";//this will need to be a different cookie that store ths user name
     var uname = getCookie(cookiename); 
     let string_of_html = '<div>Cool</div>'
     //theelement=document.body.innerHTML;
