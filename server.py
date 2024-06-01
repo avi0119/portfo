@@ -1326,10 +1326,10 @@ def recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,
 def ClockInOrOut():
     print ('inside ClockInOrOut')
     if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}
+    	return {'success':False,'msg':'RelogginNeeded'}   
     content = request.get_json(silent=True)
 
-    currenttime= content['currenttime']
+    currenttime= content['currenttime']  
     currenttime_as_date=datetime.strptime(currenttime, '%Y-%m-%d %H:%M:%S')
 
 
@@ -1342,10 +1342,10 @@ def ClockInOrOut():
     # 	'employeeid':employeeid,
     # 	'action':action
 
-    # }
+    # } 
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
-
+    
     #print(content['uname'])
     # uname=content['uname']
     # starttime=content['starttime']
@@ -1356,9 +1356,9 @@ def ClockInOrOut():
     # 	'endtime':endtime,
     # 	'workingday':workingday,
     # 	'uname':uname
-    # }
-
-
+    # } 
+    
+    
 
     last_updated=new_today_date
     created=last_updated
@@ -1375,17 +1375,27 @@ def ClockInOrOut():
     recordExists=False
     if int(numberOfusersOfSameUname)==1:
     	recordExists=True
-    if action=='out' and recordExists==False:
+    if action=='out' and recordExists==False and True==False:# this is cancleed b/c it may be that employee forgot to clock in but does clocks in
     	return {'success':False,'msg':f'unable to clock out for {workingday} while no records of prior clocking for that day were found'}
     	# return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}
+    temmp2=returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDateWhereEndDateIsNull(employeeid,workingday);
+    numberEntriesInitializedButNotFinalized=int(temmp2)    			
     if action=='in':
-    	res=recordClockIn(employeeid,workingday,time,last_updated, created)
-    else:
-    	res=recordClockOut(employeeid,workingday,time,last_updated, created)
 
+    	print (f"there are {numberEntriesInitializedButNotFinalized} records initialized but not finalized for employee id {employeeid}")
+    	if numberEntriesInitializedButNotFinalized==1:
+    		return {'success':False,'msg':f'unable to clock in for {workingday} while a non finalized clock-in entry was recorded for today'}
+    	else:
+    		res=recordClockIn(employeeid,workingday,time,last_updated, created)
+    else:
+    	if numberEntriesInitializedButNotFinalized>0:
+    		idtimeentry=ReturnIdOfRecordToUpdateAsfarAsClockingOut(employeeid,workingday)
+    		res=recordClockOut(employeeid,workingday,time,last_updated, created,idtimeentry)
+    	else:
+            res=recordClockOutInserNewRecord(employeeid,workingday,time,last_updated, created)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
-def recordClockOut(employeeid,workingday,time,last_updated, created):
+def recordClockOut(employeeid,workingday,time,last_updated, created,idtimeentry):
     try:
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
@@ -1394,14 +1404,15 @@ def recordClockOut(employeeid,workingday,time,last_updated, created):
         # startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
         # sqltext_deleteexisitngrecord = f"delete from  timeentry where employeeid={employeeid} and workingday='{workingday}';"
         # sqltext = f"INSERT INTO timeentry ( employeeid,start_date,end_time,last_updated, created) VALUES ({employeeid}, '{workingday}', '{time}',  '{last_updated}','{created}');"
-        sqltext = f"update timeentry set end_time='{time}',last_updated='{last_updated}' where employeeid={employeeid} and start_date='{workingday}';"
+        # sqltext = f"update timeentry set end_time='{time}',last_updated='{last_updated}' where employeeid={employeeid} and start_date='{workingday}';"
+        sqltext = f"update timeentry set end_time='{time}',last_updated='{last_updated}' where idtimeentry={idtimeentry};"
         # return (False,sqltext)
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
             ssh_password=app.config["MYSQL_PASSWORD"],
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-
+            
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1411,10 +1422,10 @@ def recordClockOut(employeeid,workingday,time,last_updated, created):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-
+    
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
 def recordClockIn(employeeid,workingday,time,last_updated, created):
     try:
         # if not mysql.open:
@@ -1422,7 +1433,7 @@ def recordClockIn(employeeid,workingday,time,last_updated, created):
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
         # startdate_converted_to_date = datetime.strptime(workingday, '%Y-%m-%d')
         # startdate_no_time = startdate_converted_to_date.strftime("%Y-%m-%d %H:%M:%S")
-        sqltext_deleteexisitngrecord = f"delete from  timeentry where employeeid={employeeid} and start_date='{workingday}';"
+        #sqltext_deleteexisitngrecord = f"delete from  timeentry where employeeid={employeeid} and start_date='{workingday}';"
         sqltext = f"INSERT INTO timeentry ( employeeid,start_date,start_time,last_updated, created) VALUES ({employeeid}, '{workingday}', '{time}',  '{last_updated}','{created}');"
         # return (False,sqltext)
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
@@ -1430,20 +1441,20 @@ def recordClockIn(employeeid,workingday,time,last_updated, created):
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-
+            
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
-            cursor.execute(sqltext_deleteexisitngrecord)
+            #cursor.execute(sqltext_deleteexisitngrecord)
             cursor.execute(sqltext)
             # cursor.execute('''select * from States''')
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-
+    
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
 def recordClockInAndOut(employeeid,workingday,start_time,end_time,last_updated, created):
     try:
         # if not mysql.open:
@@ -1702,8 +1713,46 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False,({"error": str(e)}))
-
-
+def ReturnIdOfRecordToUpdateAsfarAsClockingOut(employeeid,workingday):
+    listOfresults=returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday)
+    data_as_dict=listOfresults[1] 
+    recordid=data_as_dict[0]['idtimeentry']
+    print(f'record id is {recordid}')
+    return recordid
+def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDateWhereEndDateIsNull(employeeid,workingday):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor()
+            #sqltext="select * from City where name='"+ city+ "'"
+            #sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"SELECT count(*) as count FROM  timeentry where  start_date  ='{workingday}' and employeeid={employeeid} and end_time is null"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            main_list = []
+            
+            for row in rows:
+                current_list = []
+                for i in row:
+                    current_list.append(i)
+                main_list.append(current_list)
+            count=main_list[0][0]
+            return count# int([data[0]]['count'])
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error": str(e)+ '\n'+ f'sql: {sqltext}'})
 '''
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form(page_name):
