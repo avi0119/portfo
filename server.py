@@ -15,6 +15,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 import csv
+SALT="SALTANDPEPPER"
 HOST12701='127.0.0.1'
 DOMAIN_HTTP_ADDRESS='http://127.0.0.1:5000'
 
