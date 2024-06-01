@@ -565,14 +565,42 @@ def login():
     dict=user_details[1][0]
     del dict['password']
     out = jsonify(success=True, msg='successful authentication!',user_details=dict)
-    out.set_cookie('soapologyInSessionUserName', uname)
+    soapologyInSessionUserNameTokenValue=uname
+    out.set_cookie('soapologyInSessionUserName', soapologyInSessionUserNameTokenValue)
+    session['soapologyInSessionUserName']=soapologyInSessionUserNameTokenValue
+    #session.modified = True
+    print (f'just set the seeion variable soapologyInSessionUserName to {soapologyInSessionUserNameTokenValue}')
+    print(f"session varibale after it has been set is {session['soapologyInSessionUserName']}")
     return out
     # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
+def getValueOfSessionCookie_old(cookiename):
+	val= session.get(cookiename)
+	print (f"inside getValueOfSessionCookie def the session key {cookiename} is {val}")
+	if val==True:
+		return val
+	else:
+		return None
+def getValueOfSessionCookie(cookiename):
+	val=None
+	try:
+		val= session[cookiename]
+	except:
+		print (f"unable to read session value of {cookiename}")
+	print (f"inside getValueOfSessionCookie def the session key {cookiename} is {val}")
+	return val
 def IsThereSecurityCookie():
 	ret=False
 	if 'soapologyInSessionUserName' in request.cookies:
-		ret=True
+		cookie_value=request.cookies.get('soapologyInSessionUserName')
+		
+		valueofcookiinSession=getValueOfSessionCookie('soapologyInSessionUserName')
+		print (f"value of cookie soapologyInSessionUserName is {cookie_value} and session's value is {valueofcookiinSession}")
+		if valueofcookiinSession==None:
+			ret= False
+		else:
+			ret=cookie_value==valueofcookiinSession
 	return ret
+
 def isUserPasswordCombinationInDB(uname,psw):
     try:
         # if not mysql.open:
