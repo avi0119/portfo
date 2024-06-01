@@ -26,6 +26,7 @@ SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostnam
     databasename="asemah$miscdb",
 )
 app=Flask(__name__)
+app.secret_key = "BAD_SECRET_KEY"#os.urandom(24)
 print(__name__)
 
 api = Api(app)
