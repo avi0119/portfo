@@ -1683,11 +1683,13 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-
+            
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
-            sqltext = f"SELECT * FROM timeentry where employeeid={employeeid} and start_date='{workingday}'"
+            #sqltext = f"SELECT * FROM timeentry where employeeid={employeeid} and start_date='{workingday}'"
+            sqltext=f"select * from timeentry where start_time= (SELECT max(start_time) as maxStart FROM  timeentry where  start_date  ='{workingday}' and employeeid={employeeid} and end_time is null) and start_date  ='{workingday}' and employeeid={employeeid}"
+            print(f'sql to find id::{sqltext}')
             cursor.execute(sqltext)
             # cursor.execute('''select * from City''')
             rows = cursor.fetchall()
@@ -1696,7 +1698,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-
+                
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -1713,6 +1715,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False,({"error": str(e)}))
+
 def ReturnIdOfRecordToUpdateAsfarAsClockingOut(employeeid,workingday):
     listOfresults=returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday)
     data_as_dict=listOfresults[1] 
