@@ -3,7 +3,7 @@ import uuid
 import pandas as pd
 #import pyjokes
 from datetime import datetime
-from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify, send_file,send_from_directory
+from flask import Flask,render_template,url_for,redirect,request,send_from_directory,jsonify, send_file,send_from_directory,session
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS #comment this on deployment
 from api.HelloApiHandler import HelloApiHandler
@@ -19,6 +19,7 @@ import sys
 import smtplib
 from email.mime.text import MIMEText
 from urllib.parse import urlparse
+import os
 SALT="SALTANDPEPPER"
 HOST12701='127.0.0.1'
 DOMAIN_HTTP_ADDRESS='http://127.0.0.1:5000'
@@ -38,6 +39,7 @@ SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostnam
 '''
 #app=Flask(__name__,static_url_path='', static_folder='frontend\public')
 app=Flask(__name__)
+app.secret_key = "BAD_SECRET_KEY"#os.urandom(24)
 print(__name__+"xyz")
 CORS(app) #comment this on deployment
 api = Api(app)
@@ -625,13 +627,41 @@ def login():
     dict=user_details[1][0]
     del dict['password']
     out = jsonify(success=True, msg='successful authentication!',user_details=dict)
-    out.set_cookie('soapologyInSessionUserName', uname)
+    soapologyInSessionUserNameTokenValue=uname
+    out.set_cookie('soapologyInSessionUserName', soapologyInSessionUserNameTokenValue)
+    session['soapologyInSessionUserName']=soapologyInSessionUserNameTokenValue
+    #session.modified = True
+    print (f'just set the seeion variable soapologyInSessionUserName to {soapologyInSessionUserNameTokenValue}')
+    print(f"session varibale after it has been set is {session['soapologyInSessionUserName']}")
     return out
     # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
+def getValueOfSessionCookie_old(cookiename):
+	val= session.get(cookiename)
+	print (f"inside getValueOfSessionCookie def the session key {cookiename} is {val}")
+	if val==True:
+		return val
+	else:
+		return None
+def getValueOfSessionCookie(cookiename):
+	val=None
+	try:
+		val= session[cookiename]
+	except:
+		print (f"unable to read session value of {cookiename}")
+	print (f"inside getValueOfSessionCookie def the session key {cookiename} is {val}")
+	return val
+
 def IsThereSecurityCookie():
 	ret=False
 	if 'soapologyInSessionUserName' in request.cookies:
-		ret=True
+		cookie_value=request.cookies.get('soapologyInSessionUserName')
+		
+		valueofcookiinSession=getValueOfSessionCookie('soapologyInSessionUserName')
+		print (f"value of cookie soapologyInSessionUserName is {cookie_value} and session's value is {valueofcookiinSession}")
+		if valueofcookiinSession==None:
+			ret= False
+		else:
+			ret=cookie_value==valueofcookiinSession
 	return ret
 def isPasswordCorerctForUserName(uname,password):
     dbpasswoord=ReturnProvidedPasswordForUSerName(uname)
