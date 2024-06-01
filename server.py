@@ -566,8 +566,11 @@ def login():
     dict=user_details[1][0]
     del dict['password']
     out = jsonify(success=True, msg='successful authentication!',user_details=dict)
-    soapologyInSessionUserNameTokenValue=uname
-    out.set_cookie('soapologyInSessionUserName', soapologyInSessionUserNameTokenValue)
+    result = uuid.uuid4()
+    token=result.hex
+    soapologyInSessionUserNameTokenValue=token
+    out.set_cookie('soapologyInSessionUserName', token)
+    out.set_cookie('soapologyUnameOnly', uname)
     session['soapologyInSessionUserName']=soapologyInSessionUserNameTokenValue
     #session.modified = True
     print (f'just set the seeion variable soapologyInSessionUserName to {soapologyInSessionUserNameTokenValue}')
@@ -1143,7 +1146,7 @@ def sendemployeeidsetupinvitation():
 	email=email_recipient
 	rightnow = datetime.now()
     # created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
-	created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
+	created = rightnow.strftime("%Y-%m-%d %H:%M:%S")  
 	first_name=content['firstname']
 	last_name=content['lastname']
 	today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -1152,8 +1155,8 @@ def sendemployeeidsetupinvitation():
 	res=recordnewemployeetoken(email,token, created)
 	url_to_create_account=f'{obtaindomain()}/SetupNewemployeeID.html?token={token}'
 	email_text = f"""
-	Dear Person,
-	Welecome aboard.  Please click the link below in order to create new employee account
+	Dear {first_name},
+	Welecome aboard.  Please click the link below in order to create new clock in/out account
 
 	{url_to_create_account}
 
@@ -1170,7 +1173,7 @@ def sendemployeeidsetupinvitation():
 
 	recipients = [email_recipient]#["avisemah@gmail.com"]
 	msg = MIMEText(email_text)
-	msg["Subject"] = "Email report: a simple sum"
+	msg["Subject"] = "Clock in/out setup invite"
 	msg["To"] = ", ".join(recipients)
 	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
 	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)

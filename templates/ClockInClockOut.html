@@ -612,7 +612,7 @@ span.psw {
   } 
 
   function UpdateInSessionStateIfApplicable() {
-      var cookiename="soapologyInSessionUserName";// this will need to be a different cookie that store ths user name
+      var cookiename="soapologyUnameOnly";//"soapologyInSessionUserName";
       var myCookie = getCookie(cookiename);
 
       if (myCookie == null) 
@@ -700,7 +700,7 @@ span.psw {
     const workingday = form.workingday.value;      
     const starttime = form.starttime.value;
     const endtime = form.endtime.value;
-    //var cookiename="soapologyInSessionUserName";
+    var cookiename="soapologyInSessionUserName";
     // var uname = getCookie(cookiename);
     validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
     if (validationResult['isvalid']==false)
