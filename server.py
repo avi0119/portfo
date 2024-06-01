@@ -733,7 +733,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
-
+        
         if IsThereSecurityCookie()==False:
         	return (False,"RelogginNeeded")
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
@@ -741,12 +741,12 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-
+            
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
             #return  (False,"xyzxyz")
-            sqltext = f"SELECT t.* ,CONCAT(e.first_name,' ', e.last_name) as name  FROM timeentry t inner join employees e on e.employeeid=t.employeeid"
+            sqltext = f"SELECT t.* ,CONCAT(e.first_name,' ', e.last_name) as name,TIMEDIFF(end_time, start_time) as hours_worked  FROM timeentry t inner join employees e on e.employeeid=t.employeeid"
             criteria=''
             if (employeeid!=None):
             	criteria=f" where t.employeeid='{employeeid}'"
@@ -766,7 +766,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-
+                
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -783,6 +783,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False,({"error": str(e)}))
+
 def evalluatListOfDictionaries(rows):
 	ret=[]
 	for row in rows:
