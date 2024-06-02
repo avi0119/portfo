@@ -1925,7 +1925,17 @@ def UpdateTimeEntryGivenID():
     res=updateTimeEntry(idtimeentry,starttime,endtime,last_updated, created) 
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    print('inside logout')
+    # uname= request.form['uname'] 
+    # psw=request.form['psw']
+    session['soapologyInSessionUserName']=None
+    #session.modified = True
+    print (f'set the session variable soapologyInSessionUserName to None to bar any future actvity')
 
+    return {'success':True}
+    # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
 '''
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form(page_name):

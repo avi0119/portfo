@@ -109,6 +109,18 @@ body.disabled *:focus
 {
  outline: 0; 
 }
+dialog.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+dialog.disabled *:focus 
+{
+ outline: 0; 
+}
 
 /*  table {
   border-collapse: collapse;
@@ -267,6 +279,7 @@ span.psw {
 <body id="LogInBodyID">
   <dialog id="dialog" class="boxview">
 <form class="modal-content animate" action="submit_login_form" method="dialog" id="form2" style="width:50%">
+    <div id="loaderDialog" class="loaderclass"></div>
     <div class="imgcontainer">
       <!-- <h2>Single Day Time Entry</h2> -->
 <!--       <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Single Day Time Entryy">&times;</span> -->
@@ -440,10 +453,7 @@ span.psw {
     element.classList.add("disabled");
     var element = document.getElementById("loader");
     element.classList.add("loaderclass");
-    return;
-    element = document.getElementById("rotatingdivid");
-    element.classList.remove("loading");
-    element.classList.add('brnx-loading-scaleout');
+
 
    } 
      function enableInteraction() 
@@ -452,12 +462,28 @@ span.psw {
     element.classList.remove("disabled");
     var element = document.getElementById("loader");
     element.classList.remove("loaderclass");
-    return;
-    element = document.getElementById("rotatingdivid");
-    element.classList.remove("loading");
-    element.classList.add('brnx-loading-scaleout');
+
 
    }
+   function disablenteractionDialog() 
+  {
+    var element = document.getElementById("dialog");
+    element.classList.add("disabled");
+    var element = document.getElementById("loaderDialog");
+    element.classList.add("loaderclass");
+
+
+   } 
+  function enableInteractionDialog() 
+  {
+    var element = document.getElementById("dialog");
+    element.classList.remove("disabled");
+    var element = document.getElementById("loaderDialog");
+    element.classList.remove("loaderclass");
+
+
+   }
+   
   PopulateHistoricalDataWrapper();
   function  PopulateHistoricalDataWrapper()
   {
@@ -645,7 +671,7 @@ span.psw {
  }
   function populateAllEmployyes()
   {
-    disablenteraction();
+    disablenteractionDialog();
     form=document.getElementById('form2')
     const url = 'returnlistofallemployees';
     // const andSign = '&';
@@ -685,7 +711,7 @@ span.psw {
       // Check if the request was successful
       if (!response.ok) 
       {
-        enableInteraction();
+        enableInteractionDialog();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -698,7 +724,7 @@ span.psw {
         console.log(data);
         if (data['success']==false)
         {
-          enableInteraction();
+          enableInteractionDialog();
           alert('Unable to fetch all employees\n'+data['msg'])
           if (data['msg']=="RelogginNeeded")
           {
@@ -711,14 +737,14 @@ span.psw {
           // alert('Successful time logging for username ' + uname + ' for ' + workingday );
           // closeLoginForm();
           //UpdateInSessionStateIfApplicable();
-          enableInteraction();
+          enableInteractionDialog();
           populateDropDownListOfEmployyes(data['data']);
         }
       }
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
-      enableInteraction();
+      enableInteractionDialog();
       console.log('Fetch error:', error);
     });
     return false;
@@ -863,7 +889,7 @@ function RecordNewItemThroughWebService(ABUTTON)
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
-    disablenteraction();
+    disablenteractionDialog();
     adata={
       'employeeid':employeeid,
       'workingday':workingday,
@@ -884,7 +910,7 @@ function RecordNewItemThroughWebService(ABUTTON)
       // Check if the request was successful
       if (!response.ok) 
       {
-        enableInteraction();
+        enableInteractionDialog();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -896,7 +922,7 @@ function RecordNewItemThroughWebService(ABUTTON)
         console.log(data);
         if (data['success']==false)
         {
-          enableInteraction();
+          enableInteractionDialog();
           alert('Unable to update time for employee\n'+data['msg']);
           if (data['msg']=="RelogginNeeded")
           {
@@ -905,7 +931,7 @@ function RecordNewItemThroughWebService(ABUTTON)
         }
         else
         {
-          enableInteraction();
+          enableInteractionDialog();
 
           setTimeout(() => {
               console.log("Delayed for 1 second.");
@@ -921,7 +947,7 @@ function RecordNewItemThroughWebService(ABUTTON)
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
-      enableInteraction();
+      enableInteractionDialog();
       console.log('Fetch error:', error);
     });
     return false;
@@ -959,7 +985,7 @@ function RecordEditOfTimeEntry(ABUTTON)
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
-    disablenteraction();
+    disablenteractionDialog();
     adata={
       'idtimeentry':idtimeentry,
       'starttime':starttime,
@@ -979,7 +1005,7 @@ function RecordEditOfTimeEntry(ABUTTON)
       // Check if the request was successful
       if (!response.ok) 
       {
-        enableInteraction();
+        enableInteractionDialog();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -991,7 +1017,7 @@ function RecordEditOfTimeEntry(ABUTTON)
         console.log(data);
         if (data['success']==false)
         {
-          enableInteraction();
+          enableInteractionDialog();
           alert('Unable to update time for employee\n'+data['msg']);
           if (data['msg']=="RelogginNeeded")
           {
@@ -1000,7 +1026,7 @@ function RecordEditOfTimeEntry(ABUTTON)
         }
         else
         {
-          enableInteraction();
+          enableInteractionDialog();
           setTimeout(() => {
               console.log("Delayed for 1 second.");
               alert('Successful time logging for username ' + employeeid + ' for ' + workingday );
@@ -1015,7 +1041,7 @@ function RecordEditOfTimeEntry(ABUTTON)
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
-      enableInteraction();
+      enableInteractionDialog();
       console.log('Fetch error:', error);
     });
     return false;
@@ -1023,6 +1049,7 @@ function RecordEditOfTimeEntry(ABUTTON)
   
 function EditFunc(idtimeentry)
 {
+ enableInteractionDialog();
   const dialog = document.getElementById("dialog");
   // const openDialog = document.getElementById("openDialog");
   //   openDialog.addEventListener("click", () => {
