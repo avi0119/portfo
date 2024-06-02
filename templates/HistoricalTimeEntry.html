@@ -57,7 +57,7 @@ thead.fixedHeader th:last-child {
 }
 
 tbody.scrollContent td {
-  width: 160px;
+  width: 159px;
 }
 
 
@@ -241,7 +241,11 @@ span.psw {
   from {transform: scale(0)} 
   to {transform: scale(1)}
 }
-
+.cancelbtn {
+  //width: auto;
+ // padding: 10px 18px;
+  background-color: #f44336;
+}
 /* Change styles for span and cancel button on extra small screens */
 @media screen and (max-width: 300px) {
   span.psw {
@@ -252,13 +256,79 @@ span.psw {
      width: 100%;
   }
 }
+.boxview {
+    width: 100%;
+    height: 50%;
+    border: solid red 3px;
+    background-color: rgba(0, 0, 0, 0.97);
+  }
 </style>
 </head>
 <body id="LogInBodyID">
+  <dialog id="dialog" class="boxview">
+<form class="modal-content animate" action="submit_login_form" method="dialog" id="form2" style="width:50%">
+    <div class="imgcontainer">
+      <!-- <h2>Single Day Time Entry</h2> -->
+<!--       <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Single Day Time Entryy">&times;</span> -->
+    </div>
+    <div class="imgcontainer">
+      <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
+<!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
+    </div>
+
+    <div class="container" style="border: 0px solid red;">
+      <label id="employeesdropdownlabel" for="cars" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Employee Name</b></label>
+      <select name="employees" id="employees" onchange="employeeChange(this.value);">
+<!--         <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="opel">Opel</option>
+        <option value="audi">Audi</option> -->
+      </select>
+      <label for="employeeid" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Employee ID</b></label>
+      <input type="text" id="employeedidinput" placeholder="Enter Employee ID" name="employeeid" required style="width:100px;height:15px;" readonly><br><br>
+      <input type="text" id="idtimeentryid" placeholder="Enter idtimeentry" name="idtimeentry" required style="width:100px;height:15px;display:none" readonly><br><br>
+      <input type="text" id="isNewModeid" placeholder="Enter is New Mode" name="isnewmode" required style="width:100px;height:15px;display:none" readonly><br><br>
+      
+     
+      <label style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" for="SelectWorkingDay" ><b>Select Working Day</b></label>
+       <input type="date" id="workingday" name="workingday" style="width:100px" onchange="workingdaychange(this.value);"><br><br><br>
+
+      
+
+      <label for="SelectStartTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;" ><b>Select Start Time</b></label>
+      <input type="time" id="starttime" name="starttime" style="width:100px" ><br><br><br>
+
+      <label for="SelectEndTime" style="border: 0px solid red;display: inline-block;width: 150px;text-align: right;"><b>Select End Time</b></label>
+      <input type="time" id="endtime" name="endtime" style="width:100px"><br><br><br>
+
+
+
+        
+      <button type="button" style="width:100px" onclick="RecordEditOfTimeEntry(this)" >Submit</button>
+      <button type="button" style="width:100px" onclick='document.getElementById("dialog").close()' class="cancelbtnx">Cancel</button>
+<!--       <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label> -->
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <!-- <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button> -->
+<!--       <button type="button" onclick="setAction(this)" class="cancelbtn">test</button> -->
+<!--       <span class="psw">Forgot <a href="#">password?</a></span> -->
+    </div>
+  </form>
+</dialog>
 <div id="loader" class="loaderclass"></div>
 <!-- <h2>Modal Login Form</h2> -->
+
 <div id="downloadbuttonid" class="disabled">
+  <button type="button"  onclick="AddNewTimeEntry(this)" style="width:150px">New Time Entry</button>
   <button type="button"  onclick="downloadFile(this)" style="width:150px">Download Results</button>
+
+
+</div>
+<div id="newrecordid" class="">
+  
 
 </div>
 <div id='historicaldataid'>
@@ -326,6 +396,44 @@ span.psw {
 <script>
 // Get the modal
   // document.getElementById('id01').style.display='block'
+   var ACTIVITY_ARRAY;
+  function FormatTimeToorPM(atime)
+  {
+      return atime;
+      var AMPM="AM";
+      arr=atime.split(":")
+      if (arr[0]>=12)
+      {
+          AMPM="PM";
+          arr[0]=arr[0]-12;
+          str1=''+ arr[0];
+          if (str1.length==1)
+          {
+              arr[0]='0' + arr[0];
+          }
+      }
+      ret=arr.join(":");
+      ret=ret +' '+ AMPM;
+      return ret;
+  }
+   function populateStartAndEndTime(endtime,starttime,empid,name,workingday,idtimeentry)
+  {
+      //alert('populating');
+
+            form=document.getElementById('form2')
+            form.workingday.value=form.workingday.value=workingday.substring(0,10);
+             form.starttime.value=FormatTimeToorPM(starttime);
+             if (endtime!="0:00:00")
+             {
+                form.endtime.value=FormatTimeToorPM(endtime);     
+             }
+             var element = document.getElementById("employeedidinput");
+             element.value=empid;
+            idtimeentryElement = document.getElementById("idtimeentryid");
+            idtimeentryElement.value=record.idtimeentry;               
+         
+  }
+
    function disablenteraction() 
   {
     var element = document.getElementById("downloadbuttonid");
@@ -456,6 +564,7 @@ span.psw {
     }
     return ret;
   }
+  
   function returnNewTable(players)
  {
     const newTable = document.createElement("table");
@@ -534,14 +643,498 @@ span.psw {
     // const target = document.getElementById('target');
     // target.appendChild(newTable);
  }
+  function populateAllEmployyes()
+  {
+    disablenteraction();
+    form=document.getElementById('form2')
+    const url = 'returnlistofallemployees';
+    // const andSign = '&';
+    // const employeeid=form.employeeid.value;   
+    // const workingday = form.workingday.value;      
+    // const starttime = form.starttime.value;
+    // const endtime = form.endtime.value;
+    // var cookiename="soapologyInSessionUserName";
+    // // var uname = getCookie(cookiename);
+    // validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    // if (validationResult['isvalid']==false)
+    // {
+    //   alert(validationResult['msg']);
+    //   return;
+    // }
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+      // 'employeeid':employeeid,
+      // 'workingday':workingday,
+      // 'starttime':starttime,
+      // 'endtime':endtime
 
-function EditFunc(a)
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        enableInteraction();
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => 
+    {
+        // Handle the JSON data
+        
+        console.log(data);
+        if (data['success']==false)
+        {
+          enableInteraction();
+          alert('Unable to fetch all employees\n'+data['msg'])
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          a=1;
+          // alert('Successful time logging for username ' + uname + ' for ' + workingday );
+          // closeLoginForm();
+          //UpdateInSessionStateIfApplicable();
+          enableInteraction();
+          populateDropDownListOfEmployyes(data['data']);
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      enableInteraction();
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
+ function populateDropDownListOfEmployyes(arrayOfObjects)
+  {
+    var select = document.getElementById("employees");
+    var options=arrayOfObjects;
+    options.unshift({'name':'select employee','employeeid':''});
+    // var options = ["1", "2", "3", "4", "5"];
+    options
+    for(var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        var el = document.createElement("option");
+        el.textContent = opt['name'];
+        el.value =  opt['employeeid'];
+        el.setAttribute('employeeid', opt['employeeid']);
+        select.appendChild(el);
+    }
+  }
+ function AddNewTimeEntry()
+ {
+  const dialog = document.getElementById("dialog");
+  // const openDialog = document.getElementById("openDialog");
+  //   openDialog.addEventListener("click", () => {
+  //     dialog.showModal();
+  //     openCheck(dialog);
+  //   });
+  dialog.showModal();
+  // res=returnActivityPerGiveidTimeEntry(idtimeentry);
+  // record=res[0];
+  // endtime=record.end_time;  
+  // starttime=record.start_time;  
+  // empid=record.employeeid; 
+  // name='';//record.name;
+  // workingday=record.start_date;
+  // idtimeentry='';//record.idtimeentry;
+
+
+  employeeidDropDown = document.getElementById("employees");
+  employeeidDropDown.style.display="inline-block";
+  employeeidDropDownlabel = document.getElementById("employeesdropdownlabel");
+  employeeidDropDownlabel.style.display="inline-block";
+ 
+  workingDayElement = document.getElementById("workingday");
+  workingDayElement.readOnly = false ;
+
+  isNewModeElement = document.getElementById("isNewModeid");
+  isNewModeElement.value=true;
+
+  populateAllEmployyes();
+  
+
+ }
+function returnActivityPerGiveidTimeEntry(idtimeentry)
 {
-  alert("Edit " +a);
+  afunc=function IsidTimeEntryFound (entry)
+  {
+    return entry['idtimeentry']==idtimeentry;
+  }
+  var result = ACTIVITY_ARRAY.filter(afunc);
+  return result;
 }
-function DeleteFunc(a)
+  function convertTimeToseconds(atime)
+  {
+    var time = atime;
+    var array = time.split(":");
+    var seconds = (parseInt(array[0], 10) * 60 * 60) + (parseInt(array[1], 10) * 60) + 0;
+    return seconds;
+
+  }
+  function isTime1GreaterTahnTime2(time1,time2)
+  {
+      time1inseconds=convertTimeToseconds(time1);
+      time2inseconds=convertTimeToseconds(time2);
+      return time1inseconds>time2inseconds;
+
+  }
+function validateParamsForTimeEntry(workingday,starttime,endtime)
+  {
+    ret={
+
+    }
+    var isValid=true;
+    var msg;
+      if (workingday=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'working Day'"
+
+      }
+      else if (starttime=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'Start Time'"
+      }
+      else if (endtime=='')
+      {
+         isValid=false;
+        msg="Please make sure to specify 'End Time'"
+      }
+      if (isValid==false)
+      {
+          ret['isvalid']=isValid;
+          ret['msg']=msg;
+          return ret;
+      }
+      else
+      {
+          if (!(isTime1GreaterTahnTime2(endtime,starttime)))
+          {
+            ret['isvalid']=false;
+            ret['msg']="Please make sure that Ending Time is greater the Start Time";
+            
+          }
+          else
+          {
+            ret['isvalid']=true;
+            ret['msg']="Time entry is Valid";
+          }
+          return ret;
+      }
+  }
+function RecordNewItemThroughWebService(ABUTTON) 
+  {
+    form=document.getElementById('form2')
+    const url = 'recordsingledaytimehours';
+    // const andSign = '&';
+    const employeeid=form.employeeid.value;   
+    const workingday = form.workingday.value;      
+    const starttime = form.starttime.value;
+    const endtime = form.endtime.value;
+    var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);
+    validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    if (validationResult['isvalid']==false)
+    {
+      alert(validationResult['msg']);
+      return;
+    }
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    disablenteraction();
+    adata={
+      'employeeid':employeeid,
+      'workingday':workingday,
+      'starttime':starttime,
+      'endtime':endtime
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        enableInteraction();
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        
+        console.log(data);
+        if (data['success']==false)
+        {
+          enableInteraction();
+          alert('Unable to update time for employee\n'+data['msg']);
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          enableInteraction();
+
+          setTimeout(() => {
+              console.log("Delayed for 1 second.");
+              alert('Successful time logging for employee ' + employeeid + ' for ' + workingday );
+              //closeLoginForm(); 
+              document.getElementById("dialog").close();
+              location.reload();
+          }, "1000");
+
+          //UpdateInSessionStateIfApplicable();
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      enableInteraction();
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
+  function employeeChange(avalue)
+  {
+    employeedidinput=document.getElementById('employeedidinput');
+    employeedidinput.value=avalue;
+    // alert(avalue);
+  }
+function RecordEditOfTimeEntry(ABUTTON) 
+  {
+    if ((document.getElementById("isNewModeid").value+'')=='true')
+    {
+      RecordNewItemThroughWebService();
+      return;
+    }
+    form=document.getElementById('form2')
+    const url = 'updatetimeentry';
+    // const andSign = '&';
+    const employeeid=form.employeeid.value;   
+    const workingday = form.workingday.value;      
+    const starttime = form.starttime.value;
+    const endtime = form.endtime.value;
+    const idtimeentry = form.idtimeentry.value;
+    //var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);
+    validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    if (validationResult['isvalid']==false)
+    {
+      alert(validationResult['msg']);
+      return;
+    }
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    disablenteraction();
+    adata={
+      'idtimeentry':idtimeentry,
+      'starttime':starttime,
+      'endtime':endtime
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        enableInteraction();
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        
+        console.log(data);
+        if (data['success']==false)
+        {
+          enableInteraction();
+          alert('Unable to update time for employee\n'+data['msg']);
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          enableInteraction();
+          setTimeout(() => {
+              console.log("Delayed for 1 second.");
+              alert('Successful time logging for username ' + employeeid + ' for ' + workingday );
+              //closeLoginForm(); 
+              document.getElementById("dialog").close();
+              location.reload();
+          }, "1000");
+
+          //UpdateInSessionStateIfApplicable();
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      enableInteraction();
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
+  
+function EditFunc(idtimeentry)
 {
-  alert(a);
+  const dialog = document.getElementById("dialog");
+  // const openDialog = document.getElementById("openDialog");
+  //   openDialog.addEventListener("click", () => {
+  //     dialog.showModal();
+  //     openCheck(dialog);
+  //   });
+  dialog.showModal();
+  res=returnActivityPerGiveidTimeEntry(idtimeentry);
+  record=res[0];
+  endtime=record.end_time;  
+  starttime=record.start_time;  
+  empid=record.employeeid; 
+  name=record.name;
+  workingday=record.start_date;
+  idtimeentry=record.idtimeentry;
+  employeeidDropDown = document.getElementById("employees");
+  employeeidDropDown.style.display="none";
+  employeeidDropDownlabel = document.getElementById("employeesdropdownlabel");
+  employeeidDropDownlabel.style.display="none";
+ 
+  workingDayElement = document.getElementById("workingday");
+  workingDayElement.readOnly = true; 
+  isNewModeElement = document.getElementById("isNewModeid");
+  isNewModeElement.value=false;
+  
+  populateStartAndEndTime(endtime,starttime,empid,name,workingday,idtimeentry);
+}
+function CreateStringForTimeEntry(timeentryObj)
+{
+        empid = timeentryObj.employeeid;
+        name = timeentryObj.name;
+        aDate = timeentryObj.start_date.substr(0, 10);;
+        Start = timeentryObj.start_time;  
+        End = timeentryObj.end_time;
+        var stringToDisplay="You are about to remove a time entry record for employee id "+ empid + " corersponding to "+aDate + " with start and end time of "+ Start + " and "+ End+ ", repectively.\nPlease press OK to continue, Cancel to abort" ;
+        return stringToDisplay;
+}
+function DeleteFunc(idtimeentry)
+{
+   form=document.getElementById('form1')
+    const url = 'deletetimeentry';
+    // const andSign = '&';
+   //var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);  
+
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    var singleItemArray=returnActivityPerGiveidTimeEntry(idtimeentry);
+    var singleitem=singleItemArray[0];
+    var stringForConfirmation=CreateStringForTimeEntry(singleitem);
+    if (confirm(stringForConfirmation)==false)
+    {
+      return;
+    }
+    adata={
+        'idtimeentry':idtimeentry
+
+    }
+    payload=JSON.stringify(adata);
+    disablenteraction();
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        enableInteraction();
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          enableInteraction();
+          alert('Unable to login\n'+data['msg']) 
+          if (data['msg']=='RelogginNeeded'){
+            // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+            Logout();
+          }
+          
+        }
+        else
+        {
+          enableInteraction();
+          alert('entry with id '+ idtimeentry + ' has been deleted');
+          location.reload();
+          // hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
+          //alert('Successful loging');
+          //closeLoginForm();
+
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.log('Fetch error:', error);
+      enableInteraction();
+    });
+    return false;
+
 }
 
     function downloadFile() 
@@ -777,6 +1370,7 @@ function DeleteFunc(a)
         else
         {
           dictionaryToPopulate=data['data'];
+          ACTIVITY_ARRAY=dictionaryToPopulate;
           newTable=returnNewTable(dictionaryToPopulate)
           var hisotoricaldataelement = document.getElementById('historicaldataid');
           removeAllChildElmenst(hisotoricaldataelement);
