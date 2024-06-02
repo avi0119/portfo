@@ -638,6 +638,17 @@ def login():
     print(f"session varibale after it has been set is {session['soapologyInSessionUserName']}")
     return out
     # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    print('inside logout')
+    # uname= request.form['uname'] 
+    # psw=request.form['psw']
+    session['soapologyInSessionUserName']=None
+    #session.modified = True
+    print (f'set the session variable soapologyInSessionUserName to None to bar any future actvity')
+
+    return {'success':True}
+    # return {'success':True,'msg':'successful authentication!'}	#{"content":res}
 def getValueOfSessionCookie_old(cookiename):
 	val= session.get(cookiename)
 	print (f"inside getValueOfSessionCookdeleteTimeEntryie def the session key {cookiename} is {val}")

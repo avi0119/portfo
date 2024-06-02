@@ -54,11 +54,11 @@ body {
   <!-- <a href="#"onclick="return Login();">Login</a> -->
  
   <a i href="#" onclick="return ClockInOutByEmployee();">Clock In/Out</a>
-  <a i href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a>
+<!--   <a i href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a> -->
 <!--   <a  href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a> -->
   <a id="createaccountid" href="#"onclick="return CreateAccount();">Create Account</a>
   <a href="#"onclick="return EditAccount();">Edit Account</a>
-  <a id="downloadhistoricalid" href="#"onclick="return DownloadHistoricalTimeEntry();">Download Historicals</a>
+  <a id="downloadhistoricalid" href="#"onclick="return DownloadHistoricalTimeEntry();">View/Edit/Download Time Records</a>
   <!-- <a id="sendinvitationid" href="#"onclick="return SendSignUpInvitation();">Send Sign up Invitation</a> -->
   <a id="sendemployeesetupinvitation" href="#"onclick="return SendEmployeeCreationInvitation();">Employee Setup Invite</a>
   <a href="#"onclick="return Logout();">Logout</a>
@@ -80,9 +80,66 @@ body {
   UpdateInSessionStateIfApplicable();
     
 
+function NotifyServerOfLogginOut() 
+  {
+    
+    const url = 'logout';
+    // const andSign = '&';
+
+
+    adata={
+
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        
+        console.log(data);
+        if (data['success']==false)
+        {
+         
+          alert('Unable to log out');
+        }
+        else
+        {
+            alert('logged out successfully');
+        }
+      }
+    )
+    .catch(error => {
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
 
   function Logout()
   {
+      try 
+      {
+          NotifyServerOfLogginOut();
+      }
+      catch (error)
+      {
+          console.log('error while logging out through server');
+      }
       delete_cookie("soapologyInSessionUserName");
 
       window.location.href = "InitialLoginPageOnly.html"+'?n=' + new Date().getTime();
@@ -95,6 +152,7 @@ body {
         // cache: "default",
       });
       //makeRequeestToInitilaLogin(myRequest)
+
   }
 
   function delete_cookie(name) 

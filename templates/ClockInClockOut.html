@@ -578,6 +578,7 @@ span.psw {
         // ,mode: "cors",
         // cache: "default",
       });
+        NotifyServerOfLogginOut();
       //makeRequeestToInitilaLogin(myRequest)
   }
   // When the user clicks anywhere outside of the modal, close it
@@ -772,6 +773,56 @@ span.psw {
     });
     return false;
   }
+  function NotifyServerOfLogginOut() 
+  {
+    
+    const url = 'logout';
+    // const andSign = '&';
+
+
+    adata={
+
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        
+        console.log(data);
+        if (data['success']==false)
+        {
+         
+          alert('Unable to log out');
+        }
+        else
+        {
+            alert('logged out successfully');
+        }
+      }
+    )
+    .catch(error => {
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
+
   function SayHi()
   {
     alert('Hi')
