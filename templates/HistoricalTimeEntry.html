@@ -3,6 +3,63 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+    .action_btn {
+width: 200px;
+margin: 0 auto;
+display: inline;}
+  .buttons {
+width: 200px;
+margin: 0 auto;
+display: inline;}
+
+
+table.scrollTable {
+  border: 1px solid #963;
+  width: 1138px;
+  //table-layout:auto;
+}
+
+thead.fixedHeader {
+  display: block;
+}
+
+thead.fixedHeader tr {
+  height: 30px;
+  background: #c96;
+}
+
+thead.fixedHeader tr th {
+  border-right: 1px solid black;
+}
+
+tbody.scrollContent {
+  display: block;
+  height: 300px;
+  overflow: auto;
+}
+
+tbody.scrollContent td {
+  background: #eee;
+  border-right: 1px solid black;
+  height: 25px;
+}
+
+tbody.scrollContent tr.alternateRow td {
+  background: #fff;
+}
+
+thead.fixedHeader th {
+  width: 160px;
+}
+
+thead.fixedHeader th:last-child {
+  width: 178px;
+}
+
+tbody.scrollContent td {
+  width: 160px;
+}
+
 
 .loaderclass {
   position: absolute;
@@ -53,7 +110,7 @@ body.disabled *:focus
  outline: 0; 
 }
 
-  table {
+/*  table {
   border-collapse: collapse;
     font-family: Tahoma, Geneva, sans-serif;
 }
@@ -73,7 +130,7 @@ table tbody td {
 }
 table tbody tr {
   background-color: #f9fafb;
-}
+}*/
 body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Full-width input fields */
@@ -353,7 +410,7 @@ span.psw {
   } 
 
   function UpdateInSessionStateIfApplicable() {
-      var cookiename="soapologyInSessionUserName";
+      var cookiename="soapologyUnameOnly";//"soapologyInSessionUserName";
       var myCookie = getCookie(cookiename);
 
       if (myCookie == null) 
@@ -402,25 +459,61 @@ span.psw {
   function returnNewTable(players)
  {
     const newTable = document.createElement("table");
-    newTable.innerHTML = "<thead><td>Employee ID</td><td>Name</td><td>Date</td><td>Start</td><td>End</td><td>Hrs Worked</td></thead>";
+    newTable.setAttribute("cellpadding", "0");
+    newTable.setAttribute("cellspacing", "0");
+    newTable.classList.add("scrollTable");
+    // newTable.innerHTML = "<thead class='fixedHeader'><tr class='alternateRow'><td>Employee ID</td><td>Name</td><td>Date</td><td>Start</td><td>End</td><td>Hrs Worked</td></tr></thead>";
+        newTable.innerHTML = "<thead class='fixedHeader'><tr class='alternateRow'><th>Employee ID</th><th>Name</th><th>Date</th><th>Start</th><th>End</th><th>Hrs Worked</th><th>Action</th></tr></thead>";
     newtBody = document.createElement("tbody");
+   newtBody.classList.add("scrollContent");
+    i=-1;
     for(player of players){
+        i=i+1;
         const newRow = document.createElement("tr");
+        if (i%2==0)
+        {
+          newRow.classList.add("normalRow");
+        }
+        else
+        {
+          newRow.classList.add("alternateRow");
+        }
+        actionHTML='<div class="buttons">'+
 
+            '<div class="action_btn">'+
+
+            '<button name="submit" class="action_btn submit" type="submit" value="Save" onclick="myFunction()">Save</button>'+
+            '<button name="submit" class="action_btn cancel" type="submit" value="Cancel" onclick="myFunction2()">Cancel</button>'+
+
+            // '<p id="saved"></p>'+
+
+            '</div>'+
+
+        '</div>';
+        
+        
          const tdemployeeID = document.createElement("td");
         const tdUname = document.createElement("td");
         const tdDate = document.createElement("td");
         const tdStart = document.createElement("td");
         const tdEnd = document.createElement("td");
         const tdHoursWorked = document.createElement("td");
+        const tdAction = document.createElement("td");
         //const tdCreated = document.createElement("td");
-      
+        console.log(player);
+        idtimeentry=player.idtimeentry;
         tdemployeeID.textContent = player.employeeid;
         tdUname.textContent = player.name;
         tdDate.textContent = player.start_date.substr(0, 10);;
         tdStart.textContent = player.start_time;  
         tdEnd.textContent = player.end_time;
-        tdHoursWorked.textContent = ReturnNumberOfHoursWith2DecimalsPoiint(player.hours_worked);  
+        tdHoursWorked.textContent = ReturnNumberOfHoursWith2DecimalsPoiint(player.hours_worked); 
+        onclicktext="onclick=\"DeleteFunc(" + idtimeentry + ")\"";
+        onclickEdittext="onclick=\"EditFunc(" + idtimeentry + ")\"";
+        tdAction.innerHTML="<div>" +
+        "<button " +onclicktext+  " style='width:60px;height:10px;background-color:grey;font-size:8px;display:inline;margin: 0 5px 0 5px;padding: 1px 0 1px 0;border: 1px solid #963'>Delete</button>"+
+        "<button " +onclickEdittext+ " style='width:60px;height:10px;background-color:grey;font-size:8px;display:inline;margin: 0 5px 0 5px;padding: 1px 0 1px 0;border: 1px solid #963'>Edit</button>"+
+        "</div>";//actionHTML;
         //tdCreated.textContent = player.created;
 
         newRow.appendChild(tdemployeeID);
@@ -429,6 +522,7 @@ span.psw {
         newRow.appendChild(tdStart);
         newRow.appendChild(tdEnd);
         newRow.appendChild(tdHoursWorked);
+        newRow.appendChild(tdAction);
         //newRow.appendChild(tdCreated);
         
 
@@ -440,6 +534,16 @@ span.psw {
     // const target = document.getElementById('target');
     // target.appendChild(newTable);
  }
+
+function EditFunc(a)
+{
+  alert("Edit " +a);
+}
+function DeleteFunc(a)
+{
+  alert(a);
+}
+
     function downloadFile() 
   {
 
