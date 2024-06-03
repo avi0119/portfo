@@ -898,7 +898,7 @@ def resetpassword():
     print ('inside resetpassword')
     # if IsThereSecurityCookie()==False:
     # 	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']
+    #uname= request.form['uname']  
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -911,15 +911,15 @@ def resetpassword():
     uname=data_as_dict[0]['uname']
     if int(wasused)==1:
     	return {'success':False,'msg':f'password reset token has been already used.  Please issue a new one wasused={wasused} uname={uname}'}
-
+    
     ## find uname based on token
     # uname=content['uname']
     # email=content['email']
-    psw=content['psw']
+    psw=content['psw'] 
     #return {'success':True,'msg':f'password was reset token={token} and pswe={psw},uname is {uname}'}
     # first_name=content['firstname']
     # last_name=content['lastname']
-    password=psw
+    password=passwordhashing.hash_password(psw,SALT) 
     last_updated=new_today_date
     # created=last_updated
     numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenUserName(uname))
@@ -930,6 +930,7 @@ def resetpassword():
     res=updatepasswordonlyforusername(uname,password  ,last_updated,token)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
+	
 def updatepasswordonlyforusername( uname,password  ,last_updated,token):
     defaultrole = 1
     defaultactive=1
