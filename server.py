@@ -951,8 +951,8 @@ def testSendinEmail():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
@@ -991,11 +991,11 @@ def resetpassword():
     ## find uname based on token
     # uname=content['uname']
     # email=content['email']
-    psw=content['psw']
+    psw=content['psw'] 
     #return {'success':True,'msg':f'password was reset token={token} and pswe={psw},uname is {uname}'}
     # first_name=content['firstname']
     # last_name=content['lastname']
-    password=psw
+    password=passwordhashing.hash_password(psw,SALT) 
     last_updated=new_today_date
     # created=last_updated
     numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenUserName(uname))
@@ -1076,8 +1076,8 @@ def sendemailtoresetpassword():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
@@ -1125,8 +1125,8 @@ def sendemailtogetusername():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
@@ -1241,8 +1241,8 @@ def sendemployeeidsetupinvitation():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
@@ -1313,8 +1313,8 @@ def sendemployeenewemployeeidbyemail(email,newemployeeid):
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
