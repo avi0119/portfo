@@ -875,15 +875,15 @@ def testSendinEmail():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
 
 	recipients = [email_recipient]#["avisemah@gmail.com"]
 	msg = MIMEText(email_text)
-	msg["Subject"] = "Email report: a simple sum"
+	msg["Subject"] = "Account Initialization"
 	msg["To"] = ", ".join(recipients)
 	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
 
@@ -1000,15 +1000,15 @@ def sendemailtoresetpassword():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
 
 	recipients = [email_recipient]#["avisemah@gmail.com"]
 	msg = MIMEText(email_text)
-	msg["Subject"] = "Email report: a simple sum"
+	msg["Subject"] = "Password Reset"
 	msg["To"] = ", ".join(recipients)
 	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
 
@@ -1049,15 +1049,15 @@ def sendemailtogetusername():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
 
 	recipients = [email_recipient]#["avisemah@gmail.com"]
 	msg = MIMEText(email_text)
-	msg["Subject"] = "Email report: a simple sum"
+	msg["Subject"] = "Username reminder"
 	msg["To"] = ", ".join(recipients)
 	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
 
@@ -1165,8 +1165,8 @@ def sendemployeeidsetupinvitation():
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
@@ -1237,15 +1237,15 @@ def sendemployeenewemployeeidbyemail(email,newemployeeid):
 	Soapology Management
 	"""
 
-	EMAIL ="chuchutainc@gmail.com"# os.environ.get("EMAIL")
-	PASSWORD = "wlwittwcpblgpsqt"#os.environ.get("PASSWORD")
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
 
 	GMAIL_USERNAME = EMAIL
 	GMAIL_APP_PASSWORD = PASSWORD
 
 	recipients = [email_recipient]#["avisemah@gmail.com"]
 	msg = MIMEText(email_text)
-	msg["Subject"] = "Email report: a simple sum"
+	msg["Subject"] = "Employee ID Creation Notification"
 	msg["To"] = ", ".join(recipients)
 	msg["From"] = EMAIL#f"{GMAIL_USERNAME}@gmail.com"
 	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
