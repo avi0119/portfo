@@ -193,6 +193,7 @@ span.psw2 {
 
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
 <div id="loader" class="loaderclassxx"></div>
+<div id='successtimeentry' style="display:none"><h1>Successful Time entry!</h1></div>
 <div id="id01" class="modal">
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1" >
@@ -361,6 +362,8 @@ function checkTime(i) {
   }
   function closeLoginForm(){
       document.getElementById('id01').style.display='none';
+      document.getElementById('successtimeentry').style.display='block';
+      
     }
     function getCookie(name) {
       var dc = document.cookie;
