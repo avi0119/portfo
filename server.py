@@ -907,6 +907,8 @@ def resetpassword():
     token=content['token']
     listOfresults=retruntokenandunamerecordforgiventoken(token)
     data_as_dict=listOfresults[1]
+    if len(data_as_dict)==0:
+    	return {'success':False,'msg':f'reset token is invalid'}
     wasused=data_as_dict[0]['wasused']
     uname=data_as_dict[0]['uname']
     if int(wasused)==1:
