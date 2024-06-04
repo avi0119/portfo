@@ -292,7 +292,7 @@ span.psw2 {
   }
   function setAction(ABUTTON) 
   {
-    disablenteraction();
+    
     form=document.getElementById('form1')
     const url = 'login';
     // const andSign = '&';
@@ -302,6 +302,18 @@ span.psw2 {
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
+    if (uname==null || uname.trim().length==0)
+    {
+      alert('Please make sure to provide user name');
+
+      return;
+    }
+    if (psw==null || psw.trim().length==0)
+    {
+      alert('Please make sure to provide password');
+      return;
+    }
+    disablenteraction();
     adata={
       'uname':uname,
       'psw':psw

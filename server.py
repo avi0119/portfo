@@ -1257,9 +1257,9 @@ def sendemployeenewemployeeidbyemail(email,newemployeeid):
 @app.route('/createnewemployee', methods=['POST','GET'])
 def createNewEmployee():
     print ('inside submit_login_form')
-    if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']
+    # if IsThereSecurityCookie()==False:
+    # 	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']  
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -1277,6 +1277,8 @@ def createNewEmployee():
 
     listOfresults=retruntokenandemailofnewemployeesetup(token)
     data_as_dict=listOfresults[1]
+    if len(data_as_dict)==0:
+    	return {'success':False,'msg':f'token provided is invalid'}
     wasused=data_as_dict[0]['wasused']
     #return {'success':False,'wasused':wasused,'type':str(type(wasused))}
     #uname=data_as_dict[0]['uname']
@@ -1290,7 +1292,7 @@ def createNewEmployee():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if numberOfusersOfSameUname>0:
-    # 	return {'success':False,'msg':'this user name is already taken'}
+    # 	return {'success':False,'msg':'this user name is already taken'}	
     res=recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,token)
     success=res[0]
     new_employee_id=''
