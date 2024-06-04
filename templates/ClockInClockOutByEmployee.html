@@ -193,19 +193,33 @@ span.psw2 {
 
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
 <div id="loader" class="loaderclassxx"></div>
+<div id='successtimeentry' style="display:none"><h1>Successful Time entry!</h1></div>
 <div id="id01" class="modal">
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1" >
     <div class="imgcontainer">
-      <span class="close" title="Close Modal">&times;</span>
+     <!--  <span class="close" title="Close Modal">&times;</span> -->
        <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
 <!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
 <h1 id="txt" style="color:blue;"></h1>
     </div>
-
+    <div class="center" style="width:240px" > 
+      <label class="radio-inline">
+          <input onchange="changeIdentifyByEvent()" type="radio" name="optradioidentifyby" id="bydobid" value="bydob" checked="checked">By DOB      <label class="radio-inline">
+          <input onchange="changeIdentifyByEvent()" type="radio" name="optradioidentifyby" id="byempid" value="byemp" >By Employee ID
+      </label>
+ 
+    </div>
     <div class="container">
+      <div  style="display:none" id="identifybyempdivid">
       <label for="employeeid"><b>Employee ID</b></label>
-      <input type="text" placeholder="Enter Employee ID" name="employeeid" required>
+      <input type="text" placeholder="Enter Employee ID" name="employeeid" required style="width:200px">
+      </div>
+
+    <div id="identifybydobdivid">
+      <label for="dob"><b>DOB (Month and Day)</b></label>
+      <input type="text" placeholder="Enter DOB Month and Day (e.g., 1105)" name="dob" required style="width:300px">
+    </div>
 
 <!--       <label for="psw"><b>Password</b></label>
       <input type="password" placeholder="Enter Password" name="psw" required> -->
@@ -239,6 +253,42 @@ span.psw2 {
   document.getElementById('id01').style.display='block'
   var modal = document.getElementById('id01');
 var CURRENT_TIME;
+  function isString4DigitsOnly(astr) 
+  {
+    const regex = /^\d{4}$/;
+    return regex.test(astr);
+  }
+function changeIdentifyByEvent()
+{
+  val=returnIdentifyBy();
+  if (val=='byemp')
+  {
+   
+    document.getElementById('identifybyempdivid').style.display='block';
+     document.getElementById('identifybydobdivid').style.display='none';
+    
+  }
+  if (val=='bydob')
+  {
+    document.getElementById('identifybyempdivid').style.display='none';
+     document.getElementById('identifybydobdivid').style.display='block';    
+  }
+  //alert('changed to'+val);
+}
+function returnIdentifyBy(){
+     
+     var radio_ele = document.querySelector('input[name="optradioidentifyby"]:checked');
+     if (radio_ele==null)
+     {
+        return '';
+     }
+     else
+     {
+       console.log(radio_ele.value);
+       return radio_ele.value;
+     }
+
+}
    function disablenteraction() 
   {
     var element = document.getElementById("form1");
@@ -312,6 +362,8 @@ function checkTime(i) {
   }
   function closeLoginForm(){
       document.getElementById('id01').style.display='none';
+      document.getElementById('successtimeentry').style.display='block';
+      
     }
     function getCookie(name) {
       var dc = document.cookie;
@@ -381,15 +433,30 @@ function checkTime(i) {
     // const current_time_ =adjustDateForTimeZoneDiffs(original_date);
     current_time=generateDatabaseDateTime(original_date);//original_date.toLocaleString();//generateDatabaseDateTime(current_time_);
     const employeeid = form.employeeid.value;
+    const dobid = form.dob.value;
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
     action=returnAction();
-    if ((employeeid.length)==0)
+    identifyby=returnIdentifyBy();
+    if (identifyby=='byemp')
     {
-      alert('please make sure to specify employee id');
-        return;
+      if ((employeeid.length)==0)
+      {
+        alert('please make sure to specify employee id');
+          return;
+      }
     }
+    else
+    {
+        isIt4DigitsOnly=isString4DigitsOnly(dobid);
+        if (isIt4DigitsOnly==false)
+        {
+           alert('please make sure to enter 2 difits for month and 2 digits for day for DOB field');
+          return;
+        }
+    }
+    
     if ((action.length)==0 )
     {
       alert('please make sure to specify clock in or out');
@@ -399,7 +466,9 @@ function checkTime(i) {
     adata={
       'employeeid':employeeid,
       'currenttime':current_time,
-      'action':action
+      'action':action,
+      'identifyby':identifyby,
+       'dobid':dobid
 
     }
     payload=JSON.stringify(adata)
