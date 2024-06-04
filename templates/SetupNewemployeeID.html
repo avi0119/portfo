@@ -2,7 +2,43 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
+<style> .loaderclass {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+div.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+div.disabled *:focus 
+{
+ outline: 0; 
+} 
 body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Full-width input fields */
@@ -135,6 +171,7 @@ span.psw {
 <div id="id01" class="modal">
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
+     <div id="loader" class="loaderclassx"></div>
     <div class="imgcontainer">
       <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
 <!--       <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
@@ -172,6 +209,24 @@ span.psw {
 <script>
   var MODE="NEW";
   PopulateIfNecessary();
+     function disablenteraction() 
+  {
+    var element = document.getElementById("id01");
+    element.classList.add("disabled");
+    var element = document.getElementById("loader");
+    element.classList.add("loaderclass");
+
+
+   } 
+     function enableInteraction() 
+  {
+    var element = document.getElementById("id01");
+    element.classList.remove("disabled");
+    var element = document.getElementById("loader");
+    element.classList.remove("loaderclass");
+
+
+   }
   function PopulateIfNecessary()
   {
       const queryString = window.location.search;
@@ -333,8 +388,52 @@ span.psw {
   function closeLoginForm(){
     document.getElementById('id01').style.display='none';
   }
+  function IsStringNullOrEmpty(astr)
+  {
+    if (astr==null || astr.trim().length==0)
+    {
+      return true;
+    }
+    return false;
+  }
+ 
+    function isValidDateString(stringDate) 
+    {
+      const regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|1[0-9]|2[0-9]||3[0-1])\/\d{4}$/;
+      return regex.test(stringDate);
+    }
+function isDateFormattedStringActuallyAvalidDate(dateString) {
+    const parts = dateString.split("/");
+    const year = parseInt(parts[2], 10);
+    const month = parseInt(parts[0], 10);
+    const day = parseInt(parts[1], 10);
+ 
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        return false;
+    }
+ 
+    if ((month === 4 || month === 6 || month === 9 || month === 11) && day === 31) {
+        return false;
+    }
+ 
+    if (month === 2) { // Check for leap year
+        const isLeap = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
+        if (day > 29 || (day === 29 && !isLeap)) {
+            return false;
+        }
+    }
+ 
+    return true;
+}
+
   function setAction(ABUTTON) 
   {
+      const validateEmail = (email) => {
+    return email.match(
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+
+  };
     form=document.getElementById('form1')
     var url = 'createnewemployee';
     if (MODE=='EDIT')
@@ -353,7 +452,45 @@ span.psw {
     const firstname = form.firstname.value;      
     const lastname = form.lastname.value;
     const dob = form.dob.value;
+    if (!(isValidDateString(dob)))
+    {
+      alert('Please enter valid date in the format mm/dd/yyyy');
+      return;
+    }
+    if (!(isDateFormattedStringActuallyAvalidDate(dob)))
+    {
+      alert('DOB date provided is of correct format mm/dd/yyyy but is not valid');
+      return;
+    }
+    if (!(validateEmail(email))) 
+    {
+      alert('Please enter valid email');
+      return;
+    }
     // const newUrl = url+uname+andSign+psw;
+    if (IsStringNullOrEmpty(firstname)==true )
+    {
+      alert('Please make sure to provide First Name');
+      return;
+    }
+    if (IsStringNullOrEmpty(lastname)==true )
+    {
+      alert('Please make sure to provide Last Name');
+      return;
+    }
+    if (IsStringNullOrEmpty(email)==true )
+    {
+      alert('Please make sure to provide email');
+      return;
+    }
+
+    if (IsStringNullOrEmpty(dob)==true )
+    {
+      alert('Please make sure to provide DOB');
+      return;
+    }
+
+
     adata={
       'dob':dob,
       'lastname':lastname,
@@ -363,6 +500,7 @@ span.psw {
 
     }
     payload=JSON.stringify(adata)
+    disablenteraction();
     fetch(
       url,
       {            
@@ -375,6 +513,7 @@ span.psw {
       // Check if the request was successful
       if (!response.ok) 
       {
+        enableInteraction();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -382,38 +521,50 @@ span.psw {
     })
     .then(data => {
         // Handle the JSON data
-        console.log(data);
-        if (data['success']==false)
-        {
-          errormsg='Unable to create new user name\n';
-          if (MODE=='EDIT')
-          {
-              errormsg='Unable to Edit new user name\n';
-          }
-          alert(errormsg+data['msg'])
-          if (data['msg']=="RelogginNeeded")
-          {
-            Logout()
-          }
-        }
-        else
-        {
-          if (MODE=='EDIT'){
+        enableInteraction();
 
-            alert('Successful edit!');
-          }
-          else
-          {
-            alert('Successful creation of employee id!\n'+'your new employee ID is '+data['employeeid']);
-          }
 
-          closeLoginForm()
-        }
+        setTimeout(() => 
+        {
+              console.log("Delayed for 1 second.");
+              console.log(data);
+            if (data['success']==false)
+            {
+              errormsg='Unable to create new user name\n';
+              if (MODE=='EDIT')
+              {
+                  errormsg='Unable to Edit new user name\n';
+              }
+              alert(errormsg+data['msg'])
+              if (data['msg']=="RelogginNeeded")
+              {
+                Logout()
+              }
+            }
+            else
+            {
+              if (MODE=='EDIT'){
+
+                alert('Successful edit!');
+              }
+              else
+              {
+                alert('Successful creation of employee id!\n'+'your new employee ID is '+data['employeeid']);
+              }
+
+              closeLoginForm()
+            }
+        }, "1000");
+
+
+
+        
       }
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
-      console.error('Fetch error:', error);
+      enableInteraction();
+      console.log('Fetch error:', error);
     });
     return false;
   }

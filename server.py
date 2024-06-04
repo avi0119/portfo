@@ -983,6 +983,8 @@ def resetpassword():
     token=content['token']
     listOfresults=retruntokenandunamerecordforgiventoken(token)
     data_as_dict=listOfresults[1]
+    if len(data_as_dict)==0:
+    	return {'success':False,'msg':f'reset token is invalid'}
     wasused=data_as_dict[0]['wasused']
     uname=data_as_dict[0]['uname']
     if int(wasused)==1:
@@ -1332,8 +1334,8 @@ def sendemployeenewemployeeidbyemail(email,newemployeeid):
 @app.route('/createnewemployee', methods=['POST','GET'])
 def createNewEmployee():
     print ('inside submit_login_form')
-    if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}
+    # if IsThereSecurityCookie()==False:
+    # 	return {'success':False,'msg':'RelogginNeeded'}
     #uname= request.form['uname']  
     #psw=request.form['psw']
     today_date = datetime.now()
@@ -1352,6 +1354,8 @@ def createNewEmployee():
 
     listOfresults=retruntokenandemailofnewemployeesetup(token)
     data_as_dict=listOfresults[1]
+    if len(data_as_dict)==0:
+    	return {'success':False,'msg':f'token provided is invalid'}
     wasused=data_as_dict[0]['wasused']
     #return {'success':False,'wasused':wasused,'type':str(type(wasused))}
     #uname=data_as_dict[0]['uname']
@@ -1388,6 +1392,7 @@ def retruntokenandemailofnewemployeesetup(token):
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
             sqltext = f"SELECT * FROM employeesetuptokens where token='{token}'"
+            print(f'sql to find token is {sqltext}');
             cursor.execute(sqltext)
             # cursor.execute('''select * from City''')
             rows = cursor.fetchall()

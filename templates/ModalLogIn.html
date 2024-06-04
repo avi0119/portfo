@@ -3,6 +3,44 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+
+ .loaderclass {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+div.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
+div.disabled *:focus 
+{
+ outline: 0; 
+} 
 body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Full-width input fields */
@@ -140,10 +178,11 @@ span.psw2 {
 <div id="id01" class="modal">
   
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
+    <div id="loader" class="loaderclassx"></div>
     <div class="imgcontainer">
       <span class="close" title="Close Modal">&times;</span>
        <!-- <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span> -->
-      <img src="/static/img_avatar2.png" alt="Avatar" class="avatar">
+  <!--     <img src="/static/img_avatar2.png" alt="Avatar" class="avatar"> -->
     </div>
 
     <div class="container">
@@ -172,6 +211,24 @@ span.psw2 {
 // Get the modal
   document.getElementById('id01').style.display='block'
   var modal = document.getElementById('id01');
+   function disablenteraction() 
+  {
+    var element = document.getElementById("id01");
+    element.classList.add("disabled");
+    var element = document.getElementById("loader");
+    element.classList.add("loaderclass");
+
+
+   } 
+     function enableInteraction() 
+  {
+    var element = document.getElementById("id01");
+    element.classList.remove("disabled");
+    var element = document.getElementById("loader");
+    element.classList.remove("loaderclass");
+
+
+   }
   function ForgotPassword()
   {
     alert('launch forgot password from');
@@ -235,6 +292,7 @@ span.psw2 {
   }
   function setAction(ABUTTON) 
   {
+    
     form=document.getElementById('form1')
     const url = 'login';
     // const andSign = '&';
@@ -244,6 +302,18 @@ span.psw2 {
     // const firstname = form.firstname.value;      
     // const lastname = form.lastname.value;
     // const newUrl = url+uname+andSign+psw;
+    if (uname==null || uname.trim().length==0)
+    {
+      alert('Please make sure to provide user name');
+
+      return;
+    }
+    if (psw==null || psw.trim().length==0)
+    {
+      alert('Please make sure to provide password');
+      return;
+    }
+    disablenteraction();
     adata={
       'uname':uname,
       'psw':psw
@@ -262,6 +332,7 @@ span.psw2 {
       // Check if the request was successful
       if (!response.ok) 
       {
+        enableInteraction();
         throw new Error('Network response was not ok');
       }
       // Parse the response as JSON
@@ -269,6 +340,7 @@ span.psw2 {
     })
     .then(data => {
         // Handle the JSON data
+        enableInteraction();
         console.log(data);
         if (data['success']==false)
         {
@@ -302,7 +374,8 @@ span.psw2 {
     )
     .catch(error => {
       // Handle any errors that occurred during the fetch
-      console.error('Fetch error:', error);
+      enableInteraction();
+      console.log('Fetch error:', error);
     });
     return false;
   }
