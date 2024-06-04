@@ -1269,7 +1269,10 @@ def createNewEmployee():
     #print(content['uname'])
     #uname=content['uname']
     email=content['email']
-    dob=content['dob']
+    dobtemp=content['dob']
+    dobtemp2=datetime.strptime(dobtemp, '%m/%d/%Y')
+    dob=dobtemp2.strftime( '%Y-%m-%d')
+    print (f'dob is found to be {dob}')
     token=content['token']
     first_name=content['firstname']
     last_name=content['lastname']
@@ -1391,6 +1394,8 @@ def ClockInOrOut():
     workingday=currenttime_as_date.strftime( '%Y-%m-%d')
     employeeid=content['employeeid']
     action=content['action']
+    identifyby=content['identifyby']
+    dobid=content['dobid']
     # return { 'success':False,
     # 	'employeeid':employeeid,
     # 	'action':action
@@ -1412,7 +1417,16 @@ def ClockInOrOut():
     # } 
     
     
-
+    if identifyby=='bydob':
+	    listOfresults=retrunemployeeidgivendobmonthandday(dobid)
+	    data_as_dict=listOfresults[1]
+	    if len(data_as_dict)==0:
+	    	return {'success':False,'msg':f'the dob id provided does not exist'}
+	    else:
+	    	if len(data_as_dict)>1:
+	    		return {'success':False,'msg':f'the dob id provided is shared by more than one employee.  please use identification by employee id'}
+	    	else:
+	    		employeeid=data_as_dict[0]['employeeid']
     last_updated=new_today_date
     created=last_updated
     numberofemployeesofsameemployeeid=int(returnCountOfRecordsOfGivenEmployeeID(employeeid))
@@ -1441,13 +1455,44 @@ def ClockInOrOut():
     	else:
     		res=recordClockIn(employeeid,workingday,time,last_updated, created)
     else:
-    	if numberEntriesInitializedButNotFinalized>0:
-    		idtimeentry=ReturnIdOfRecordToUpdateAsfarAsClockingOut(employeeid,workingday)
-    		res=recordClockOut(employeeid,workingday,time,last_updated, created,idtimeentry)
-    	else:
+        if numberEntriesInitializedButNotFinalized>0:
+            idtimeentry=ReturnIdOfRecordToUpdateAsfarAsClockingOut(employeeid,workingday)
+            res=recordClockOut(employeeid,workingday,time,last_updated, created,idtimeentry)
+        else:
             res=recordClockOutInserNewRecord(employeeid,workingday,time,last_updated, created)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
+def retrunemployeeidgivendobmonthandday(dobid):
+    try:
+    	#retruntokenandunamerecordforgiventoken
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+            
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"SELECT *,   DATE_FORMAT(dob, '%m%d') AS your_date from employees where DATE_FORMAT(dob, '%m%d')='{dobid}'"
+            print (f'sqltext : {sqltext}');
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            # data_array=data['content']
+            # firstrecord=data_array[0]
+            # count=firstrecord[0]
+            print('hiiiiiiiiiiiiiii',file=sys.stdout)
+        	#ret={'type':str(type(rows))}
+            print(rows,file=sys.stdout)
+            return (True,evalluatListOfDictionaries(rows))
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return ({"error":"while executing {sqltext}"+ str(e)})
+
 def recordClockOut(employeeid,workingday,time,last_updated, created,idtimeentry):
     try:
         # if not mysql.open:
