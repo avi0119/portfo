@@ -59,6 +59,7 @@ body {
   <a id="createaccountid" href="#"onclick="return CreateAccount();">Create Account</a>
   <a href="#"onclick="return EditAccount();">Edit Account</a>
   <a id="downloadhistoricalid" href="#"onclick="return DownloadHistoricalTimeEntry();">View/Edit/Download Time Records</a>
+  <a id="emailWorkingrecords" href="#"onclick="return EmailWorkingRecords();">Email Working Records</a>
   <!-- <a id="sendinvitationid" href="#"onclick="return SendSignUpInvitation();">Send Sign up Invitation</a> -->
   <a id="sendemployeesetupinvitation" href="#"onclick="return SendEmployeeCreationInvitation();">Employee Setup Invite</a>
   <a href="#"onclick="return Logout();">Logout</a>
@@ -244,6 +245,9 @@ function NotifyServerOfLogginOut()
 
               downloadhistoricalidelement=document.getElementById('downloadhistoricalid');
               downloadhistoricalidelement.style.display="none";
+
+              emailWorkingrecordselement=document.getElementById('emailWorkingrecords');
+              emailWorkingrecordselement.style.display="none";              
               
               
           } else if (usernamerole=2)
@@ -333,7 +337,14 @@ function NotifyServerOfLogginOut()
     let string_of_html = '<div>Cool</div>'
     //theelement=document.body.innerHTML;
     theelement=document.getElementById('contentpaneid');
-    theelement.src = "DownloadHistoricals.html";//string_of_html;     
+    theelement.src = "DownloadHistoricals.html?Email=False";//string_of_html;     
+  }
+  function EmailWorkingRecords()
+  {
+    let string_of_html = '<div>Cool</div>'
+    //theelement=document.body.innerHTML;
+    theelement=document.getElementById('contentpaneid');
+    theelement.src = "DownloadHistoricals.html?Email=True";//string_of_html;     
   }
   function SendSignUpInvitation()
   {

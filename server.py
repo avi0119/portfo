@@ -1,4 +1,6 @@
+from OpenSSL import SSL
 import passwordhashing
+import exceltopdf
 import uuid
 import pandas as pd
 #import pyjokes
@@ -17,8 +19,11 @@ import sshtunnel
 import csv
 import sys
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from urllib.parse import urlparse
+from email import encoders
 import os
 SALT="SALTANDPEPPER"
 HOST12701='127.0.0.1'
@@ -103,6 +108,14 @@ def index():
 #mysql = MySQL(app)
 # print(f'my sql is: {mysql}')
 # print(f'my sql is conenction: {mysql.connection}')
+@app.route('/')
+def my_home():
+	#return 'Hello, World'
+	return render_template('index.html')
+port = 5000
+print(f'__name__  is {__name__ }')
+
+
 class City():
 
     __tablename__ = "city"
@@ -195,10 +208,7 @@ def obtaindomain():
 	o = urlparse(request.base_url)
 	return DOMAIN_HTTP_ADDRESS#"http://"+  o.hostname
 
-@app.route('/')
-def my_home():
-	#return 'Hello, World'
-	return render_template('index.html')
+
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form():
 	if request.method=='POST':
@@ -794,6 +804,90 @@ def returnNoneIfEmpty(arg):
 	if arg!=None and len(arg)==0:
 		return None
 	return arg
+@app.route('/emailtimeentryrecords', methods=['GET', 'POST'])
+def Emailtimeentryrecords():
+    print ('inside Emailtimeentryrecords')
+    if IsThereSecurityCookie()==False:
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname'] 
+    #psw=request.form['psw']
+    # today_date = datetime.now()
+    # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
+	# if True==False:
+	# 	content = request.get_json(silent=True)
+	# 	uname=content.get('uname',None)
+	# 	fromdate=content.get('fromdate',None)
+	# 	todate=content.get('todate',None)
+	# else:
+    content = request.get_json(silent=True)
+    #print(content['uname'])
+    # uname=content['uname']
+    employeeid=content.get('employeeid',None)
+    fromdate=content.get('fromdate',None)
+    todate=content.get('todate',None)
+
+    # employeeid = returnNoneIfEmpty(request.args.get('employeeid'))
+    # fromdate = returnNoneIfEmpty(request.args.get('fromdate'))
+    # todate = returnNoneIfEmpty(request.args.get('todate'))
+    # temp=str(uname) + " "+ str(fromdate)+ " "+ str(todate)
+    # return {'final':temp}
+    # email=content['email']
+    # psw=content['psw']
+    # first_name=content['firstname']
+    # last_name=content['lastname']
+    # password=psw
+    # last_updated=new_today_date
+    # created=last_updated
+    employeedeatails=returnDetailsOfEmployee(employeeid)
+    if employeedeatails[0]==False:
+    	return {'success':False,'msg':employeedeatails[1]}	
+    listofdicts=employeedeatails[1]
+    firstitem=listofdicts[0]
+    email=firstitem['email']
+    first_name=firstitem['first_name']
+    last_name=firstitem['last_name']
+    listOfresults=returnAllRecordTimeEntryHistoryForUserName(employeeid=employeeid,fromdate=fromdate,todate=todate)
+    #print(content['uname'])
+    filename="timeentrydownload.xlsx"
+    uploads="D:\\PythonWS\\portfo"
+    df = pd.DataFrame(listOfresults[1])
+    print(df)
+    df.to_excel('timeentrydownload.xlsx', index=False)
+    sendresults=sendEmailWithAtatchedFile(email,filename,first_name,last_name,fromdate,todate)
+    return {'success':sendresults['success'],'msg':sendresults['msg']}	
+
+    
+
+    # data_as_dict=listOfresults[1]
+    # if listOfresults[0]==True:
+    # 	return {'success':listOfresults[0],'data':data_as_dict,'msg':'all is good'}
+    # else:
+    # 	msg=data_as_dict
+    # 	return {'success':listOfresults[0],'msg':msg}	
+def returnDetailsOfEmployee(employeeid):
+    try:
+        # if not mysql.open:
+        #     mysql.ping(reconnect=True)
+        # cursor = mysql.cursor(pymysql.cursors.DictCursor)
+        with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
+        ssh_password=app.config["MYSQL_PASSWORD"],
+        remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
+            connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
+            host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
+
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            # sqltext="select * from City where name='"+ city+ "'"
+            # sqltext="select * from users" #where uname='{uname}'""
+            sqltext = f"SELECT * FROM employees where employeeid={employeeid}"
+            cursor.execute(sqltext)
+            # cursor.execute('''select * from City''')
+            rows = cursor.fetchall()
+            print(rows,file=sys.stdout)
+            return (True,evalluatListOfDictionaries(rows))
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return (False,"error while executing {sqltext}"+ str(e))
+
 @app.route('/downloadtimeentryfile', methods=['GET', 'POST'])
 def downloadtimeentryfile():
     print ('inside downloadtimeentryfile')
@@ -2082,6 +2176,61 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return (False,({"error": str(e)}))
+def sendEmailWithAtatchedFile(email,filename,first_name,last_name,fromdate,todate):
+	content = request.get_json(silent=True)
+	# print(content['uname'])
+	# uname = content['uname']
+	email_recipient=email
+	# psw = content['psw']
+	first_name=first_name
+	last_name=last_name
+
+
+	email_text = f"""
+	Dear {first_name},
+
+	Please find attached a file with working hours for the period {fromdate} through {todate}
+
+	Thank you,
+	Soapology Management
+	"""
+
+	EMAIL ="soapology.clockinout@gmail.com"# os.environ.get("EMAIL")
+	PASSWORD = "msnkqeaxykurhyac"#os.environ.get("PASSWORD")
+
+	GMAIL_USERNAME = EMAIL
+	GMAIL_APP_PASSWORD = PASSWORD
+
+	recipients = [email_recipient]#["avisemah@gmail.com"]
+	msg = MIMEMultipart()
+	#msg = MIMEText(email_text)
+
+	msg["Subject"] = "Create New Account Invite"
+	msg["To"] = ", ".join(recipients)
+	msg["From"] = EMAIL
+	msg['Date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+	part = MIMEBase('application', "octet-stream")
+	attachment =open(filename, "rb")
+	part.set_payload(attachment.read())
+	attachment.close()
+	encoders.encode_base64(part)
+	part.add_header('Content-Disposition', f'attachment; filename="{filename}"')
+	msg.attach(part)
+	msg.attach(MIMEText(email_text))
+	smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+	smtp_server.login(GMAIL_USERNAME, GMAIL_APP_PASSWORD)
+	smtp_server.sendmail(msg["From"], recipients, msg.as_string())
+	smtp_server.quit()
+	return {'success':True,'msg':'sent email!'}
+
+# if __name__ == '__main__':
+#     #app.run(host="localhost", port=port, debug=True)
+#     print ('done!')
+#     print(f'app.url_map is {app.url_map} ')
+#     #app.run(host='127.0.0.1', port=5000)  
+#     app.run(debug=True,ssl_context=('cert.pem', 'key.pem'))
 
 '''
 @app.route('/submit_form', methods=['POST','GET'])
