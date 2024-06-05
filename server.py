@@ -9,10 +9,11 @@ import sshtunnel
 
 import sys
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
-import uuid
-from datetime import datetime
 from urllib.parse import urlparse
+from email import encoders
 import os
 import csv
 SALT="SALTANDPEPPER"
