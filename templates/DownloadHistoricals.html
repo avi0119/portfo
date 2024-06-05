@@ -3,6 +3,39 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+
+   .loaderclass {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+div.disabled 
+{ 
+    pointer-events: none; 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; 
+    user-select: none;    
+    opacity: 0.2   ;   
+    /*animation: loading 1s linear infinite;*/
+}
 body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Full-width input fields */
@@ -133,7 +166,7 @@ span.psw {
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;display:none">Login</button>
 
 <div id="id01" class="modal">
-  
+  <div id="loader" class="loaderclass"></div>
   <form class="modal-content animate" action="submit_login_form" method="post" id="form1">
     <div class="imgcontainer">
       <h2 id="tileid">Single Day Time Entry</h2>
@@ -145,15 +178,22 @@ span.psw {
     </div>
 
     <div class="container" style="border: 0px solid red;">
-     
+       <label for="cars" style="border: 0px solid red;display: inline-block;width: 120px;text-align: right;"><b>Emp. Name</b></label>
+      <select name="employees" id="employees" onchange="employeeChange(this.value);">
+<!--         <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="opel">Opel</option>
+        <option value="audi">Audi</option> -->
+      </select> 
+      <br>  <br>   
       <label style="border: 0px solid red;display: inline-block;width: 120px;text-align: right;" for="fromdate" ><b>From:</b></label>
        <input type="date" id="fromdate" name="fromdate" style="width:100px"><br><br>
 
       <label style="border: 0px solid red;display: inline-block;width: 120px;text-align: right;" for="todate" ><b>To:</b></label>
        <input type="date" id="todate" name="todate" style="width:100px"><br><br>
 
-      <label style="border: 0px solid red;display: inline-block;width: 120px;height:15px;text-align: right;" for="employeeid" ><b>Employee ID:</b></label>
-       <input type="text" id="employeeid" name="employeeid" style="width:100px;height:15px;" placeholder="emp id"><br><br>
+      <label style="border: 0px solid red;display: none;width: 120px;height:15px;text-align: right;" for="employeeid" ><b>Employee ID:</b></label>
+       <input type="text" id="employeeid" name="employeeid" style="width:100px;height:15px;display:none" placeholder="emp id"><br><br>
 
       
 
@@ -202,9 +242,134 @@ span.psw {
       document.getElementById('id01').style.display='block';
       titleelemnt=document.getElementById('tileid');
       titleelemnt.innerHTML="Time Entry Query";
-
+      populateAllEmployyes();
       
   }
+
+  function populateAllEmployyes()
+  {
+    disablenteraction();
+    form=document.getElementById('form1')
+    const url = 'returnlistofallemployees';
+    // const andSign = '&';
+    // const employeeid=form.employeeid.value;   
+    // const workingday = form.workingday.value;      
+    // const starttime = form.starttime.value;
+    // const endtime = form.endtime.value;
+    // var cookiename="soapologyInSessionUserName";
+    // // var uname = getCookie(cookiename);
+    // validationResult=validateParamsForTimeEntry(workingday,starttime,endtime);
+    // if (validationResult['isvalid']==false)
+    // {
+    //   alert(validationResult['msg']);
+    //   return;
+    // }
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+      // 'employeeid':employeeid,
+      // 'workingday':workingday,
+      // 'starttime':starttime,
+      // 'endtime':endtime
+
+    }
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        enableInteraction();
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => 
+    {
+        // Handle the JSON data
+        
+        console.log(data);
+        if (data['success']==false)
+        {
+          enableInteraction();
+          alert('Unable to fetch all employees\n'+data['msg'])
+          if (data['msg']=="RelogginNeeded")
+          {
+            Logout()
+          }
+        }
+        else
+        {
+          a=1;
+          // alert('Successful time logging for username ' + uname + ' for ' + workingday );
+          // closeLoginForm();
+          //UpdateInSessionStateIfApplicable();
+          enableInteraction();
+          populateDropDownListOfEmployyes(data['data']);
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      enableInteraction();
+      console.log('Fetch error:', error);
+    });
+    return false;
+  }
+    function employeeChange(avalue)
+  {
+    employeedidinput=document.getElementById('employeeid');
+    employeedidinput.value=avalue;
+    //AttemptPopulatingStartAndEndTime();
+    // alert(avalue);
+  }
+  function populateDropDownListOfEmployyes(arrayOfObjects)
+  {
+    var select = document.getElementById("employees");
+    var options=arrayOfObjects;
+    options.unshift({'name':'select employee','employeeid':''});
+    // var options = ["1", "2", "3", "4", "5"];
+    options
+    for(var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        var el = document.createElement("option");
+        el.textContent = opt['name'];
+        el.value =  opt['employeeid'];
+        el.setAttribute('employeeid', opt['employeeid']);
+        select.appendChild(el);
+    }
+  }
+
+   function disablenteraction() 
+  {
+    //return;
+    var element = document.getElementById("form1");
+    element.classList.add("disabled");
+    var element = document.getElementById("loader");
+    element.classList.add("loaderclass");
+
+
+   } 
+  function enableInteraction() 
+  {
+    //return;
+    var element = document.getElementById("form1");
+    element.classList.remove("disabled");
+    var element = document.getElementById("loader");
+    element.classList.remove("loaderclass");
+
+   }
+
   function delete_cookie(name) 
   {
     document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
