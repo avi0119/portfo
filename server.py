@@ -301,7 +301,7 @@ def crate_new_user():
     print ('inside submit_login_form')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -319,8 +319,8 @@ def crate_new_user():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     if numberOfusersOfSameUname>0:
-    	return {'success':False,'msg':'this user name is already taken'}	
-    hashedpasword=passwordhashing.hash_password(password,SALT) 
+    	return {'success':False,'msg':'this user name is already taken'}
+    hashedpasword=passwordhashing.hash_password(password,SALT)
     res=recordNewUserName(uname,first_name, last_name, hashedpasword,  last_updated, created,email)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
@@ -533,14 +533,14 @@ def updateUserName( uname,first_name, last_name,   last_updated,email):
         print(f"An error occurred: {str(e)}")
         return (False, {"error": f'{e}'})
 def ReturnProvidedPasswordForUSerName(uname):
-	user_details= returnAllUserDetailsForUserName(uname)  
+	user_details= returnAllUserDetailsForUserName(uname)
 	adict=user_details[1][0]
 	hashedpassword=adict['password']
 	return hashedpassword
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print('inside login')
-    # uname= request.form['uname'] 
+    # uname= request.form['uname']
     # psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -596,7 +596,7 @@ def IsThereSecurityCookie():
 	ret=False
 	if 'soapologyInSessionUserName' in request.cookies:
 		cookie_value=request.cookies.get('soapologyInSessionUserName')
-		
+
 		valueofcookiinSession=getValueOfSessionCookie('soapologyInSessionUserName')
 		print (f"value of cookie soapologyInSessionUserName is {cookie_value} and session's value is {valueofcookiinSession}")
 		if valueofcookiinSession==None:
@@ -780,7 +780,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
         # if not mysql.open:
         #     mysql.ping(reconnect=True)
         # cursor = mysql.cursor(pymysql.cursors.DictCursor)
-        
+
         if IsThereSecurityCookie()==False:
         	return (False,"RelogginNeeded")
         with sshtunnel.SSHTunnelForwarder(('ssh.pythonanywhere.com'), ssh_username=app.config["MYSQL_USER"],
@@ -788,7 +788,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host='127.0.0.1', port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -813,7 +813,7 @@ def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,tod
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -898,7 +898,7 @@ def resetpassword():
     print ('inside resetpassword')
     # if IsThereSecurityCookie()==False:
     # 	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -913,15 +913,15 @@ def resetpassword():
     uname=data_as_dict[0]['uname']
     if int(wasused)==1:
     	return {'success':False,'msg':f'password reset token has been already used.  Please issue a new one wasused={wasused} uname={uname}'}
-    
+
     ## find uname based on token
     # uname=content['uname']
     # email=content['email']
-    psw=content['psw'] 
+    psw=content['psw']
     #return {'success':True,'msg':f'password was reset token={token} and pswe={psw},uname is {uname}'}
     # first_name=content['firstname']
     # last_name=content['lastname']
-    password=passwordhashing.hash_password(psw,SALT) 
+    password=passwordhashing.hash_password(psw,SALT)
     last_updated=new_today_date
     # created=last_updated
     numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenUserName(uname))
@@ -932,7 +932,7 @@ def resetpassword():
     res=updatepasswordonlyforusername(uname,password  ,last_updated,token)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
-	
+
 def updatepasswordonlyforusername( uname,password  ,last_updated,token):
     defaultrole = 1
     defaultactive=1
@@ -1149,7 +1149,7 @@ def sendemployeeidsetupinvitation():
 	email=email_recipient
 	rightnow = datetime.now()
     # created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
-	created = rightnow.strftime("%Y-%m-%d %H:%M:%S")  
+	created = rightnow.strftime("%Y-%m-%d %H:%M:%S")
 	first_name=content['firstname']
 	last_name=content['lastname']
 	today_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -1261,7 +1261,7 @@ def createNewEmployee():
     print ('inside submit_login_form')
     # if IsThereSecurityCookie()==False:
     # 	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -1297,7 +1297,7 @@ def createNewEmployee():
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if numberOfusersOfSameUname>0:
-    # 	return {'success':False,'msg':'this user name is already taken'}	
+    # 	return {'success':False,'msg':'this user name is already taken'}
     res=recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,token)
     success=res[0]
     new_employee_id=''
@@ -1382,10 +1382,10 @@ def recordNewEmployee(dob, first_name, last_name,  last_updated, created, email,
 def ClockInOrOut():
     print ('inside ClockInOrOut')
     if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}   
+    	return {'success':False,'msg':'RelogginNeeded'}
     content = request.get_json(silent=True)
 
-    currenttime= content['currenttime']  
+    currenttime= content['currenttime']
     currenttime_as_date=datetime.strptime(currenttime, '%Y-%m-%d %H:%M:%S')
 
 
@@ -1400,10 +1400,10 @@ def ClockInOrOut():
     # 	'employeeid':employeeid,
     # 	'action':action
 
-    # } 
+    # }
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
-    
+
     #print(content['uname'])
     # uname=content['uname']
     # starttime=content['starttime']
@@ -1414,9 +1414,9 @@ def ClockInOrOut():
     # 	'endtime':endtime,
     # 	'workingday':workingday,
     # 	'uname':uname
-    # } 
-    
-    
+    # }
+
+
     if identifyby=='bydob':
 	    listOfresults=retrunemployeeidgivendobmonthandday(dobid)
 	    data_as_dict=listOfresults[1]
@@ -1446,7 +1446,7 @@ def ClockInOrOut():
     	return {'success':False,'msg':f'unable to clock out for {workingday} while no records of prior clocking for that day were found'}
     	# return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}
     temmp2=returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDateWhereEndDateIsNull(employeeid,workingday);
-    numberEntriesInitializedButNotFinalized=int(temmp2)    			
+    numberEntriesInitializedButNotFinalized=int(temmp2)
     if action=='in':
 
     	print (f"there are {numberEntriesInitializedButNotFinalized} records initialized but not finalized for employee id {employeeid}")
@@ -1473,7 +1473,7 @@ def retrunemployeeidgivendobmonthandday(dobid):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -1510,7 +1510,7 @@ def recordClockOut(employeeid,workingday,time,last_updated, created,idtimeentry)
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1520,10 +1520,10 @@ def recordClockOut(employeeid,workingday,time,last_updated, created,idtimeentry)
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
 def recordClockIn(employeeid,workingday,time,last_updated, created):
     try:
         # if not mysql.open:
@@ -1539,7 +1539,7 @@ def recordClockIn(employeeid,workingday,time,last_updated, created):
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1549,10 +1549,10 @@ def recordClockIn(employeeid,workingday,time,last_updated, created):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
 def recordClockInAndOut(employeeid,workingday,start_time,end_time,last_updated, created):
     try:
         # if not mysql.open:
@@ -1781,7 +1781,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -1796,7 +1796,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
             # count=firstrecord[0]
             if True == False:
                 main_list = []
-                
+
                 for row in rows:
                     current_list = []
                     for i in row:
@@ -1816,7 +1816,7 @@ def returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday):
 
 def ReturnIdOfRecordToUpdateAsfarAsClockingOut(employeeid,workingday):
     listOfresults=returnDetailsOfTimeentryGivenEmployeeIDandDate(employeeid,workingday)
-    data_as_dict=listOfresults[1] 
+    data_as_dict=listOfresults[1]
     recordid=data_as_dict[0]['idtimeentry']
     print(f'record id is {recordid}')
     return recordid
@@ -1830,7 +1830,7 @@ def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDateWhereEndDateIsNull(emplo
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             #sqltext="select * from City where name='"+ city+ "'"
             #sqltext="select * from users" #where uname='{uname}'""
@@ -1842,7 +1842,7 @@ def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDateWhereEndDateIsNull(emplo
             # firstrecord=data_array[0]
             # count=firstrecord[0]
             main_list = []
-            
+
             for row in rows:
                 current_list = []
                 for i in row:
@@ -1850,7 +1850,7 @@ def returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDateWhereEndDateIsNull(emplo
                 main_list.append(current_list)
             count=main_list[0][0]
             return count# int([data[0]]['count'])
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return ({"error": str(e)+ '\n'+ f'sql: {sqltext}'})
@@ -1859,7 +1859,7 @@ def deletetimeentrybasedonid():
     print ('inside submit_login_form')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']  
+    #uname= request.form['uname']
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -1894,7 +1894,7 @@ def deleteTimeEntry(idtimeentry):
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1904,10 +1904,10 @@ def deleteTimeEntry(idtimeentry):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
 def updateTimeEntry(idtimeentry,start_time,end_time,last_updated, created):
     try:
         # if not mysql.open:
@@ -1924,7 +1924,7 @@ def updateTimeEntry(idtimeentry,start_time,end_time,last_updated, created):
             remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor()
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext = "select * from States"
@@ -1934,17 +1934,17 @@ def updateTimeEntry(idtimeentry,start_time,end_time,last_updated, created):
             connection.commit()
             # data = cursor.fetchall()
             return (True, '11')
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})	
+        return (False, {"error": f'error:{e}\nsql text:{sqltext}'})
 
 @app.route('/updatetimeentry', methods=['POST','GET'])
 def UpdateTimeEntryGivenID():
     print ('inside UpdateTimeEntryGivenID')
     if IsThereSecurityCookie()==False:
-    	return {'success':False,'msg':'RelogginNeeded'}    
-    #uname= request.form['uname']  
+    	return {'success':False,'msg':'RelogginNeeded'}
+    #uname= request.form['uname']
     #psw=request.form['psw']
     today_date = datetime.now()
     new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -1961,8 +1961,8 @@ def UpdateTimeEntryGivenID():
     # 	'endtime':endtime,
     # 	'workingday':workingday,
     # 	'uname':uname
-    # } 
-    
+    # }
+
     last_updated=new_today_date
     created=last_updated
     # numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenEmployeeID(employeeid))
@@ -1970,15 +1970,15 @@ def UpdateTimeEntryGivenID():
     # 	return {'success':False,'msg':f'employee id {employeeid} does not exist'}
     # numberOfusersOfSameUname=int(returnCountOfRecordsOfGivenEmployeeIDndTimeEntryDate(employeeid,workingday))
     # if numberOfusersOfSameUname==1:
-    # 	return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}		
+    # 	return {'success':False,'msg':f'username {uname} already recorded time for {workingday}.\nPleaase go to history and update the time for that date'}
     # res=recordTimeInAndOut(uname      ,workingday,starttime,endtime,last_updated, created)
-    res=updateTimeEntry(idtimeentry,starttime,endtime,last_updated, created) 
+    res=updateTimeEntry(idtimeentry,starttime,endtime,last_updated, created)
     success=res[0]
     return {'success':success,'msg':res[1]}	#{"content":res}
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     print('inside logout')
-    # uname= request.form['uname'] 
+    # uname= request.form['uname']
     # psw=request.form['psw']
     session['soapologyInSessionUserName']=None
     #session.modified = True
@@ -1999,7 +1999,7 @@ def sendEmailWithAtatchedFile(email,filename,first_name,last_name,fromdate,todat
 	email_text = f"""
 	Dear {first_name},
 
-	Please find attached a file with working hours for the period {fromdate} through {todate} 
+	Please find attached a file with working hours for the period {fromdate} through {todate}
 
 	Thank you,
 	Soapology Management
@@ -2014,15 +2014,15 @@ def sendEmailWithAtatchedFile(email,filename,first_name,last_name,fromdate,todat
 	recipients = [email_recipient]#["avisemah@gmail.com"]
 	msg = MIMEMultipart()
 	#msg = MIMEText(email_text)
-	
+
 	msg["Subject"] = "Create New Account Invite"
 	msg["To"] = ", ".join(recipients)
 	msg["From"] = EMAIL
 	msg['Date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	
+
 
 	part = MIMEBase('application', "octet-stream")
-	attachment =open(filename, "rb")
+	attachment =open('/home/asemah/'+filename, "rb")
 	part.set_payload(attachment.read())
 	attachment.close()
 	encoders.encode_base64(part)
@@ -2045,7 +2045,7 @@ def returnDetailsOfEmployee(employeeid):
         remote_bind_address=(app.config["MYSQL_HOST"], 3306)) as tunnel:
             connection = pymysql.connect(user=app.config["MYSQL_USER"], password=app.config["MYSQL_PASSWORD"],
             host=HOST12701, port=tunnel.local_bind_port, db=app.config["MYSQL_DB"])
-            
+
             cursor = connection.cursor(pymysql.cursors.DictCursor)
             # sqltext="select * from City where name='"+ city+ "'"
             # sqltext="select * from users" #where uname='{uname}'""
@@ -2063,7 +2063,7 @@ def Emailtimeentryrecords():
     print ('inside Emailtimeentryrecords')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname'] 
+    #uname= request.form['uname']
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -2094,7 +2094,7 @@ def Emailtimeentryrecords():
     # created=last_updated
     employeedeatails=returnDetailsOfEmployee(employeeid)
     if employeedeatails[0]==False:
-    	return {'success':False,'msg':employeedeatails[1]}	
+    	return {'success':False,'msg':employeedeatails[1]}
     listofdicts=employeedeatails[1]
     firstitem=listofdicts[0]
     email=firstitem['email']
@@ -2108,7 +2108,7 @@ def Emailtimeentryrecords():
     print(df)
     df.to_excel('timeentrydownload.xlsx', index=False)
     sendresults=sendEmailWithAtatchedFile(email,filename,first_name,last_name,fromdate,todate)
-    return {'success':sendresults['success'],'msg':sendresults['msg']}	
+    return {'success':sendresults['success'],'msg':sendresults['msg']}
 
 '''
 @app.route('/submit_form', methods=['POST','GET'])
