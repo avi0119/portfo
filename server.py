@@ -724,7 +724,7 @@ def downloadtimeentryfile():
     print ('inside downloadtimeentryfile')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']
+    #uname= request.form['uname'] 
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -736,7 +736,7 @@ def downloadtimeentryfile():
 	# else:
     # uname=None
     # fromdate=None
-    # todate=None
+    # todate=None	
     employeeid = returnNoneIfEmpty(request.args.get('employeeid'))
     fromdate = returnNoneIfEmpty(request.args.get('fromdate'))
     todate = returnNoneIfEmpty(request.args.get('todate'))
@@ -753,19 +753,23 @@ def downloadtimeentryfile():
     #print(content['uname'])
     filename="timeentrydownload.xlsx"
     uploads="D:\\PythonWS\\portfo"
-    df = pd.DataFrame(listOfresults[1])
-    print(df)
-    df.to_excel('timeentrydownload.xlsx', index=False)
-    return send_file( '/home/asemah/'+filename,as_attachment=True)
+    if True==False:
+	    df = pd.DataFrame(listOfresults[1])
+	    df = df.drop(['uname','created','last_updated','idtimeentry'], axis=1)
+	    print(df)
+	    df.to_excel('timeentrydownload.xlsx', index=False)
+    else: 
+        GenerateExcelfileFromListOfDictionariesOfTimeRecords(listOfresults[1],filename)
+    return send_file( filename,as_attachment=True)
     # return send_from_directory(uploads, filename)
     # typeogf=str(type(numberOfusersOfSameUname))
     # return {'ret':typeogf}
     # if len(listOfresults)==0:
-    # 	return {'success':False,'msg':'this user name is already taken'}
+    # 	return {'success':False,'msg':'this user name is already taken'}	
     # res=recordNewUserName(uname,first_name, last_name, password,  last_updated, created,email)
     # success=res[0]
     # data_as_dict={ 'line '+str(ind) :' '.join([str(i) for i in x]) for ind, x in enumerate(listOfresults) }
-
+    
 
     data_as_dict=listOfresults[1]
     #data_as_dict=[{'line1':'xyz'},{'line1':'abc'}];
@@ -2065,7 +2069,7 @@ def Emailtimeentryrecords():
     print ('inside Emailtimeentryrecords')
     if IsThereSecurityCookie()==False:
     	return {'success':False,'msg':'RelogginNeeded'}
-    #uname= request.form['uname']
+    #uname= request.form['uname'] 
     #psw=request.form['psw']
     # today_date = datetime.now()
     # new_today_date = today_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -2096,22 +2100,41 @@ def Emailtimeentryrecords():
     # created=last_updated
     employeedeatails=returnDetailsOfEmployee(employeeid)
     if employeedeatails[0]==False:
-    	return {'success':False,'msg':employeedeatails[1]}
+    	return {'success':False,'msg':employeedeatails[1]}	
     listofdicts=employeedeatails[1]
     firstitem=listofdicts[0]
     email=firstitem['email']
     first_name=firstitem['first_name']
     last_name=firstitem['last_name']
+    filename_="individual_emp_workhours.xlsx"
     listOfresults=returnAllRecordTimeEntryHistoryForUserName(employeeid=employeeid,fromdate=fromdate,todate=todate)
+    GenerateExcelfileFromListOfDictionariesOfTimeRecords(listOfresults[1],filename_)
     #print(content['uname'])
-    filename="timeentrydownload.xlsx"
-    uploads="D:\\PythonWS\\portfo"
-    df = pd.DataFrame(listOfresults[1])
-    print(df)
-    df.to_excel('timeentrydownload.xlsx', index=False)
+    
+    filename="individual_emp_workhours.pdf"
+    #exceltopdf.ExcelToPdf(filename_,filename)
+    filename=filename_
+    print(f'fiel {filename_} as been converted to {filename}')
+    # uploads="D:\\PythonWS\\portfo"
+    # df = pd.DataFrame(listOfresults[1])
+    # print(df)
+    # df.to_excel('timeentrydownload.xlsx', index=False)
     sendresults=sendEmailWithAtatchedFile(email,filename,first_name,last_name,fromdate,todate)
-    return {'success':sendresults['success'],'msg':sendresults['msg']}
+    return {'success':sendresults['success'],'msg':sendresults['msg']}	
 
+    
+
+    # data_as_dict=listOfresults[1]
+    # if listOfresults[0]==True:
+    # 	return {'success':listOfresults[0],'data':data_as_dict,'msg':'all is good'}
+    # else:
+    # 	msg=data_as_dict
+    # 	return {'success':listOfresults[0],'msg':msg}	
+def GenerateExcelfileFromListOfDictionariesOfTimeRecords(listofDicts,filename):
+	df = pd.DataFrame(listofDicts)
+	df = df.drop(['uname','created','last_updated','idtimeentry'], axis=1)
+	print(df)
+	df.to_excel(filename, index=False)
 '''
 @app.route('/submit_form', methods=['POST','GET'])
 def submit_form(page_name):
