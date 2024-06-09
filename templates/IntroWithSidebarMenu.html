@@ -57,9 +57,9 @@ body {
 <!--   <a i href="#" onclick="return SingleDayTimeEntry();">Single Day Time Entry</a> -->
 <!--   <a  href="#" onclick="return HistoricalTimeEntry();">Historical Time Entry</a> -->
   <a id="createaccountid" href="#"onclick="return CreateAccount();">Create Account</a>
-  <a href="#"onclick="return EditAccount();">Edit Account</a>
-  <a id="downloadhistoricalid" href="#"onclick="return DownloadHistoricalTimeEntry();">View/Edit/Download Time Records</a>
-  <a id="emailWorkingrecords" href="#"onclick="return EmailWorkingRecords();">Email Working Records</a>
+  <a id="editaccountid" href="#"onclick="return EditAccount();">Edit Account</a>
+  <a id="downloadhistoricalid" href="#"onclick="return DownloadHistoricalTimeEntry();">View Time Records</a>
+<!--   <a id="emailWorkingrecords" href="#"onclick="return EmailWorkingRecords();">Email Working Records</a> -->
   <!-- <a id="sendinvitationid" href="#"onclick="return SendSignUpInvitation();">Send Sign up Invitation</a> -->
   <a id="sendemployeesetupinvitation" href="#"onclick="return SendEmployeeCreationInvitation();">Employee Setup Invite</a>
   <a href="#"onclick="return Logout();">Logout</a>
@@ -246,8 +246,12 @@ function NotifyServerOfLogginOut()
               downloadhistoricalidelement=document.getElementById('downloadhistoricalid');
               downloadhistoricalidelement.style.display="none";
 
-              emailWorkingrecordselement=document.getElementById('emailWorkingrecords');
-              emailWorkingrecordselement.style.display="none";              
+              // emailWorkingrecordselement=document.getElementById('emailWorkingrecords');
+              // emailWorkingrecordselement.style.display="none";   
+
+              createaccountidelement=document.getElementById('editaccountid');
+              createaccountidelement.style.display="none";
+                         
               
               
           } else if (usernamerole=2)

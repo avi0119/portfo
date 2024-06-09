@@ -337,6 +337,7 @@ span.psw {
 <div id="downloadbuttonid" class="disabled">
   <button type="button"  onclick="AddNewTimeEntry(this)" style="width:150px">New Time Entry</button>
   <button type="button"  onclick="downloadFile(this)" style="width:150px">Download Results</button>
+  <button id="emailresultsid" type="button"  onclick="HistoricalTimeEntry(this)" style="width:150px">Email</button>
 
 
 </div>
@@ -410,6 +411,200 @@ span.psw {
 // Get the modal
   // document.getElementById('id01').style.display='block'
    var ACTIVITY_ARRAY;
+  function validateForFetchingHistoricals(fromdate,todate)
+  {
+    ret={
+
+    }
+    var isValid=true;
+    var msg;
+      if (fromdate=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'From date'"
+
+      }
+      else if (todate=='')
+      {
+        isValid=false;
+        msg="Please make sure to specify 'To Date'"
+      }
+      else
+      {
+          if (!(isTime1GreaterTahnTime2(endtime,starttime)))
+          {
+            ret['isvalid']=false;
+            ret['msg']="Please make sure that Ending Time is greater the Start Time";
+            
+          }
+          else
+          {
+            ret['isvalid']=true;
+            ret['msg']="Time entry is Valid";
+          }
+          return ret;
+      }
+  }
+  function convertDateToString(date)
+  {
+    return date.toISOString().substring(0,10);
+    // Get year, month, and day part from the date
+    var year = date.toLocaleString("default", { year: "numeric" });
+    var month = date.toLocaleString("default", { month: "2-digit" });
+    var day = date.toLocaleString("default", { day: "2-digit" });
+
+    // Generate yyyy-mm-dd date string
+    var formattedDate = year + "-" + month + "-" + day;
+    return formattedDate;
+  }
+function dateString2Date(dateString) {
+  const dt = dateString.split(/\-|\s/);
+  return new Date(dt.slice(0, 3).reverse().join('-') + ' ' + dt[3]);
+}
+  function HistoricalTimeEntry()
+  {
+        const queryString = window.location.search;
+        // alert(queryString);
+        console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        // uname_=urlParams.get('uname');
+        fromdate=urlParams.get('fromdate');
+        todate=urlParams.get('todate');
+        employeeid=urlParams.get('employeeid');
+        MODE=urlParams.get('MODE');
+        // alert('employee id ='+employeeid);
+        // alert('todate ='+todate);
+        // alert('fromdate ='+fromdate);
+        // return;
+
+   // form=document.getElementById('form1')
+    // const andSign = '&';
+    // var employeeid=form.employeeid.value; 
+    // var fromdate = form.fromdate.value;      
+    // var todate = form.todate.value;
+    // if (fromdate=='')
+    // {
+    //   fromdate='1970-01-01'
+    // }
+    // if (todate=='')
+    // {
+    //   todate='9999-12-31'
+    // }
+    fromdate_date=new Date(fromdate);
+    todate_date=new Date(todate);
+    // if (todate_date.getTime()<fromdate_date.getTime())
+    // {
+    //   alert("Please make sure from date is not greater than To date");
+    //   return;
+    // }
+    fromdate_=convertDateToString(fromdate_date);
+    todate_=convertDateToString(todate_date);
+    //theelement=document.body.innerHTML;
+    //theelement=window.parent.document.getElementById('contentpaneid');
+
+        // alert('dealing with emailing');
+        // alert('employee id ='+employeeid);
+        // alert('todate ='+todate_);
+        // alert('fromdate ='+fromdate_);
+        // return;
+
+     EmailHistoricaldata(fromdate_,todate_,employeeid) ;
+
+          
+  }
+  function EmailHistoricaldata(fromdate,todate,employeeid) 
+  {
+
+    // form=document.getElementById('form1')
+    const url = 'emailtimeentryrecords';
+    // const andSign = '&';
+   var cookiename="soapologyInSessionUserName";
+    // var uname = getCookie(cookiename);  
+
+    // const email = form.email.value;
+    // const firstname = form.firstname.value;      
+    // const lastname = form.lastname.value;
+    // const newUrl = url+uname+andSign+psw;
+    adata={
+        // 'emailflag':'YES'
+
+    }
+    // if ((employeeid.length)>0)
+    // {
+      adata['employeeid']=employeeid;
+    // }
+    // else
+    // {
+    //   alert('Required field:Please specify employee to whom an email will be sent');
+    //   return;
+    // }
+    // if ((fromdate.length)>0)
+    // {
+      adata['fromdate']=fromdate;
+    // }
+    // if ((todate.length)>0)
+    // {
+      adata['todate']=todate;
+    //}
+
+    
+    
+    payload=JSON.stringify(adata)
+    fetch(
+      url,
+      {            
+        headers: { "Content-Type": "application/json" },            
+        method: "POST",
+        body: payload
+      }
+    )
+    .then(response => {
+      // Check if the request was successful
+      if (!response.ok) 
+      {
+        enableInteraction();
+        throw new Error('Network response was not ok');
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+    .then(data => {
+        // Handle the JSON data
+        console.log(data);
+        if (data['success']==false)
+        {
+          enableInteraction();
+          alert('Unable to login\n'+data['msg']) 
+          if (data['msg']=='RelogginNeeded'){
+            // window.location.href ='InitialLoginPageOnly.html'+ '?n=' + new Date().getTime(); ;
+            Logout();
+          }
+          
+        }
+        else
+        {
+          alert('email sent to employee with id ' + employeeid +'!');
+          // dictionaryToPopulate=data['data'];
+          // ACTIVITY_ARRAY=dictionaryToPopulate;
+          // newTable=returnNewTable(dictionaryToPopulate)
+          // var hisotoricaldataelement = document.getElementById('historicaldataid');
+          // removeAllChildElmenst(hisotoricaldataelement);
+          // hisotoricaldataelement.appendChild(newTable);
+          // enableInteraction();
+          // hisotoricaldataelement.innerText=JSON.stringify(dictionaryToPopulate);
+          //alert('Successful loging');
+          //closeLoginForm();
+
+        }
+      }
+    )
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.log('Fetch error:', error);
+      enableInteraction();
+    });
+    return false;
+  }
   function FormatTimeToorPM(atime)
   {
       return atime;
@@ -507,8 +702,15 @@ span.psw {
       {
         document.getElementById('downloadbuttonid').style.display='block';
       }
-
-       PopulateHistoricalData(fromdate_,todate_,employeeid);
+      if (employeeid=='')
+      {
+          document.getElementById('emailresultsid').style.display='none';
+      }
+      else
+      {
+          document.getElementById('emailresultsid').style.display='none-block';
+      }
+      PopulateHistoricalData(fromdate_,todate_,employeeid);
   }
   var modal = document.getElementById('id01');
 
