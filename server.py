@@ -753,6 +753,8 @@ def downloadtimeentryfile():
     listOfresults=returnAllRecordTimeEntryHistoryForUserName(employeeid=employeeid,fromdate=fromdate,todate=todate)
     #print(content['uname'])
     filename="timeentrydownload.xlsx"
+    filename=os.path.join(app.instance_path, 'downloads', 'timeentrydownload.xlsx')
+    print (f'file name to save and from which to download is {filename}')
     uploads="D:\\PythonWS\\portfo"
     if True==False:
 	    df = pd.DataFrame(listOfresults[1])
@@ -2135,6 +2137,7 @@ def GenerateExcelfileFromListOfDictionariesOfTimeRecords(listofDicts,filename):
 	df = pd.DataFrame(listofDicts)
 	df = df.drop(['uname','created','last_updated','idtimeentry'], axis=1)
 	print(df)
+	print(f'about to save file {filename} under {os.getcwd()} from GenerateExcelfileFromListOfDictionariesOfTimeRecords')
 	df.to_excel(filename, index=False)
 '''
 @app.route('/submit_form', methods=['POST','GET'])
