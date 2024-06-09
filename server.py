@@ -1,6 +1,6 @@
 from OpenSSL import SSL
 import passwordhashing
-import exceltopdf
+#import exceltopdf
 import uuid
 import pandas as pd
 #import pyjokes
@@ -846,13 +846,19 @@ def Emailtimeentryrecords():
     email=firstitem['email']
     first_name=firstitem['first_name']
     last_name=firstitem['last_name']
+    filename_="individual_emp_workhours.xlsx"
     listOfresults=returnAllRecordTimeEntryHistoryForUserName(employeeid=employeeid,fromdate=fromdate,todate=todate)
+    GenerateExcelfileFromListOfDictionariesOfTimeRecords(listOfresults[1],filename_)
     #print(content['uname'])
-    filename="timeentrydownload.xlsx"
-    uploads="D:\\PythonWS\\portfo"
-    df = pd.DataFrame(listOfresults[1])
-    print(df)
-    df.to_excel('timeentrydownload.xlsx', index=False)
+    
+    filename="individual_emp_workhours.pdf"
+    #exceltopdf.ExcelToPdf(filename_,filename)
+    filename=filename_
+    print(f'fiel {filename_} as been converted to {filename}')
+    # uploads="D:\\PythonWS\\portfo"
+    # df = pd.DataFrame(listOfresults[1])
+    # print(df)
+    # df.to_excel('timeentrydownload.xlsx', index=False)
     sendresults=sendEmailWithAtatchedFile(email,filename,first_name,last_name,fromdate,todate)
     return {'success':sendresults['success'],'msg':sendresults['msg']}	
 
@@ -922,9 +928,13 @@ def downloadtimeentryfile():
     #print(content['uname'])
     filename="timeentrydownload.xlsx"
     uploads="D:\\PythonWS\\portfo"
-    df = pd.DataFrame(listOfresults[1])
-    print(df)
-    df.to_excel('timeentrydownload.xlsx', index=False)
+    if True==False:
+	    df = pd.DataFrame(listOfresults[1])
+	    df = df.drop(['uname','created','last_updated','idtimeentry'], axis=1)
+	    print(df)
+	    df.to_excel('timeentrydownload.xlsx', index=False)
+    else: 
+        GenerateExcelfileFromListOfDictionariesOfTimeRecords(listOfresults[1],filename)
     return send_file( filename,as_attachment=True)
     # return send_from_directory(uploads, filename)
     # typeogf=str(type(numberOfusersOfSameUname))
@@ -946,6 +956,13 @@ def downloadtimeentryfile():
     	else:
     		msg=data_as_dict
     	return {'success':listOfresults[0],'msg':msg}	#{"content":res}
+def GenerateExcelfileFromListOfDictionariesOfTimeRecords(listofDicts,filename):
+	df = pd.DataFrame(listofDicts)
+	df = df.drop(['uname','created','last_updated','idtimeentry'], axis=1)
+	print(df)
+	df.to_excel(filename, index=False)
+
+
 def returnAllRecordTimeEntryHistoryForUserName(employeeid=None,fromdate=None,todate=None):
     try:
         # if not mysql.open:
