@@ -607,7 +607,27 @@ function dateString2Date(dateString) {
   }
   function FormatTimeToorPM(atime)
   {
+    if (atime==null)
+    {
       return atime;
+    }
+    if (atime.length==0)
+    {
+      return atime;
+    }
+    if (atime=='None')
+    {
+      return atime;
+    }
+    var parts=atime.split(":");
+    if ((parts[0].length)==1)
+    {
+        return '0'+ atime;
+    }
+    else
+    {
+      return atime;
+    }
       var AMPM="AM";
       arr=atime.split(":")
       if (arr[0]>=12)
@@ -630,10 +650,16 @@ function dateString2Date(dateString) {
 
             form=document.getElementById('form2')
             form.workingday.value=form.workingday.value=workingday.substring(0,10);
-             form.starttime.value=FormatTimeToorPM(starttime);
-             if (endtime!="0:00:00")
+             if (starttime!='None')
              {
-                form.endtime.value=FormatTimeToorPM(endtime);     
+                form.starttime.value=FormatTimeToorPM(starttime);
+             }
+             if (endtime!='None')
+             {
+               if (endtime!="0:00:00")
+               {
+                  form.endtime.value=FormatTimeToorPM(endtime);     
+               }
              }
              var element = document.getElementById("employeedidinput");
              element.value=empid;
